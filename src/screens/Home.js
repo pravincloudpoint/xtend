@@ -1,0 +1,335 @@
+import {
+    View,
+    Text,
+    ImageBackground,
+    SafeAreaView,
+    Image,
+    TextInput,
+    FlatList,
+    TouchableOpacity,
+    StyleSheet,
+    ActivityIndicator,
+} from "react-native";
+import React, { useState, useEffect } from "react";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useNavigation } from "@react-navigation/native";
+
+import {
+    AREA,
+    COLORS,
+    FONTS,
+    SIZES,
+    categories,
+    promo,
+    courses,
+} from "../constants";
+import {
+    CategoryComponent,
+    CardComponent,
+    PlayAudioComponent,
+} from "../components";
+import { InputSearch } from "../svg";
+
+export default function Home() {
+    const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+    const navigation = useNavigation();
+
+    function updateCurrentSlideIndex(e) {
+        const contentOffsetX = e.nativeEvent.contentOffset.x;
+        const currentIndex = Math.round(contentOffsetX / SIZES.width);
+        setCurrentSlideIndex(currentIndex);
+    }
+
+    const topRated = courses.filter(function (course) {
+        return course.topRated;
+    });
+    const popular = courses.filter(function (course) {
+        return course.popular;
+    });
+
+    function renderDots() {
+        return (
+            <View
+                style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: "row",
+                }}
+            >
+                {promo.map((_, index) => {
+                    return (
+                        <View
+                            key={index}
+                            style={[
+                                styles.dot,
+                                currentSlideIndex == index && {
+                                    width: 25,
+                                    backgroundColor: COLORS.black,
+                                    borderRadius: 6,
+                                },
+                            ]}
+                        />
+                    );
+                })}
+            </View>
+        );
+    }
+
+    function renderSearch() {
+        return (
+            <View
+                style={{
+                    height: 150,
+                    backgroundColor: "rgba(255,255,255,0.5)",
+                    borderRadius: 10,
+                    padding: 20,
+                    marginBottom: 20,
+                    marginHorizontal: 20,
+                }}
+            >
+                <View
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginBottom: 4,
+                    }}
+                >
+                    <Image
+                        source={{
+                            uri: "https://via.placeholder.com/72x72",
+                        }}
+                        style={{
+                            width: 24,
+                            height: 24,
+                            borderRadius: 12,
+                            marginRight: 10,
+                        }}
+                    />
+                    <Text style={{ ...FONTS.H3, color: COLORS.black }}>
+                        Hello, Kristin
+                    </Text>
+                </View>
+                <Text
+                    style={{
+                        ...FONTS.Lato_400Regular,
+                        fontSize: 14,
+                        color: COLORS.lightBlack,
+                        marginBottom: 12,
+                        lineHeight: 14 * 1.7,
+                    }}
+                >
+                    Find a course you want to learn.
+                </Text>
+                <ImageBackground
+                    style={{
+                        width: "100%",
+                        height: 42,
+                        flexDirection: "row",
+                        alignItems: "center",
+                    }}
+                    source={require("../assets/images/background-02.png")}
+                    imageStyle={{ borderRadius: 5 }}
+                >
+                    <View style={{ marginLeft: 16 }}>
+                        <InputSearch />
+                    </View>
+                    <TextInput
+                        placeholder="Search"
+                        style={{
+                            flex: 1,
+                            marginLeft: 8,
+                            flex: 1,
+                            marginRight: 16,
+                        }}
+                    />
+                </ImageBackground>
+            </View>
+        );
+    }
+
+    function renderPromo() {
+        return (
+            <View>
+                <FlatList
+                    horizontal={true}
+                    index={2}
+                    data={promo}
+                    pagingEnabled={true}
+                    showsHorizontalScrollIndicator={false}
+                    onMomentumScrollEnd={updateCurrentSlideIndex}
+                    contentContainerStyle={{ marginBottom: 16 }}
+                    renderItem={({ item }) => (
+                        <ImageBackground
+                            source={item.image}
+                            style={{
+                                width: SIZES.width - 40,
+                                height: 220,
+                                marginHorizontal: 20,
+                            }}
+                            imageStyle={{ borderRadius: 10 }}
+                        ></ImageBackground>
+                    )}
+                />
+                {renderDots()}
+            </View>
+        );
+    }
+
+    function renderHeader() {
+        return (
+            <View style={{ marginBottom: 30 }}>
+                <View style={{ height: 40 }} />
+                <Image
+                    source={require("../assets/images/background.png")}
+                    style={{
+                        position: "absolute",
+                        width: SIZES.width,
+                        height: "100%",
+                    }}
+                />
+                {renderSearch()}
+                {renderPromo()}
+            </View>
+        );
+    }
+
+    function renderCategories() {
+        return (
+            <View style={{ marginBottom: 30 }}>
+                <CategoryComponent
+                    title={"Categories"}
+                    onPress={() => navigation.navigate("CategoryGrid")}
+                />
+                <FlatList
+                    data={categories}
+                    horizontal={true}
+                    renderItem={({ item, index }) => {
+                        return (
+                            <TouchableOpacity key={index}>
+                                <ImageBackground
+                                    style={{
+                                        paddingHorizontal: 20,
+                                        paddingTop: 8,
+                                        height: 89,
+                                        marginRight: 10,
+                                    }}
+                                    source={item.image}
+                                    imageStyle={{ borderRadius: 10 }}
+                                >
+                                    <Text
+                                        style={{
+                                            ...FONTS.Lato_700Bold,
+                                            color: COLORS.white,
+                                            lineHeight: 14 * 1.5,
+                                            fontSize: 14,
+                                        }}
+                                    >
+                                        {item.name}
+                                    </Text>
+                                </ImageBackground>
+                            </TouchableOpacity>
+                        );
+                    }}
+                    contentContainerStyle={{ paddingLeft: 20 }}
+                    showsHorizontalScrollIndicator={false}
+                />
+            </View>
+        );
+    }
+
+    function renderTopRated() {
+        return (
+            <View style={{ marginBottom: 30 }}>
+                <CategoryComponent
+                    title={"Top rated"}
+                    onPress={() => navigation.navigate("CategoryList")}
+                />
+                {topRated.map((item, index, array) => {
+                    const lastIndex = array.length - 1;
+                    return (
+                        <View
+                            key={index}
+                            style={{
+                                marginHorizontal: 20,
+                            }}
+                        >
+                            <CardComponent
+                                item={item}
+                                lastComponent={
+                                    index == lastIndex ? true : false
+                                }
+                                onPress={() =>
+                                    navigation.navigate("CourseDetails", {
+                                        item: item,
+                                    })
+                                }
+                            />
+                        </View>
+                    );
+                })}
+            </View>
+        );
+    }
+
+    function renderPopular() {
+        return (
+            <View style={{ marginBottom: 30 }}>
+                <CategoryComponent
+                    title={"Popular"}
+                    onPress={() => navigation.navigate("CategoryList")}
+                />
+                <FlatList
+                    data={popular}
+                    horizontal={true}
+                    keyExtractor={({ id }, index) => id}
+                    showsHorizontalScrollIndicator={false}
+                    renderItem={({ item, index }) => {
+                        return (
+                            item.popular === true && (
+                                <PlayAudioComponent
+                                    item={item}
+                                    onPress={() =>
+                                        navigation.navigate(
+                                            "CourseDetails",
+                                            {
+                                                item: item,
+                                            }
+                                        )
+                                    }
+                                />
+                            )
+                        );
+                    }}
+                    contentContainerStyle={{ paddingLeft: 20 }}
+                />
+            </View>
+        );
+    }
+
+    return (
+        <KeyboardAwareScrollView
+            contentContainerStyle={{
+                flexGrow: 1,
+                backgroundColor: COLORS.white,
+            }}
+            showsVerticalScrollIndicator={false}
+        >
+            <View style={{ flex: 1 }}>
+                {renderHeader()}
+                {renderCategories()}
+                {renderTopRated()}
+                {renderPopular()}
+            </View>
+        </KeyboardAwareScrollView>
+    );
+}
+
+const styles = StyleSheet.create({
+    dot: {
+        width: 10,
+        height: 2,
+        marginHorizontal: 5,
+        borderRadius: 6,
+        backgroundColor: COLORS.gray,
+    },
+});
