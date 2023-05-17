@@ -227,7 +227,14 @@ export default function Home() {
           horizontal={true}
           renderItem={({ item, index }) => {
             return (
-              <TouchableOpacity key={index}>
+              <TouchableOpacity
+                key={index}
+                onPress={() =>
+                  navigation.navigate("CategoryList", {
+                    item,
+                  })
+                }
+              >
                 <ImageBackground
                   style={{
                     paddingHorizontal: 20,
@@ -336,7 +343,7 @@ export default function Home() {
         {renderCategories()}
         {renderTopRated()}
         {renderPopular()}
-        <Button
+        {/* <Button
           style={{
             height: "100%",
             justifyContent: "center",
@@ -351,7 +358,7 @@ export default function Home() {
           }}
           onPress={() => {}}
           title="Call API"
-        ></Button>
+        ></Button> */}
       </View>
     </KeyboardAwareScrollView>
   );

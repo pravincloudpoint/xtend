@@ -216,27 +216,30 @@ const onboardingSlide = [
     title: "Discover useful resources",
     description:
       "E-Learning is for everyone. Now is the chance to sign up and receive all the lessons that we’ve prepared for education so far.",
-    image: {
-      uri: "https://via.placeholder.com/1125x1125",
-    },
+    // image: {
+    //   uri: "https://via.placeholder.com/1125x1125",
+    // },
+    image: require("../assets/images/3950.png"),
   },
   {
     id: "2",
     title: "New profession",
     description:
       "With us you can get a new profession, learn skills for career development or reconfigure your business. ",
-    image: {
-      uri: "https://via.placeholder.com/1125x1125",
-    },
+    // image: {
+    //   uri: "https://via.placeholder.com/1125x1125",
+    // },
+    image: require("../assets/images/3950.png"),
   },
   {
     id: "3",
     title: "Move forward",
     description:
       "We have created a comfortable learning environment so that you always have the motivation to move forward.",
-    image: {
-      uri: "https://via.placeholder.com/1125x1125",
-    },
+    // image: {
+    //   uri: "https://via.placeholder.com/1125x1125",
+    // },
+    image: require("../assets/images/3950.png"),
   },
 ];
 
