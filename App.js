@@ -22,6 +22,7 @@ export default function App() {
     Spartan_400Regular: require("./src/assets/fonts/Spartan-Regular.ttf"),
     Spartan_500Medium: require("./src/assets/fonts/Spartan-Medium.ttf"),
     Spartan_600SemiBold: require("./src/assets/fonts/Spartan-SemiBold.ttf"),
+
     Spartan_700Bold: require("./src/assets/fonts/Spartan-Bold.ttf"),
   });
 
