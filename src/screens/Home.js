@@ -39,11 +39,10 @@ export default function Home() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const ott = useSelector((state) => state);
-  console.log("====================================");
   // console.log(ott.ott.data);
   // setFirst(ott.ott.data.results);
   useEffect(() => {
-    dispatch(fetchOtt());
+    // dispatch(fetchOtt());
   }, []);
 
   function updateCurrentSlideIndex(e) {
@@ -271,7 +270,12 @@ export default function Home() {
       <View style={{ marginBottom: 30 }}>
         <CategoryComponent
           title={"New Additions"}
-          onPress={() => navigation.navigate("CategoryList")}
+          onPress={() =>
+            navigation.navigate("TopRatedList", {
+              name: "New Additions",
+              topRated,
+            })
+          }
         />
         {topRated.map((item, index, array) => {
           const lastIndex = array.length - 1;
@@ -303,7 +307,12 @@ export default function Home() {
       <View style={{ marginBottom: 30 }}>
         <CategoryComponent
           title={"Recently Viewed"}
-          onPress={() => navigation.navigate("CategoryList")}
+          onPress={() =>
+            navigation.navigate("TopRatedList", {
+              name: "Recently Viewed",
+              popular,
+            })
+          }
         />
         <FlatList
           data={popular}
