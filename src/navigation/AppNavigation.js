@@ -35,6 +35,7 @@ import {
   VerifyYourPhoneNumber,
   Filter,
 } from "../screens";
+import TopRatedList from "../screens/TopRatedList";
 
 const Stack = createStackNavigator();
 //test
@@ -65,6 +66,7 @@ function Navigation() {
       <Stack.Screen name="Filter" component={Filter} />
       <Stack.Screen name="CategoryGrid" component={CategoryGrid} />
       <Stack.Screen name="CategoryList" component={CategoryList} />
+      <Stack.Screen name="TopRatedList" component={TopRatedList} />
       <Stack.Screen name="ResetPassword" component={ResetPassword} />
       <Stack.Screen name="CourseReviews" component={CourseReviews} />
       <Stack.Screen name="MyWallet" component={MyWallet} />
