@@ -40,7 +40,7 @@ export default function Home() {
   const dispatch = useDispatch();
   const ott = useSelector((state) => state);
   console.log("====================================");
-  console.log(ott.ott.data);
+  // console.log(ott.ott.data);
   // setFirst(ott.ott.data.results);
   useEffect(() => {
     dispatch(fetchOtt());
@@ -219,7 +219,7 @@ export default function Home() {
     return (
       <View style={{ marginBottom: 30 }}>
         <CategoryComponent
-          title={"Categories"}
+          title={"Subjects"}
           onPress={() => navigation.navigate("CategoryGrid")}
         />
         <FlatList
@@ -231,7 +231,7 @@ export default function Home() {
                 key={index}
                 onPress={() =>
                   navigation.navigate("CategoryList", {
-                    item,
+                    item: item,
                   })
                 }
               >
@@ -270,7 +270,7 @@ export default function Home() {
     return (
       <View style={{ marginBottom: 30 }}>
         <CategoryComponent
-          title={"Top rated"}
+          title={"New Additions"}
           onPress={() => navigation.navigate("CategoryList")}
         />
         {topRated.map((item, index, array) => {
@@ -302,7 +302,7 @@ export default function Home() {
     return (
       <View style={{ marginBottom: 30 }}>
         <CategoryComponent
-          title={"Popular"}
+          title={"Recently Viewed"}
           onPress={() => navigation.navigate("CategoryList")}
         />
         <FlatList

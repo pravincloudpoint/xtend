@@ -35,6 +35,7 @@ import {
   VerifyYourPhoneNumber,
   Filter,
 } from "../screens";
+import Player from "../screens/Player";
 
 const Stack = createStackNavigator();
 //test
@@ -83,6 +84,7 @@ function Navigation() {
         name="ChoosePaymentMethod"
         component={ChoosePaymentMethod}
       />
+      <Stack.Screen name="Player" component={Player} />
       <Stack.Screen name="PaymentSuccess" component={PaymentSuccess} />
       <Stack.Screen name="HelpAndSupport" component={HelpAndSupport} />
       <Stack.Screen name="ConfirmationCode" component={ConfirmationCode} />
