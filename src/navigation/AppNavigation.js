@@ -35,6 +35,7 @@ import {
   VerifyYourPhoneNumber,
   Filter,
 } from "../screens";
+import Player from "../screens/Player";
 import TopRatedList from "../screens/TopRatedList";
 
 const Stack = createStackNavigator();
@@ -85,6 +86,7 @@ function Navigation() {
         name="ChoosePaymentMethod"
         component={ChoosePaymentMethod}
       />
+      <Stack.Screen name="Player" component={Player} />
       <Stack.Screen name="PaymentSuccess" component={PaymentSuccess} />
       <Stack.Screen name="HelpAndSupport" component={HelpAndSupport} />
       <Stack.Screen name="ConfirmationCode" component={ConfirmationCode} />

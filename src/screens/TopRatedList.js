@@ -57,7 +57,7 @@ export default function TopRatedList({ route }) {
     <KeyboardAwareScrollView
       style={{
         marginBottom: 30,
-        // flexGrow: 1,
+        flexGrow: 1,
         ...AndroidSafeArea.AndroidSafeArea,
       }}
     >

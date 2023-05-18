@@ -1,32 +1,32 @@
 const categories = [
   {
     id: 1,
-    name: "Business",
+    name: "Science",
     image: require("../assets/images/categories/business.png"),
   },
   {
     id: 2,
-    name: "Technology",
+    name: "English",
     image: require("../assets/images/categories/technology.png"),
   },
   {
     id: 3,
-    name: "Digital Marketing",
+    name: "Mathematics",
     image: require("../assets/images/categories/digital-marketing.png"),
   },
   {
     id: 4,
-    name: "Business",
+    name: "Chemistry",
     image: require("../assets/images/categories/business.png"),
   },
   {
     id: 5,
-    name: "Technology",
+    name: "Music",
     image: require("../assets/images/categories/technology.png"),
   },
   {
     id: 6,
-    name: "Digital Marketing",
+    name: "Physics",
     image: require("../assets/images/categories/digital-marketing.png"),
   },
 ];
@@ -215,7 +215,7 @@ const onboardingSlide = [
     id: "1",
     title: "Discover useful resources",
     description:
-      "E-Learning is for everyone. Now is the chance to sign up and receive all the lessons that we’ve prepared for education so far.",
+      "Welcome to Extend, the groundbreaking eLearning platform that takes your learning experience beyond the boundaries of the internet. With Extend, you have the power to explore and expand your knowledge even in offline environments, thanks to our innovative setup box and satellite-enabled WiFi connectivity.",
     // image: {
     //   uri: "https://via.placeholder.com/1125x1125",
     // },
@@ -223,9 +223,9 @@ const onboardingSlide = [
   },
   {
     id: "2",
-    title: "New profession",
+    title: "Learn offline",
     description:
-      "With us you can get a new profession, learn skills for career development or reconfigure your business. ",
+      "Discover Extend, the innovative e-learning platform that takes your educational journey beyond the limitations of the internet. With our unique setup box and satellite-enabled Wi-Fi, you can now expand your knowledge even in offline environments. ",
     // image: {
     //   uri: "https://via.placeholder.com/1125x1125",
     // },
@@ -235,7 +235,7 @@ const onboardingSlide = [
     id: "3",
     title: "Move forward",
     description:
-      "We have created a comfortable learning environment so that you always have the motivation to move forward.",
+      "We have created a comfortable learning environment so that you always have the motivation to move forward.Experience the freedom to learn anytime, anywhere, and unlock a world of endless possibilities with Extend.",
     // image: {
     //   uri: "https://via.placeholder.com/1125x1125",
     // },

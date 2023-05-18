@@ -18,7 +18,7 @@ export default function CategoryGrid() {
     <SafeAreaView
       style={{ marginBottom: 30, flex: 1, ...AndroidSafeArea.AndroidSafeArea }}
     >
-      <Header title="Categories" goBack={false} />
+      <Header title="Subjects" goBack={false} />
       <FlatList
         data={categories}
         horizontal={false}

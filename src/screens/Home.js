@@ -218,7 +218,7 @@ export default function Home() {
     return (
       <View style={{ marginBottom: 30 }}>
         <CategoryComponent
-          title={"Categories"}
+          title={"Subjects"}
           onPress={() => navigation.navigate("CategoryGrid")}
         />
         <FlatList
@@ -230,7 +230,7 @@ export default function Home() {
                 key={index}
                 onPress={() =>
                   navigation.navigate("CategoryList", {
-                    item,
+                    item: item,
                   })
                 }
               >
@@ -269,9 +269,12 @@ export default function Home() {
     return (
       <View style={{ marginBottom: 30 }}>
         <CategoryComponent
-          title={"Top rated"}
+          title={"New Additions"}
           onPress={() =>
-            navigation.navigate("TopRatedList", { name: "Top rated", topRated })
+            navigation.navigate("TopRatedList", {
+              name: "New Additions",
+              topRated,
+            })
           }
         />
         {topRated.map((item, index, array) => {
@@ -303,9 +306,12 @@ export default function Home() {
     return (
       <View style={{ marginBottom: 30 }}>
         <CategoryComponent
-          title={"Popular"}
+          title={"Recently Viewed"}
           onPress={() =>
-            navigation.navigate("TopRatedList", { name: "Popular", popular })
+            navigation.navigate("TopRatedList", {
+              name: "Recently Viewed",
+              popular,
+            })
           }
         />
         <FlatList
