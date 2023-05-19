@@ -1,11 +1,18 @@
-import { View, Text, Image, SafeAreaView, StyleSheet, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  TextInput,
+} from "react-native";
 import React, { useRef, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import PhoneInput from "react-native-phone-input";
 import { useNavigation } from "@react-navigation/native";
 
 import { SIZES, AndroidSafeArea, FONTS, COLORS } from "../constants";
-import { Header, Button } from "../components";
+import { Header, Button, InputField } from "../components";
 import { getApp, initializeApp } from "firebase/app";
 import {
   FirebaseRecaptchaVerifierModal,
@@ -20,6 +27,7 @@ import fbConfig from "../../config/firebase";
 
 export default function VerifyYourPhoneNumber() {
   const navigation = useNavigation();
+  const phoneInput = useRef < PhoneInput > null;
 
   try {
     firebase.initializeApp(fbConfig);
@@ -27,7 +35,6 @@ export default function VerifyYourPhoneNumber() {
     console.log("Initializing error ", error);
   }
   const app = getApp();
-  console.log("app ==============>",app);
   const auth = getAuth(app);
 
   if (!app?.options || Platform.OS === "web") {
@@ -38,22 +45,29 @@ export default function VerifyYourPhoneNumber() {
 
   const recaptchaVerifier = useRef(null);
 
+  //   const [phoneNumber, setPhoneNumber] = useState("");
+
   const [phoneNumber, setPhoneNumber] = useState("");
+  const phoneRef = useRef(undefined);
+
   const [verificationId, setVerificationID] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
+  console.log("phoneNumber -->", phoneNumber);
 
   const firebaseConfig = app ? app.options : undefined;
   const [info, setInfo] = useState("");
   const attemptInvisibleVerification = false;
   const handleSendVerificationCode = async () => {
+    console.log("phoneNumber", phoneNumber);
+
     try {
       const phoneProvider = new PhoneAuthProvider(auth); // initialize the phone provider.
-      console.log("phoneProvider",phoneProvider);
+      console.log("phoneProvider", phoneProvider);
       const verificationId = await phoneProvider.verifyPhoneNumber(
         phoneNumber,
         recaptchaVerifier.current
       ); // get the verification id
-      console.log("verificationId",verificationId);
+      console.log("verificationId", verificationId);
 
       setVerificationID(verificationId); // set the verification id
       setInfo("Success : Verification code has been sent to your phone"); // If Ok, show message.
@@ -62,6 +76,8 @@ export default function VerifyYourPhoneNumber() {
     }
   };
   const handleVerifyVerificationCode = async () => {
+    console.log("verificationCode", verificationCode);
+
     try {
       const credential = PhoneAuthProvider.credential(
         verificationId,
@@ -69,7 +85,7 @@ export default function VerifyYourPhoneNumber() {
       ); // get the credential
       await signInWithCredential(auth, credential); // verify the credential
       setInfo("Success: Phone authentication successful"); // if OK, set the message
-      navigation.navigate("SignUp"); // navigate to the welcome screen
+      navigation.navigate("Home"); // navigate to the welcome screen
     } catch (error) {
       setInfo(`Error : ${error.message}`); // show the error.
     }
@@ -116,41 +132,93 @@ export default function VerifyYourPhoneNumber() {
         >
           We have sent you an SMS with a code to number +17 0123456789.
         </Text>
-        <View
-          style={{
-            marginBottom: 20,
-            backgroundColor: "rgba(255, 255, 255, 0.5)",
-            borderRadius: 10,
-            paddingHorizontal: 20,
-            paddingVertical: 8,
-          }}
-        >
-          <Text
-            style={{
-              ...FONTS.Spartan_400Regular,
-              fontSize: 12,
-              textTransform: "capitalize",
-              lineHeight: 12 * 1.7,
-              marginBottom: 3,
-              color: COLORS.secondaryTextColor,
-            }}
-          >
-            phone number
-          </Text>
-          <PhoneInput
-            style={{
-              fontSize: 14,
-              // fontFamily: FONTS.Spartan_400Regular,
-              paddingBottom: 4,
-            }}
-            placeholderTextColor={COLORS.bodyTextColor}
-            initialCountry={"in"}
-          />
-        </View>
-        <Button
-          title="confirm"
-          onPress={() => navigation.navigate("ConfirmationCode")}
+
+        <FirebaseRecaptchaVerifierModal
+          ref={recaptchaVerifier}
+          firebaseConfig={firebaseConfig}
         />
+
+        {info && <Text style={styles.text}>{info}</Text>}
+
+        {
+          // show the phone number input field when verification id is not set.
+          !verificationId && (
+            <View>
+              <View
+                style={{
+                  marginBottom: 20,
+                  backgroundColor: "rgba(255, 255, 255, 0.5)",
+                  borderRadius: 10,
+                  paddingHorizontal: 20,
+                  paddingVertical: 8,
+                }}
+              >
+                <Text
+                  style={{
+                    ...FONTS.Spartan_400Regular,
+                    fontSize: 12,
+                    textTransform: "capitalize",
+                    lineHeight: 12 * 1.7,
+                    marginBottom: 3,
+                    color: COLORS.secondaryTextColor,
+                  }}
+                >
+                  phone number
+                </Text>
+                <PhoneInput
+                  autoFocus
+                  style={{
+                    fontSize: 14,
+                    // fontFamily: FONTS.Spartan_400Regular,
+                    paddingBottom: 4,
+                  }}
+                  ref={phoneRef}
+                  value={phoneNumber}
+                  placeholderTextColor={COLORS.bodyTextColor}
+                  initialCountry={"in"}
+                  onChangePhoneNumber={(phoneNumber) =>
+                    setPhoneNumber(phoneNumber)
+                  }
+                />
+              </View>
+              <Button
+                // title="confirm"
+                //   onPress={() => navigation.navigate("ConfirmationCode")}
+                onPress={() => handleSendVerificationCode()}
+                title="Send Verification Code"
+                disabled={!phoneNumber}
+              />
+            </View>
+          )
+        }
+
+        {
+          // if verification id exists show the confirm code input field.
+          verificationId && (
+            <View>
+              <TextInput
+                style={styles.input}
+                keyboardType="numeric"
+                editable={!!verificationId}
+                placeholder="123456"
+                onChangeText={setVerificationCode}
+              />
+              <Button
+                title="Confirm Verification Code"
+                disabled={!verificationCode}
+                onPress={() => handleVerifyVerificationCode()}
+                containerStyle={{ marginBottom: 20 }}
+              />
+              {/* <Button
+                title="Back"
+                containerStyle={{ marginBottom: 20 }}
+                onPress={() => navigation.navigate("VerifyYourPhoneNumber")}
+              /> */}
+            </View>
+          )
+        }
+
+        {attemptInvisibleVerification && <FirebaseRecaptchaBanner />}
       </KeyboardAwareScrollView>
     );
   }
@@ -160,7 +228,7 @@ export default function VerifyYourPhoneNumber() {
       {renderBackground()}
       {renderHeader()}
       {renderContent()}
-      <View style={styles.container}>
+      {/* <View style={styles.container}>
         <FirebaseRecaptchaVerifierModal
           ref={recaptchaVerifier}
           firebaseConfig={firebaseConfig}
@@ -214,18 +282,15 @@ export default function VerifyYourPhoneNumber() {
         }
 
         {attemptInvisibleVerification && <FirebaseRecaptchaBanner />}
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
-    text:{
-        color: "#aaa"
-    },
-    container:{
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-    }
-    })
+    input: {
+        height: 50,
+        margin: 12,
+        borderWidth: 1,
+        padding: 10,
+      },
+});
