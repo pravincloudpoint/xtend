@@ -25,7 +25,7 @@ export default function SignIn() {
                 style={{
                     position: "absolute",
                     width: SIZES.width,
-                    height: SIZES.height,
+                    height: SIZES.height + SIZES.height / 2,
                     resizeMode: "stretch",
                 }}
             />

@@ -208,35 +208,41 @@ export default function MyProfile() {
                     icon={<Heart strokeColor={COLORS.mainColor} />}
                     onPress={() => navigation.navigate("MyWishlist")}
                     arrow={true}
+                    contaynerStyle={{ marginBottom: 5 }}
                 />
                 <ProfileCategoryComponent
                     title="Coupons"
                     icon={<Gift />}
                     onPress={() => navigation.navigate("MyCoupons")}
                     arrow={true}
+                    contaynerStyle={{ marginBottom: 5 }}
                 />
                 <ProfileCategoryComponent
                     title="Wallet"
                     icon={<CreditCard />}
                     onPress={() => navigation.navigate("MyWallet")}
                     arrow={true}
+                    contaynerStyle={{ marginBottom: 5 }}
                 />
                 <ProfileCategoryComponent
                     title="Help & Support"
                     icon={<HelpCircle />}
                     onPress={() => navigation.navigate("HelpAndSupport")}
                     arrow={true}
+                    contaynerStyle={{ marginBottom: 5 }}
                 />
                 <ProfileCategoryComponent
                     title="Privacy Policy"
                     icon={<FileText />}
                     onPress={() => navigation.navigate("PrivacyPolicy")}
                     arrow={true}
+                    contaynerStyle={{ marginBottom: 5 }}
                 />
                 <ProfileCategoryComponent
                     title="Sign out"
                     icon={<LogOut />}
                     onPress={() => setShowModal(true)}
+                    contaynerStyle={{ marginBottom: 5 }}
                 />
             </ScrollView>
         );
