@@ -7,7 +7,6 @@ export const COLORS = {
   lightBlack: "#333333",
   white: "#FFFFFF",
   gray: "#666666",
-
   black: "#000000",
   gray: "#333333",
   lightGray: "#666666",
