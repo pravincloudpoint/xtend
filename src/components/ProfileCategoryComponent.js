@@ -10,6 +10,7 @@ export default function ProfileCategoryComponent({
     title,
     onPress,
     arrow,
+    contaynerStyle
 }) {
     return (
         <Shadow
@@ -18,6 +19,7 @@ export default function ProfileCategoryComponent({
             startColor={"rgba(6, 38, 100, 0.04)"}
             finalColor={"rgba(6, 38, 100, 0.0)"}
             viewStyle={{ width: "100%", marginBottom: 6 }}
+            style={{ ...contaynerStyle }}
         >
             <TouchableOpacity
                 style={{

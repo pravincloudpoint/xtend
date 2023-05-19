@@ -23,7 +23,7 @@ export default function SignUp({ navigation }) {
         style={{
           position: "absolute",
           width: SIZES.width,
-          height: SIZES.height,
+          height:SIZES.height + SIZES.height / 2,
           resizeMode: "stretch",
         }}
       />

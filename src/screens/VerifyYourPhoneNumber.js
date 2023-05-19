@@ -77,11 +77,11 @@ export default function VerifyYourPhoneNumber() {
                     <PhoneInput
                         style={{
                             fontSize: 14,
-                            fontFamily: FONTS.Spartan_400Regular,
+                            // fontFamily: FONTS.Spartan_400Regular,
                             paddingBottom: 4,
                         }}
                         placeholderTextColor={COLORS.bodyTextColor}
-                        initialCountry={"us"}
+                        initialCountry={"in"}
                     />
                 </View>
                 <Button
