@@ -10,6 +10,8 @@ export default function InputField({
   icon,
   secureTextEntry,
   title,
+  onChangeText,
+  error,
 }) {
   return (
     <Shadow
@@ -30,6 +32,8 @@ export default function InputField({
           paddingVertical: 8,
           flexDirection: "row",
           alignItems: "center",
+          borderWidth: 1,
+          borderColor: error ? "red" : COLORS.white,
         }}
       >
         <View
@@ -51,10 +55,26 @@ export default function InputField({
             style={{ paddingRight: 20, width: "100%" }}
             placeholder={placeholder}
             secureTextEntry={secureTextEntry}
+            onChangeText={onChangeText}
           />
+     
         </View>
         {icon && icon}
+       
       </View>
+      {error && (
+            <Text
+              style={{
+                ...FONTS.LeagueSpartan_400Regular,
+                fontSize: 12,
+                color: 'red',
+                marginLeft:10
+              }}
+            >
+              {error.message || "Error"}
+            </Text>
+          )}
     </Shadow>
+
   );
 }

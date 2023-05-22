@@ -48,6 +48,8 @@ export default function VerifyYourPhoneNumber() {
   //   const [phoneNumber, setPhoneNumber] = useState("");
 
   const [phoneNumber, setPhoneNumber] = useState("");
+  console.log("🚀 ~ file: VerifyYourPhoneNumber.js:51 ~ VerifyYourPhoneNumber ~ phoneNumber:", phoneNumber)
+  console.log("🚀 ~ file: VerifyYourPhoneNumber.js:51 ~ VerifyYourPhoneNumber ~ phoneNumber:", phoneNumber)
   const phoneRef = useRef(undefined);
 
   const [verificationId, setVerificationID] = useState("");
@@ -79,13 +81,16 @@ export default function VerifyYourPhoneNumber() {
     console.log("verificationCode", verificationCode);
 
     try {
-      const credential = PhoneAuthProvider.credential(
-        verificationId,
-        verificationCode
-      ); // get the credential
-      await signInWithCredential(auth, credential); // verify the credential
-      setInfo("Success: Phone authentication successful"); // if OK, set the message
-      navigation.navigate("Home"); // navigate to the welcome screen
+    //   const credential = PhoneAuthProvider.credential(
+    //     verificationId,
+    //     verificationCode
+    //   ); // get the credential
+    //   await signInWithCredential(auth, credential); // verify the credential
+    //   setInfo("Success: Phone authentication successful"); // if OK, set the message
+    // //  navigation.navigate("Home"); // navigate to the welcome screen
+        navigation.navigate("SignUp", {
+          phoneNumber,
+        })
     } catch (error) {
       setInfo(`Error : ${error.message}`); // show the error.
     }

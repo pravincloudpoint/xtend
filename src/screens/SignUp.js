@@ -14,8 +14,14 @@ import { AndroidSafeArea, SIZES, FONTS, COLORS } from "../constants";
 import { Check, Facebook, Google, Twitter, EyeOff } from "../svg";
 import DropDownPicker from "react-native-dropdown-picker";
 import { ScrollView } from "react-native-gesture-handler";
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { updatePhoneNumber } from "firebase/auth";
 
 export default function SignUp({ navigation }) {
+  // const { phoneNumber } = route.params;
+  // console.log("phoneNumber===>", phoneNumber);
   function renderBackground() {
     return (
       <Image
@@ -23,7 +29,7 @@ export default function SignUp({ navigation }) {
         style={{
           position: "absolute",
           width: SIZES.width,
-          height:SIZES.height + SIZES.height / 2,
+          height: SIZES.height + SIZES.height / 2,
           resizeMode: "stretch",
         }}
       />
@@ -34,14 +40,41 @@ export default function SignUp({ navigation }) {
     return <Header title="Sign Up" onPress={() => navigation.goBack()} />;
   }
 
+  const schema = yup.object().shape({
+    email: yup.string().email().required(),
+    password: yup.string().min(8).max(32).required(),
+  });
+
   function renderContent() {
+    const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
-    console.log("value", value);
+    const [hidePass, setHidePass] = useState(true);
+
+    // console.log("value", value);
     const [items, setItems] = useState([
       { label: "Student", value: "student" },
       { label: "Teacher", value: "teacher" },
     ]);
+    const phoneNumber = "34342432";
+    const {
+      control,
+      handleSubmit,
+      watch,
+      formState: { errors },
+    } = useForm({
+      defaultValues: {
+        phoneNumber: phoneNumber,
+      },
+    });
+
+    console.log(errors);
+
+    const pwd = watch("password");
+    const onSignUpForm = (data) => {
+      console.log("🚀 ~ onSignUpForm ~ data:", data);
+    };
     return (
       <KeyboardAwareScrollView
         contentContainerStyle={{
@@ -83,28 +116,185 @@ export default function SignUp({ navigation }) {
             setItems={setItems}
           />
         </View>
+        <Controller
+          control={control}
+          name="schoolName"
+          rules={{
+            required: "School Name is required",
+            minLength: {
+              value: 3,
+              message: "School Name should be at least 3 characters long",
+            },
+            maxLength: {
+              value: 20,
+              message: "School Name should be max 23 characters long",
+            },
+            pattern: {
+              value: /^[A-Za-z]+$/i,
+              message: "Enter characters only",
+            },
+          }}
+          render={({
+            field: { value, onChange, onBlur },
+            fieldState: { error },
+          }) => (
+            <InputField
+              title="School Name"
+              placeholder="xyz"
+              contaynerStyle={{ marginBottom: 10 }}
+              value={value}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              error={error}
+            />
+          )}
+        />
+        <Controller
+          control={control}
+          name="username"
+          rules={{
+            required: "UserName is required",
+            minLength: {
+              value: 3,
+              message: "UserName should be at least 3 characters long",
+            },
+            maxLength: {
+              value: 20,
+              message: "UserName should be max 23 characters long",
+            },
+            pattern: {
+              value: /^[A-Za-z]+$/i,
+              message: "Enter characters only",
+            },
+          }}
+          render={({
+            field: { value, onChange, onBlur },
+            fieldState: { error },
+          }) => (
+            <InputField
+              title="UserName"
+              placeholder="test"
+              contaynerStyle={{ marginBottom: 10 }}
+              value={value}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              error={error}
+            />
+          )}
+        />
+        <Controller
+          control={control}
+          name="phoneNumber"
+          rules={{
+            required: "Phone Number is required",
+          }}
+          render={({
+            field: { value, onChange, onBlur },
+            fieldState: { error },
+          }) => (
+            <InputField
+              title="Phone Number"
+              placeholder="9999999999"
+              contaynerStyle={{
+                marginBottom: 10,
+                // minLength: 10,
+                // maxLength: 10,
+              }}
+              value={value}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              error={error}
+            />
+          )}
+        />
 
-        <InputField
-          title="Name"
-          placeholder="Kristin Watson"
-          icon={
-            <View style={{ padding: 20 }}>
-              <Check />
-            </View>
-          }
-          contaynerStyle={{ marginBottom: 10 }}
+        <Controller
+          control={control}
+          name="email"
+          rules={{
+            required: "Email is required",
+
+            pattern: {
+              value: EMAIL_REGEX,
+              message: "Email is invalid",
+            },
+          }}
+          render={({
+            field: { value, onChange, onBlur },
+            fieldState: { error },
+          }) => (
+            <InputField
+              title="Email"
+              placeholder="abc@gmail.com"
+              contaynerStyle={{ marginBottom: 10 }}
+              value={value}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              error={error}
+            />
+          )}
         />
-        <InputField
-          title="Email"
-          placeholder="kristinwatson@mail.com"
-          icon={
-            <View style={{ padding: 20 }}>
-              <Check />
-            </View>
-          }
-          contaynerStyle={{ marginBottom: 10 }}
+        <Controller
+          control={control}
+          name="password"
+          rules={{
+            required: "Password is required",
+            minLength: {
+              value: 3,
+              message: "Password should be minimum 3 characters long",
+            },
+            maxLength: {
+              value: 20,
+              message: "Password should be max 16 characters long",
+            },
+          }}
+          render={({
+            field: { value, onChange, onBlur },
+            fieldState: { error },
+          }) => (
+            <InputField
+              title="Password"
+              placeholder="••••••••"
+              contaynerStyle={{ marginBottom: 10 }}
+              value={value}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              secureTextEntry={hidePass ? true : false}
+              error={error}
+              icon={
+                <TouchableOpacity
+                  style={{ padding: 20 }}
+                  onPress={() => setHidePass(!hidePass)}
+                >
+                  {!hidePass ? <EyeOff /> : <EyeOff />}
+                </TouchableOpacity>
+              }
+            />
+          )}
         />
-        <InputField
+        <Controller
+          control={control}
+          name="password-repeat"
+          rules={{
+            validate: (value) => value === pwd || "Password not match",
+          }}
+          render={({
+            field: { value, onChange, onBlur },
+            fieldState: { error },
+          }) => (
+            <InputField
+              title="Confirm Password"
+              placeholder="••••••••"
+              contaynerStyle={{ marginBottom: 10 }}
+              value={value}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              secureTextEntry
+              error={error}
+            />
+          )}
+        />
+        {/* <InputField
           title="Password"
           placeholder="••••••••"
           icon={
@@ -113,7 +303,8 @@ export default function SignUp({ navigation }) {
             </TouchableOpacity>
           }
           contaynerStyle={{ marginBottom: 10 }}
-        />
+        /> */}
+
         <InputField
           title="Confirm Password"
           placeholder="••••••••"
@@ -124,10 +315,16 @@ export default function SignUp({ navigation }) {
           }
           contaynerStyle={{ marginBottom: 35 }}
         />
+        {/* <Button
+            title="sign up"
+            containerStyle={{ marginBottom: 20 }}
+            onPress={() => navigation.navigate("VerifyYourPhoneNumber")}
+          /> */}
         <Button
           title="sign up"
+          type="submit"
           containerStyle={{ marginBottom: 20 }}
-          onPress={() => navigation.navigate("VerifyYourPhoneNumber")}
+          onPress={handleSubmit(onSignUpForm)}
         />
         <View
           style={{
