@@ -111,6 +111,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 5,
   },
+
   nextButtonText: {
     color: "white",
     fontSize: 16,
