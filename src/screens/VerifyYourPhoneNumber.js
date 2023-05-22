@@ -287,10 +287,15 @@ export default function VerifyYourPhoneNumber() {
   );
 }
 const styles = StyleSheet.create({
-    input: {
-        height: 50,
-        margin: 12,
-        borderWidth: 1,
-        padding: 10,
-      },
+  input: {
+    height: 50,
+    marginBottom: 10,
+    marginTop: 10,
+    borderWidth: 0,
+    padding: 10,
+    paddingLeft: 20,
+    shadowColor: 10,
+    backgroundColor: "white",
+    borderRadius: 7,
+  },
 });

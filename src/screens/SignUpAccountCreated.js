@@ -4,7 +4,7 @@ import React from "react";
 import { AndroidSafeArea, FONTS, SIZES, COLORS } from "../constants";
 import { Button } from "../components";
 import { useNavigation } from "@react-navigation/native";
-
+import { Shadow } from "react-native-shadow-2";
 export default function SignUpAccountCreated() {
   const navigation = useNavigation();
 
