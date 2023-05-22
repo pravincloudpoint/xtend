@@ -19,6 +19,7 @@ import {
   InstructorSectionComponent,
   ReviewsSectionComponent,
 } from "../components";
+import Quiz from "../components/QuizsectionComponent";
 
 export default function CourseDetails() {
   const navigation = useNavigation();
@@ -28,13 +29,15 @@ export default function CourseDetails() {
   const FirstRoute = () => <DescriptionSectionComponent item={item} />;
   const SecondRoute = () => <LessonsSectionComponent item={item} />;
   const ThirdRoute = () => <InstructorSectionComponent item={item} />;
-  const FourthRoute = () => <ReviewsSectionComponent item={item} />;
+  // const FourthRoute = () => <ReviewsSectionComponent item={item} />;
+  const FifthRoute = () => <Quiz item={item} />;
 
   const renderScene = SceneMap({
     first: FirstRoute,
     second: SecondRoute,
     third: ThirdRoute,
-    fourth: FourthRoute,
+    // fourth: FourthRoute,
+    Fifth: FifthRoute,
   });
 
   const layout = useWindowDimensions();
@@ -44,7 +47,8 @@ export default function CourseDetails() {
     { key: "first", title: "Description" },
     { key: "second", title: "Lessons" },
     { key: "third", title: "Instructor" },
-    { key: "fourth", title: "Reviews" },
+    // { key: "fourth", title: "Reviews" },
+    { key: "Fifth", title: "Quiz" },
   ]);
 
   function renderHeader() {
