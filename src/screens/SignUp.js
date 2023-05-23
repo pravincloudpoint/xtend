@@ -18,6 +18,7 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { updatePhoneNumber } from "firebase/auth";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 
 export default function SignUp({ navigation }) {
   // const { phoneNumber } = route.params;
@@ -106,14 +107,47 @@ export default function SignUp({ navigation }) {
         </Text>
 
         <View style={{ zIndex: 10, marginBottom: 10 }}>
-          <DropDownPicker
-            style={styles.dropdown}
-            open={open}
-            value={value}
-            items={items}
-            setOpen={setOpen}
-            setValue={setValue}
-            setItems={setItems}
+          <Controller
+            control={control}
+            name="role"
+            rules={{
+              required: "Role is required",
+            }}
+            render={({ field, error }) => (
+              <>
+                <DropDownPicker
+                  style={styles.dropdown}
+                  open={open}
+                  // value={value}
+                  value={field.value}
+                  setValue={(callback) => field.onChange(callback())}
+                  items={items}
+                  setOpen={setOpen}
+                  // setValue={setValue}
+                  setItems={setItems}
+                  dropDownContainerStyle={{
+                    backgroundColor: "grey",
+                  }}
+                  selectedItemContainerStyle={{
+                    backgroundColor: "grey",
+                  }}
+                />
+                {errors.role && (
+                  <Text
+                    style={{
+                      ...FONTS.LeagueSpartan_400Regular,
+                      fontSize: 12,
+                      color: "red",
+                      marginLeft: 10,
+                      zIndex: -11
+                      
+                    }}
+                  >
+                    {errors.role.message || "Error"}
+                  </Text>
+                )}
+              </>
+            )}
           />
         </View>
         <Controller
@@ -185,25 +219,16 @@ export default function SignUp({ navigation }) {
         <Controller
           control={control}
           name="phoneNumber"
-          rules={{
-            required: "Phone Number is required",
-          }}
-          render={({
-            field: { value, onChange, onBlur },
-            fieldState: { error },
-          }) => (
+          render={({}) => (
             <InputField
               title="Phone Number"
-              placeholder="9999999999"
+              placeholder={`${phoneNumber}`}
               contaynerStyle={{
                 marginBottom: 10,
-                // minLength: 10,
-                // maxLength: 10,
               }}
-              value={value}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              error={error}
+              value={`${phoneNumber}`}
+              selectTextOnFocus={false}
+              editable={false}
             />
           )}
         />
@@ -305,7 +330,7 @@ export default function SignUp({ navigation }) {
           contaynerStyle={{ marginBottom: 10 }}
         /> */}
 
-        <InputField
+        {/* <InputField
           title="Confirm Password"
           placeholder="••••••••"
           icon={
@@ -314,7 +339,7 @@ export default function SignUp({ navigation }) {
             </TouchableOpacity>
           }
           contaynerStyle={{ marginBottom: 35 }}
-        />
+        /> */}
         {/* <Button
             title="sign up"
             containerStyle={{ marginBottom: 20 }}
@@ -393,15 +418,16 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     width: "100%",
     marginBottom: 15,
+    elevation: 3,
   },
   dropdownCompany: {
     marginHorizontal: 10,
     marginBottom: 15,
+    elevation: 3,
   },
   dropdown: {
     borderColor: "#B7B7B7",
     height: 50,
-    zIndex: 9,
     width: "100%",
     height: 60,
     backgroundColor: COLORS.white,

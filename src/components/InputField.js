@@ -11,6 +11,7 @@ export default function InputField({
   secureTextEntry,
   title,
   onChangeText,
+  editable,
   error,
 }) {
   return (
@@ -56,6 +57,7 @@ export default function InputField({
             placeholder={placeholder}
             secureTextEntry={secureTextEntry}
             onChangeText={onChangeText}
+            editable={editable}
           />
      
         </View>
