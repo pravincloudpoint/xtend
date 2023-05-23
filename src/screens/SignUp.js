@@ -11,7 +11,15 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 
 import { Header, InputField, Button } from "../components";
 import { AndroidSafeArea, SIZES, FONTS, COLORS } from "../constants";
-import { Check, Facebook, Google, Twitter, EyeOff } from "../svg";
+import {
+  Check,
+  Facebook,
+  Google,
+  Twitter,
+  EyeOff,
+  EmailSvg,
+  Username,
+} from "../svg";
 import DropDownPicker from "react-native-dropdown-picker";
 import { ScrollView } from "react-native-gesture-handler";
 import { Controller, useForm } from "react-hook-form";
@@ -19,6 +27,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { updatePhoneNumber } from "firebase/auth";
 import { Colors } from "react-native/Libraries/NewAppScreen";
+import EyeOn from "../svg/EyeOn";
 
 export default function SignUp({ navigation }) {
   // const { phoneNumber } = route.params;
@@ -139,8 +148,7 @@ export default function SignUp({ navigation }) {
                       fontSize: 12,
                       color: "red",
                       marginLeft: 10,
-                      zIndex: -11
-                      
+                      zIndex: -11,
                     }}
                   >
                     {errors.role.message || "Error"}
@@ -213,6 +221,11 @@ export default function SignUp({ navigation }) {
               onBlur={onBlur}
               onChangeText={onChange}
               error={error}
+              icon={
+                <View style={{ padding: 20 }}>
+                  <Username />
+                </View>
+              }
             />
           )}
         />
@@ -256,6 +269,11 @@ export default function SignUp({ navigation }) {
               onBlur={onBlur}
               onChangeText={onChange}
               error={error}
+              icon={
+                <View style={{ padding: 20 }}>
+                  <EmailSvg />
+                </View>
+              }
             />
           )}
         />
@@ -291,7 +309,7 @@ export default function SignUp({ navigation }) {
                   style={{ padding: 20 }}
                   onPress={() => setHidePass(!hidePass)}
                 >
-                  {!hidePass ? <EyeOff /> : <EyeOff />}
+                  {!hidePass ? <EyeOn /> : <EyeOff />}
                 </TouchableOpacity>
               }
             />
