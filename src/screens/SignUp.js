@@ -20,7 +20,7 @@ import * as yup from "yup";
 import { updatePhoneNumber } from "firebase/auth";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
-export default function SignUp({ route, navigation }) {
+export default function SignUp({ route,navigation }) {
   const { phoneNumber } = route.params;
   console.log("phoneNumber===>", phoneNumber);
   function renderBackground() {
@@ -41,24 +41,34 @@ export default function SignUp({ route, navigation }) {
     return <Header title="Sign Up" onPress={() => navigation.goBack()} />;
   }
 
-  const schema = yup.object().shape({
-    email: yup.string().email().required(),
-    password: yup.string().min(8).max(32).required(),
-  });
-
   function renderContent() {
     const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
 
     const [open, setOpen] = useState(false);
+    const [openClass, setOpenClass] = useState(false);
     const [value, setValue] = useState(null);
     const [hidePass, setHidePass] = useState(true);
 
-    // console.log("value", value);
     const [items, setItems] = useState([
       { label: "Student", value: "student" },
       { label: "Teacher", value: "teacher" },
     ]);
-    // const phoneNumber = "34342432";
+    const [classItems, setClassItems] = useState([
+      {
+        label: "Class 1",
+        value: "class1",
+      },
+      { label: "Class 2", value: "class2" },
+      { label: "Class 3", value: "class3" },
+      { label: "Class 4", value: "class4" },
+      { label: "Class 5", value: "class5" },
+      { label: "Class 6", value: "class6" },
+      { label: "Class 7", value: "class7" },
+      { label: "Class 8", value: "class8" },
+      { label: "Class 9", value: "class9" },
+      { label: "Class 10", value: "class10" },
+      
+    ]);
     const {
       control,
       handleSubmit,
@@ -71,14 +81,16 @@ export default function SignUp({ route, navigation }) {
     });
 
     console.log(errors);
-
+    console.log("🚀 ~ renderContent ~ errors:", errors);
+    
     const pwd = watch("password");
+    const role = watch("role");
     const onSignUpForm = (data) => {
       console.log("🚀 ~ onSignUpForm ~ data:", data);
     };
     return (
       <KeyboardAwareScrollView
-       contentContainerStyle={{
+        contentContainerStyle={{
           paddingTop: 6,
           paddingHorizontal: 20,
           flexGrow: 1,
@@ -106,49 +118,49 @@ export default function SignUp({ route, navigation }) {
           Sign up
         </Text>
 
-          <View style={{ zIndex: 10, marginBottom: 10 }}>
-            <Controller
-              control={control}
-              name="role"
-              rules={{
-                required: "Role is required",
-              }}
-              render={({ field, error }) => (
-                <>
-                  <DropDownPicker
-                    style={styles.dropdown}
-                    open={open}
-                    // value={value}
-                    value={field.value}
-                    setValue={(callback) => field.onChange(callback())}
-                    items={items}
-                    setOpen={setOpen}
-                    // setValue={setValue}
-                    setItems={setItems}
-                    dropDownContainerStyle={{
-                      backgroundColor: "grey",
+        <View style={{ zIndex: 10, marginBottom: 10 }}>
+          <Controller
+            control={control}
+            name="role"
+            rules={{
+              required: "Role is required",
+            }}
+            render={({ field, error }) => (
+              <>
+                <DropDownPicker
+                  style={styles.dropdown}
+                  open={open}
+                  // value={value}
+                  value={field.value}
+                  setValue={(callback) => field.onChange(callback())}
+                  items={items}
+                  setOpen={setOpen}
+                  // setValue={setValue}
+                  setItems={setItems}
+                  dropDownContainerStyle={{
+                    backgroundColor: "grey",
+                  }}
+                  selectedItemContainerStyle={{
+                    backgroundColor: "grey",
+                  }}
+                />
+                {errors.role && (
+                  <Text
+                    style={{
+                      ...FONTS.LeagueSpartan_400Regular,
+                      fontSize: 12,
+                      color: "red",
+                      marginLeft: 10,
+                      zIndex: -11,
                     }}
-                    selectedItemContainerStyle={{
-                      backgroundColor: "grey",
-                    }}
-                  />
-                  {errors.role && (
-                    <Text
-                      style={{
-                        ...FONTS.LeagueSpartan_400Regular,
-                        fontSize: 12,
-                        color: "red",
-                        marginLeft: 10,
-                        zIndex: -11,
-                      }}
-                    >
-                      {errors.role.message || "Error"}
-                    </Text>
-                  )}
-                </>
-              )}
-            />
-          </View>
+                  >
+                    {errors.role.message || "Error"}
+                  </Text>
+                )}
+              </>
+            )}
+          />
+        </View>
         <Controller
           control={control}
           name="schoolName"
@@ -182,6 +194,52 @@ export default function SignUp({ route, navigation }) {
             />
           )}
         />
+        {role == "student" && (
+          <View style={{ zIndex: 10, marginBottom: 10 }}>
+            <Controller
+              control={control}
+              name="class"
+              rules={{
+                required: "Role is required",
+              }}
+              render={({ field, error }) => (
+                <>
+                  <DropDownPicker
+                    style={styles.dropdown}
+                    open={openClass}
+                    // value={value}
+                    value={field.value}
+                    setValue={(callback) => field.onChange(callback())}
+                    items={classItems}
+                    setOpen={setOpenClass}
+                    // setValue={setValue}
+                    setItems={setClassItems}
+                    dropDownContainerStyle={{
+                      backgroundColor: "grey",
+                    }}
+                    selectedItemContainerStyle={{
+                      backgroundColor: "grey",
+                    }}
+                  />
+                  {errors.role && (
+                    <Text
+                      style={{
+                        ...FONTS.LeagueSpartan_400Regular,
+                        fontSize: 12,
+                        color: "red",
+                        marginLeft: 10,
+                        zIndex: -11,
+                      }}
+                    >
+                      {errors.role.message || "Error"}
+                    </Text>
+                  )}
+                </>
+              )}
+            />
+          </View>
+        )}
+
         <Controller
           control={control}
           name="username"
