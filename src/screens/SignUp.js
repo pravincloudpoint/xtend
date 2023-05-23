@@ -20,9 +20,9 @@ import * as yup from "yup";
 import { updatePhoneNumber } from "firebase/auth";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
-export default function SignUp({ navigation }) {
-  // const { phoneNumber } = route.params;
-  // console.log("phoneNumber===>", phoneNumber);
+export default function SignUp({ route, navigation }) {
+  const { phoneNumber } = route.params;
+  console.log("phoneNumber===>", phoneNumber);
   function renderBackground() {
     return (
       <Image
@@ -58,7 +58,7 @@ export default function SignUp({ navigation }) {
       { label: "Student", value: "student" },
       { label: "Teacher", value: "teacher" },
     ]);
-    const phoneNumber = "34342432";
+    // const phoneNumber = "34342432";
     const {
       control,
       handleSubmit,
@@ -78,7 +78,7 @@ export default function SignUp({ navigation }) {
     };
     return (
       <KeyboardAwareScrollView
-        contentContainerStyle={{
+       contentContainerStyle={{
           paddingTop: 6,
           paddingHorizontal: 20,
           flexGrow: 1,
@@ -106,50 +106,49 @@ export default function SignUp({ navigation }) {
           Sign up
         </Text>
 
-        <View style={{ zIndex: 10, marginBottom: 10 }}>
-          <Controller
-            control={control}
-            name="role"
-            rules={{
-              required: "Role is required",
-            }}
-            render={({ field, error }) => (
-              <>
-                <DropDownPicker
-                  style={styles.dropdown}
-                  open={open}
-                  // value={value}
-                  value={field.value}
-                  setValue={(callback) => field.onChange(callback())}
-                  items={items}
-                  setOpen={setOpen}
-                  // setValue={setValue}
-                  setItems={setItems}
-                  dropDownContainerStyle={{
-                    backgroundColor: "grey",
-                  }}
-                  selectedItemContainerStyle={{
-                    backgroundColor: "grey",
-                  }}
-                />
-                {errors.role && (
-                  <Text
-                    style={{
-                      ...FONTS.LeagueSpartan_400Regular,
-                      fontSize: 12,
-                      color: "red",
-                      marginLeft: 10,
-                      zIndex: -11
-                      
+          <View style={{ zIndex: 10, marginBottom: 10 }}>
+            <Controller
+              control={control}
+              name="role"
+              rules={{
+                required: "Role is required",
+              }}
+              render={({ field, error }) => (
+                <>
+                  <DropDownPicker
+                    style={styles.dropdown}
+                    open={open}
+                    // value={value}
+                    value={field.value}
+                    setValue={(callback) => field.onChange(callback())}
+                    items={items}
+                    setOpen={setOpen}
+                    // setValue={setValue}
+                    setItems={setItems}
+                    dropDownContainerStyle={{
+                      backgroundColor: "grey",
                     }}
-                  >
-                    {errors.role.message || "Error"}
-                  </Text>
-                )}
-              </>
-            )}
-          />
-        </View>
+                    selectedItemContainerStyle={{
+                      backgroundColor: "grey",
+                    }}
+                  />
+                  {errors.role && (
+                    <Text
+                      style={{
+                        ...FONTS.LeagueSpartan_400Regular,
+                        fontSize: 12,
+                        color: "red",
+                        marginLeft: 10,
+                        zIndex: -11,
+                      }}
+                    >
+                      {errors.role.message || "Error"}
+                    </Text>
+                  )}
+                </>
+              )}
+            />
+          </View>
         <Controller
           control={control}
           name="schoolName"
