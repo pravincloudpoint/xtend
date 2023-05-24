@@ -45,8 +45,7 @@ export default function SignIn() {
       control,
       handleSubmit,
       formState: { errors },
-    } = useForm({
-    });
+    } = useForm({});
     console.log("🚀 ~ renderContent ~ errors:", errors);
     const onSignInForm = (data) => {
       console.log("🚀 ~ onSignUpForm ~ data:", data);
@@ -220,8 +219,8 @@ export default function SignIn() {
         <Button
           title="Sign in"
           containerStyle={{ marginBottom: 20 }}
-        //   onPress={() => navigation.navigate("MainLayout")}
-          onPress={handleSubmit(onSignInForm)}
+          onPress={() => navigation.navigate("MainLayout")}
+          // onPress={handleSubmit(onSignInForm)}
         />
         <View
           style={{
@@ -240,7 +239,9 @@ export default function SignIn() {
           >
             Don’t have an account?
           </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("VerifyYourPhoneNumber")}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("VerifyYourPhoneNumber")}
+          >
             <Text
               style={{
                 ...FONTS.Lato_700Bold,
