@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "318719700098",
+    "project_id": "extend-c43c5",
+    "storage_bucket": "extend-c43c5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:318719700098:android:7b21ad5224b4aa3b9a589b",
+        "android_client_info": {
+          "package_name": "com.extend"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "318719700098-dhaffj2i2n31o2cgde9pi1o9982um473.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBx4A-9wd7DgMsO8y_eLUNpPkJkt913ik"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "318719700098-dhaffj2i2n31o2cgde9pi1o9982um473.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

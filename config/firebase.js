@@ -1,5 +1,7 @@
 
 import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
@@ -12,7 +14,15 @@ const firebaseConfig = {
     measurementId: "G-P6MKHCQPFX"
   };
   
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
-module.exports = firebaseConfig;
+// // Initialize Firebase
+export const app = initializeApp(firebaseConfig);
+export const db= getFirestore(app);
+export const auth= getAuth(app);
+
+//const analytics = getAnalytics(app);
+// module.exports = firebaseConfig;
+// if (!firebase.apps.length) {
+//   firebase.initializeApp(firebaseConfig);
+// }
+
+// export default database;

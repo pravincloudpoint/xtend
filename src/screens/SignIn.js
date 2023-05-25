@@ -6,7 +6,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useNavigation } from "@react-navigation/native";
 
@@ -14,10 +14,18 @@ import { Header, InputField, Button } from "../components";
 import { AREA, COLORS, FONTS, SIZES } from "../constants";
 import { Check, EyeOff, CheckSmall, Facebook, Twitter, Google } from "../svg";
 import { Controller, useForm } from "react-hook-form";
+import { db } from "../../config/firebase";
+import { addDoc, collection } from "firebase/firestore";
 
 export default function SignIn() {
   const [rememberMe, setRememberMe] = useState(true);
   const navigation = useNavigation();
+  useEffect(() => {});
+  const loginData = { title: "test" };
+  const getUserInfo = async () => {
+    const doc = addDoc(collection(db, "user"), loginData);
+    console.log("🚀 ~ getUserInfo ~ doc:", doc);
+  };
 
   function renderBackground() {
     return (
@@ -45,11 +53,12 @@ export default function SignIn() {
       control,
       handleSubmit,
       formState: { errors },
-    } = useForm({
-    });
+    } = useForm({});
     console.log("🚀 ~ renderContent ~ errors:", errors);
-    const onSignInForm = (data) => {
-      console.log("🚀 ~ onSignUpForm ~ data:", data);
+    const onSignInForm = (loginData) => {
+      console.log("🚀 ~ onSignUpForm ~ data:", loginData);
+      const doc = addDoc(collection(db, "user"), loginData);
+      console.log("🚀 ~ getUserInfo ~ doc:", doc);
     };
     return (
       <KeyboardAwareScrollView
@@ -220,8 +229,13 @@ export default function SignIn() {
         <Button
           title="Sign in"
           containerStyle={{ marginBottom: 20 }}
-        //   onPress={() => navigation.navigate("MainLayout")}
+          //   onPress={() => navigation.navigate("MainLayout")}
           onPress={handleSubmit(onSignInForm)}
+        />
+        <Button
+          title="getUserInfo"
+          containerStyle={{ marginBottom: 20 }}
+          onPress={getUserInfo}
         />
         <View
           style={{
@@ -240,7 +254,9 @@ export default function SignIn() {
           >
             Don’t have an account?
           </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("VerifyYourPhoneNumber")}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("VerifyYourPhoneNumber")}
+          >
             <Text
               style={{
                 ...FONTS.Lato_700Bold,
@@ -249,7 +265,6 @@ export default function SignIn() {
                 lineHeight: 16 * 1.7,
               }}
             >
-              {" "}
               Sign up.
             </Text>
           </TouchableOpacity>
