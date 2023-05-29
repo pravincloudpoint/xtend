@@ -24,14 +24,44 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.pravin1desh.nuton"
+      "intentFilters": [
+        {
+          "action": "MAIN",
+          "category": [
+            "LEANBACK_LAUNCHER"
+          ]
+        }
+      ],
+      "tv": {
+        "category": "leanback",
+        "mainTVBanner": {
+          "xhdpi": "./assets/splash.png"
+        }
+      },
+      "package": "com.pravin1desh.extend"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "build": {
+      "preview": {
+        "android": {
+          "buildType": "apk"
+        }
+      },
+      "preview2": {
+        "android": {
+          "gradleCommand": ":app:assembleRelease"
+        }
+      },
+      "preview3": {
+        "developmentClient": true
+      },
+      "production": {}
+    },
     "extra": {
       "eas": {
-        "projectId": "50087d59-59c2-43a5-a386-8261abfbb833"
+        "projectId": "782f08b7-0377-4d47-a21d-e526849713e6"
       }
     }
   }
