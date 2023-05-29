@@ -32,6 +32,7 @@ import EyeOn from "../svg/EyeOn";
 export default function SignUp({ route, navigation }) {
   const { phoneNumber } = route.params;
   console.log("phoneNumber===>", phoneNumber);
+
   function renderBackground() {
     return (
       <Image
@@ -446,7 +447,7 @@ export default function SignUp({ route, navigation }) {
           >
             Already have an account?
           </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>
+          <TouchableOpacity onPress={() => addDocument()}>
             <Text
               style={{
                 ...FONTS.Lato_700Bold,

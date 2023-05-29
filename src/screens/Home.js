@@ -33,6 +33,7 @@ import { InputSearch } from "../svg";
 import { useDispatch, useSelector } from "react-redux";
 import OttSlice, { fetchOtt } from "../Slice/OttSlice";
 import { Video, ResizeMode } from "expo-av";
+import { classes } from "../constants/constants";
 
 export default function Home() {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
@@ -264,6 +265,56 @@ export default function Home() {
       </View>
     );
   }
+  function renderClasses() {
+    return (
+      <View style={{ marginBottom: 30 }}>
+        <CategoryComponent
+          title={"Class"}
+          onPress={() => navigation.navigate("CategoryGrid")}
+        />
+        <FlatList
+          data={classes}
+          horizontal={true}
+          renderItem={({ item, index }) => {
+            return (
+              <TouchableOpacity
+                key={index}
+                onPress={() =>
+                  navigation.navigate("CategoryGrid", {
+                    className: item,
+                  })
+                }
+              >
+                <ImageBackground
+                  style={{
+                    paddingHorizontal: 20,
+                    paddingTop: 8,
+                    height: 89,
+                    marginRight: 10,
+                  }}
+                  source={item.image}
+                  imageStyle={{ borderRadius: 10 }}
+                >
+                  <Text
+                    style={{
+                      ...FONTS.Lato_700Bold,
+                      color: COLORS.white,
+                      lineHeight: 14 * 1.5,
+                      fontSize: 14,
+                    }}
+                  >
+                    {item.class}
+                  </Text>
+                </ImageBackground>
+              </TouchableOpacity>
+            );
+          }}
+          contentContainerStyle={{ paddingLeft: 20 }}
+          showsHorizontalScrollIndicator={false}
+        />
+      </View>
+    );
+  }
 
   function renderTopRated() {
     return (
@@ -349,7 +400,7 @@ export default function Home() {
     >
       <View style={{ flex: 1 }}>
         {renderHeader()}
-        {renderCategories()}
+        {renderClasses()}
         {renderTopRated()}
         {renderPopular()}
         {/* <Button

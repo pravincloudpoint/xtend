@@ -5,8 +5,9 @@ import {
   SafeAreaView,
   Image,
   TouchableOpacity,
+  StyleSheet,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useNavigation } from "@react-navigation/native";
 
@@ -14,10 +15,109 @@ import { Header, InputField, Button } from "../components";
 import { AREA, COLORS, FONTS, SIZES } from "../constants";
 import { Check, EyeOff, CheckSmall, Facebook, Twitter, Google } from "../svg";
 import { Controller, useForm } from "react-hook-form";
-
+import { db } from "../../config/firebase";
+import { addDoc, collection } from "firebase/firestore";
+import * as FileSystem from "expo-file-system";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ResizeMode, Video } from "expo-av";
 export default function SignIn() {
   const [rememberMe, setRememberMe] = useState(true);
   const navigation = useNavigation();
+  useEffect(() => {});
+  const loginData = { title: "test" };
+  const getUserInfo = async () => {
+    const doc = addDoc(collection(db, "user"), loginData);
+    console.log("🚀 ~ getUserInfo ~ doc:", doc);
+  };
+  const [state, setState] = useState("");
+
+  const callback = (downloadProgress) => {
+    const progress =
+      downloadProgress.totalBytesWritten /
+      downloadProgress.totalBytesExpectedToWrite;
+    setState({
+      downloadProgress: progress,
+    });
+  };
+  const downloadResumable = FileSystem.createDownloadResumable(
+    "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+    FileSystem.documentDirectory + "big_buck.mp4",
+    {},
+    callback
+  );
+  const download = async () => {
+    try {
+      const { uri } = await downloadResumable.downloadAsync();
+      console.log("Finished downloading to ", uri);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+  const deleteFile = async () => {
+    try {
+      console.log("dlttest ===>");
+      const { deletefileurl } = await FileSystem.deleteAsync(
+        "file:///data/user/0/host.exp.exponent/files/ExperienceData/%2540abhikale7%252Fextend/big_buck.mp4"
+      );
+      console.log(deletefileurl, "dlturl");
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const downloadSnapshotJson = async () => {
+    //To resume a download across app restarts, assuming the DownloadResumable.savable() object was stored:
+    const downloadSnapshotJson = await AsyncStorage.getItem("pausedDownload");
+    const downloadSnapshot = JSON.parse(downloadSnapshotJson);
+    const downloadResumable = new FileSystem.DownloadResumable(
+      downloadSnapshot.url,
+      downloadSnapshot.fileUri,
+      downloadSnapshot.options,
+      callback,
+      downloadSnapshot.resumeData
+    );
+
+    try {
+      const { uri } = await downloadResumable.resumeAsync();
+      console.log("Finished downloading to ", uri);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+  const pause = async () => {
+    try {
+      await downloadResumable.pauseAsync();
+      console.log("Paused download operation, saving for future retrieval");
+      AsyncStorage.setItem(
+        "pausedDownload",
+        JSON.stringify(downloadResumable.savable())
+      );
+    } catch (e) {
+      console.error(e);
+    }
+  };
+  const storagePath = `${FileSystem.documentDirectory}`;
+  const [info, setInfo] = useState("");
+  const resume = async () => {
+    // try {
+    //   const { uri } = await downloadResumable.resumeAsync();
+    //   console.log("Finished downloading to ", uri);
+    // } catch (e) {
+    //   console.error(e);
+    // }
+
+    const { exists, isDirectory, uri } = await FileSystem.getInfoAsync(
+      storagePath
+    );
+    console.log(
+      "exists: " + exists + " isDirectory: " + isDirectory + " uri: " + uri
+    );
+    FileSystem.readAsStringAsync(FileSystem.documentDirectory + "small.mp4")
+      .then((info) => setInfo(info.toString()))
+      .catch((error) => {
+        console.log("🚀 ~ resume ~ error:", error);
+      });
+  };
 
   function renderBackground() {
     return (
@@ -38,7 +138,7 @@ export default function SignIn() {
   }
 
   function renderContent() {
-    const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+    const EMAIL_REGEX = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w\w+)+$/;
     const [hidePass, setHidePass] = useState(true);
 
     const {
@@ -46,9 +146,11 @@ export default function SignIn() {
       handleSubmit,
       formState: { errors },
     } = useForm({});
-    console.log("🚀 ~ renderContent ~ errors:", errors);
-    const onSignInForm = (data) => {
-      console.log("🚀 ~ onSignUpForm ~ data:", data);
+    //console.log("🚀 ~ renderContent ~ errors:", errors);
+    const onSignInForm = (loginData) => {
+      //  console.log("🚀 ~ onSignUpForm ~ data:", loginData);
+      const doc = addDoc(collection(db, "user"), loginData);
+      //console.log("🚀 ~ getUserInfo ~ doc:", doc);
     };
     return (
       <KeyboardAwareScrollView
@@ -219,9 +321,41 @@ export default function SignIn() {
         <Button
           title="Sign in"
           containerStyle={{ marginBottom: 20 }}
-          onPress={() => navigation.navigate("MainLayout")}
-          // onPress={handleSubmit(onSignInForm)}
+          //   onPress={() => navigation.navigate("MainLayout")}
+          onPress={handleSubmit(onSignInForm)}
         />
+        <Button
+          title="getUserInfo"
+          containerStyle={{ marginBottom: 20 }}
+          onPress={getUserInfo}
+        />
+
+        <Button
+          title="download"
+          containerStyle={{ marginBottom: 20 }}
+          onPress={() => download()}
+        ></Button>
+        <Button
+          title="pause"
+          containerStyle={{ marginBottom: 20 }}
+          onPress={() => pause()}
+        ></Button>
+        <Button
+          title="resume"
+          containerStyle={{ marginBottom: 20 }}
+          onPress={() => resume()}
+        ></Button>
+        <Button
+          title="Delete"
+          containerStyle={{ marginBottom: 20 }}
+          onPress={() => deleteFile()}
+        ></Button>
+        <Button
+          title="downloadSnapshotJson"
+          containerStyle={{ marginBottom: 20 }}
+          onPress={() => downloadSnapshotJson()}
+        ></Button>
+
         <View
           style={{
             flexDirection: "row",
@@ -250,7 +384,6 @@ export default function SignIn() {
                 lineHeight: 16 * 1.7,
               }}
             >
-              {" "}
               Sign up.
             </Text>
           </TouchableOpacity>
@@ -281,6 +414,33 @@ export default function SignIn() {
       {renderBackground()}
       {renderHeader()}
       {renderContent()}
+      <Video
+        style={styles.video}
+        // resizeMode="contain"
+        resizeMode={ResizeMode.CONTAIN}
+        // resizeMode="contain"
+        isLooping
+        source={{
+          uri: "file:///data/user/0/host.exp.exponent/files/ExperienceData/%2540abhikale7%252Fextend/big_buck.mp4",
+        }}
+        useNativeControls
+      />
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  dot: {
+    width: 10,
+    height: 2,
+    marginHorizontal: 5,
+    borderRadius: 6,
+    backgroundColor: COLORS.gray,
+  },
+  video: {
+    alignSelf: "center",
+    width: SIZES.width - 40,
+    height: 220,
+    marginHorizontal: 20,
+  },
+});

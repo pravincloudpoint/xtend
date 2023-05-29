@@ -7,12 +7,12 @@ import { AndroidSafeArea, courses } from "../constants";
 
 export default function CategoryList({ route }) {
   console.log("==================route==================", route.params);
-  const { item } = route.params;
+  const { item, className } = route.params;
   console.log("==================id==================", item);
   const navigation = useNavigation();
 
   const popular = courses.filter(function (course) {
-    return course.category == item.name;
+    return course.category == item.name && course.class == className.class;
   });
   console.log("popular", popular);
   function renderHeader() {

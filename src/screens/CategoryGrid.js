@@ -11,8 +11,9 @@ import { AndroidSafeArea, COLORS, FONTS, categories } from "../constants";
 import { CategoryComponent, Header } from "../components";
 import { useNavigation } from "@react-navigation/native";
 
-export default function CategoryGrid() {
+export default function CategoryGrid({ route }) {
   const navigation = useNavigation();
+  const { className } = route.params;
 
   return (
     <SafeAreaView
@@ -35,6 +36,7 @@ export default function CategoryGrid() {
               onPress={() =>
                 navigation.navigate("CategoryList", {
                   item,
+                  className,
                 })
               }
             >
