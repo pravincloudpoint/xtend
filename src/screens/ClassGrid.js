@@ -11,18 +11,18 @@ import { AndroidSafeArea, COLORS, FONTS, categories } from "../constants";
 import { CategoryComponent, Header } from "../components";
 import { useNavigation } from "@react-navigation/native";
 
-export default function CategoryGrid({ route }) {
+export default function ClassGrid({ route }) {
   const navigation = useNavigation();
   const { className } = route.params;
-  console.log("🚀 ~ CategoryGrid ~ className:", className);
+  console.log("🚀 ~ ClassGrid ~ className:", className);
 
   return (
     <SafeAreaView
       style={{ marginBottom: 30, flex: 1, ...AndroidSafeArea.AndroidSafeArea }}
     >
-      <Header title="Subjects" goBack={false} />
+      <Header title="Classes" goBack={false} />
       <FlatList
-        data={categories}
+        data={className}
         horizontal={false}
         numColumns={2}
         columnWrapperStyle={{
@@ -35,9 +35,8 @@ export default function CategoryGrid({ route }) {
             <TouchableOpacity
               key={index}
               onPress={() =>
-                navigation.navigate("CategoryList", {
-                  item,
-                  className,
+                navigation.navigate("CategoryGrid", {
+                  className: item,
                 })
               }
             >
@@ -62,7 +61,7 @@ export default function CategoryGrid({ route }) {
                     fontSize: 14,
                   }}
                 >
-                  {item.name}
+                  {item.class}
                 </Text>
               </ImageBackground>
             </TouchableOpacity>

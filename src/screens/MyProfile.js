@@ -210,7 +210,7 @@ export default function MyProfile() {
                     arrow={true}
                     contaynerStyle={{ marginBottom: 5 }}
                 />
-                <ProfileCategoryComponent
+                {/* <ProfileCategoryComponent
                     title="Coupons"
                     icon={<Gift />}
                     onPress={() => navigation.navigate("MyCoupons")}
@@ -223,7 +223,7 @@ export default function MyProfile() {
                     onPress={() => navigation.navigate("MyWallet")}
                     arrow={true}
                     contaynerStyle={{ marginBottom: 5 }}
-                />
+                /> */}
                 <ProfileCategoryComponent
                     title="Help & Support"
                     icon={<HelpCircle />}

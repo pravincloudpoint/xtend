@@ -113,7 +113,8 @@ const courses = [
   {
     id: "1",
     category: "Science",
-    name: "Chapter 1 – Chemical Reactions and Equations.",
+    class: "Class 1",
+    name: "Chapter 1 of class 1 of science – Chemical Reactions and Equations.",
     author: "Jack Smith",
     thumbnail: { uri: "https://via.placeholder.com/270x270" },
     image: { uri: "https://via.placeholder.com/690x360" },
@@ -159,6 +160,7 @@ const courses = [
   },
   {
     id: "2",
+    class: "Class 2",
     category: "Science",
     name: "Chapter 1 – Chemical Reactions and Equations.",
     author: "Jack Smith",
@@ -206,7 +208,8 @@ const courses = [
   },
   {
     id: "3",
-    category: "Maths",
+    category: "Mathematics",
+    class: "Class 1",
     name: "Chapter - 3: Pair of Linear Equations in Two Variables.",
     author: "Jack Smith",
     thumbnail: { uri: "https://via.placeholder.com/270x270" },
@@ -255,6 +258,7 @@ const courses = [
   {
     id: "4",
     category: "English",
+    class: "Class 1",
     name: "Chapter 2: Nelson Mandela Long Walk to Freedom",
     author: "Jack Smith",
     thumbnail: { uri: "https://via.placeholder.com/270x270" },

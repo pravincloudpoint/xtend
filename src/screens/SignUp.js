@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Header, InputField, Button } from "../components";
 import { AndroidSafeArea, SIZES, FONTS, COLORS } from "../constants";
 import {
@@ -29,9 +29,10 @@ import { updatePhoneNumber } from "firebase/auth";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import EyeOn from "../svg/EyeOn";
 
-export default function SignUp({ route,navigation }) {
+export default function SignUp({ route, navigation }) {
   const { phoneNumber } = route.params;
   console.log("phoneNumber===>", phoneNumber);
+
   function renderBackground() {
     return (
       <Image
@@ -76,7 +77,6 @@ export default function SignUp({ route,navigation }) {
       { label: "Class 8", value: "class8" },
       { label: "Class 9", value: "class9" },
       { label: "Class 10", value: "class10" },
-      
     ]);
     const {
       control,
@@ -91,11 +91,14 @@ export default function SignUp({ route,navigation }) {
 
     console.log(errors);
     console.log("🚀 ~ renderContent ~ errors:", errors);
-    
+
     const pwd = watch("password");
     const role = watch("role");
-    const onSignUpForm = (data) => {
+    const onSignUpForm = async (data) => {
       console.log("🚀 ~ onSignUpForm ~ data:", data);
+      await AsyncStorage.setItem("data", JSON.stringify(data));
+      const asyncvalue = AsyncStorage.getItem("data");
+      console.log("async data", await asyncvalue);
     };
     return (
       <KeyboardAwareScrollView
@@ -444,7 +447,7 @@ export default function SignUp({ route,navigation }) {
           >
             Already have an account?
           </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>
+          <TouchableOpacity onPress={() => addDocument()}>
             <Text
               style={{
                 ...FONTS.Lato_700Bold,

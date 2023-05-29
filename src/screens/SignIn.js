@@ -145,7 +145,7 @@ const [info, setInfo] = useState("")
   }
 
   function renderContent() {
-    const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+    const EMAIL_REGEX = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w\w+)+$/;
     const [hidePass, setHidePass] = useState(true);
 
     const {
@@ -337,7 +337,6 @@ const [info, setInfo] = useState("")
           onPress={getUserInfo}
         />
 
-
         <Button
           title="download"
           containerStyle={{ marginBottom: 20 }}
@@ -424,17 +423,16 @@ const [info, setInfo] = useState("")
       {renderHeader()}
       {renderContent()}
       <Video
-         style={styles.video}
-              // resizeMode="contain"
-              resizeMode={ResizeMode.CONTAIN}
-              // resizeMode="contain"
-              isLooping
-              source={{
-                uri: "file:///data/user/0/host.exp.exponent/files/ExperienceData/%2540pravin1desh%252Fextend/small.mp4",
-
-              }}
-              useNativeControls
-            />
+        style={styles.video}
+        // resizeMode="contain"
+        resizeMode={ResizeMode.CONTAIN}
+        // resizeMode="contain"
+        isLooping
+        source={{
+          uri: "file:///data/user/0/host.exp.exponent/files/ExperienceData/%2540abhikale7%252Fextend/big_buck.mp4",
+        }}
+        useNativeControls
+      />
     </SafeAreaView>
   );
 }

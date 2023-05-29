@@ -37,6 +37,7 @@ import {
 } from "../screens";
 import Player from "../screens/Player";
 import TopRatedList from "../screens/TopRatedList";
+import ClassGrid from "../screens/ClassGrid";
 
 const Stack = createStackNavigator();
 //test
@@ -66,6 +67,7 @@ function Navigation() {
       <Stack.Screen name="CourseCompletedOne" component={CourseCompletedOne} />
       <Stack.Screen name="Filter" component={Filter} />
       <Stack.Screen name="CategoryGrid" component={CategoryGrid} />
+      <Stack.Screen name="ClassGrid" component={ClassGrid} />
       <Stack.Screen name="CategoryList" component={CategoryList} />
       <Stack.Screen name="TopRatedList" component={TopRatedList} />
       <Stack.Screen name="ResetPassword" component={ResetPassword} />

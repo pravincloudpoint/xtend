@@ -49,7 +49,7 @@ export default function OnBoarding() {
           position: "absolute",
           width: SIZES.width,
           height: SIZES.height + SIZES.height / 2,
-           resizeMode: "stretch",
+          resizeMode: "stretch",
           zIndex: -1,
         }}
       />
@@ -96,7 +96,7 @@ export default function OnBoarding() {
               zIndex: 999,
               alignSelf: "flex-end",
             }}
-            onPress={() => navigation.navigate("SignIn")}
+            onPress={() => navigation.navigate("MainLayout")}
           >
             <Text>Skip</Text>
           </TouchableOpacity>
@@ -169,7 +169,7 @@ export default function OnBoarding() {
         }}
         onPress={
           currentSlideIndex == onboardingSlide.length - 1
-            ? () => navigation.navigate("SignIn")
+            ? () => navigation.navigate("MainLayout")
             : goToNextSlide
         }
       />

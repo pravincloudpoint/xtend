@@ -31,6 +31,39 @@ const categories = [
   },
 ];
 
+const classes = [
+  {
+    id: 1,
+    class: "Class 1",
+    image: require("../assets/images/categories/business.png"),
+  },
+  {
+    id: 2,
+    class: "Class 2",
+    image: require("../assets/images/categories/technology.png"),
+  },
+  {
+    id: 3,
+    class: "Class 3",
+    image: require("../assets/images/categories/digital-marketing.png"),
+  },
+  {
+    id: 4,
+    class: "Class 4",
+    image: require("../assets/images/categories/business.png"),
+  },
+  {
+    id: 5,
+    class: "Class 5",
+    image: require("../assets/images/categories/technology.png"),
+  },
+  {
+    id: 6,
+    class: "Class 6",
+    image: require("../assets/images/categories/digital-marketing.png"),
+  },
+];
+
 const promo = [
   {
     id: "1",
@@ -252,4 +285,5 @@ export {
   PP,
   reviews,
   onboardingSlide,
+  classes,
 };

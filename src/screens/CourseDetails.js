@@ -54,7 +54,7 @@ export default function CourseDetails() {
   function renderHeader() {
     return (
       <ImageBackground
-        style={{ height: 282, width: "100%" }}
+        style={{ height: "auto", width: "100%" }}
         source={require("../assets/images/background/background-02.png")}
       >
         <View
@@ -78,8 +78,9 @@ export default function CourseDetails() {
               <Heart strokeColor={COLORS.white} />
             </TouchableOpacity>
           </View>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text
+          <View style={{ flexDirection: "row", alignItems: "center",justifyContent: "space-between",}}>
+          <View style={{ flexDirection: "row", alignItems: "center",justifyContent: "space-between",}}>
+          <Text
               style={{
                 ...FONTS.Lato_700Bold,
                 fontSize: 10,
@@ -92,6 +93,22 @@ export default function CourseDetails() {
             </Text>
             <Rating />
           </View>
+            
+            <View>
+            <Text
+              style={{
+                ...FONTS.Lato_700Bold,
+                fontSize: 14,
+                color: "#000",
+                marginRight: 3,
+                lineHeight: 10 * 1.7,
+              }}
+            >
+              {item.class}
+            </Text>
+            </View>
+          </View>
+         
           <Text
             style={{
               ...FONTS.H4,
@@ -163,7 +180,7 @@ export default function CourseDetails() {
               {item.author}
             </Text>
           </View>
-          <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
+          {/* <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
             <Text
               style={{
                 ...FONTS.Lato_700Bold,
@@ -185,7 +202,7 @@ export default function CourseDetails() {
                 ${item.oldPrice}
               </Text>
             )}
-          </View>
+          </View> */}
         </View>
         {/* <Video
                     source={{ uri: "background" }} // Can be a URL or a local file.
