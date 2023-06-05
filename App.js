@@ -30,11 +30,11 @@ export default function App() {
     return <AppLoading />;
   } else {
     return (
-      <Provider store={store}>
         <NavigationContainer>
+          <Provider store={store}>
           <AppNavigation />
+          </Provider>
         </NavigationContainer>
-      </Provider>
     );
   }
 }

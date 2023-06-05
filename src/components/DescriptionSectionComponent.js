@@ -68,7 +68,33 @@ export default function DescriptionSectionComponent({ item }) {
             lineHeight: 16 * 1.5,
           }}
         >
-          About course
+          {/* About course */}
+          About
+        </Text>
+        <Text
+          style={{
+            ...FONTS.BodyText,
+            color: COLORS.bodyTextColor,
+            marginBottom: 1,
+          }}
+        >
+          {/* Welcome to Udemy's first, No Coding Required, VR development course,
+          using VRTK 4. Build once and deploy to both Oculus and Steam VR
+          devices. {"\n"} {"\n"}This course, teaches you everything you need to
+          know to build your very own VR apps and games using the world class
+          Unity Engine. */}
+          {item.Filename}
+        </Text>
+        <Text
+          style={{
+            ...FONTS.Lato_400Regular,
+            fontSize: 10,
+            color: COLORS.secondaryTextColor,
+            lineHeight: 10 * 1.7,
+            marginBottom: 10,
+          }}
+        >
+          {item.Tag}
         </Text>
         <Text
           style={{
@@ -77,11 +103,12 @@ export default function DescriptionSectionComponent({ item }) {
             marginBottom: 30,
           }}
         >
-          Welcome to Udemy's first, No Coding Required, VR development course,
+          {/* Welcome to Udemy's first, No Coding Required, VR development course,
           using VRTK 4. Build once and deploy to both Oculus and Steam VR
           devices. {"\n"} {"\n"}This course, teaches you everything you need to
           know to build your very own VR apps and games using the world class
-          Unity Engine.
+          Unity Engine. */}
+          {item.Description}
         </Text>
         <Text
           style={{

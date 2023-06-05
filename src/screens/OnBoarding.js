@@ -19,13 +19,19 @@ import {
 } from "../constants";
 import { Button } from "../components";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useDispatch } from "react-redux";
+import { fetchOtt } from "../Slice/OttSlice";
 
 export default function OnBoarding() {
+
   const navigation = useNavigation();
 
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const ref = useRef();
 
+  const dispatch = useDispatch();
+  dispatch(fetchOtt());
+  
   function updateCurrentSlideIndex(e) {
     const contentOffsetX = e.nativeEvent.contentOffset.x;
     const currentIndex = Math.round(contentOffsetX / SIZES.width);

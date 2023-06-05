@@ -1,21 +1,23 @@
 const { createSlice, createAsyncThunk } = require("@reduxjs/toolkit");
+// http://20.204.171.156/frm
 const url =
-  "https://ott-details.p.rapidapi.com/advancedsearch?start_year=1970&end_year=2020&min_imdb=6&max_imdb=7.8&genre=action&language=english&type=movie&sort=latest&page=1";
+  "http://192.168.30.1/frm/api/v1/packages";
 
 const options = {
   method: "GET",
   headers: {
-    "X-RapidAPI-Key": "07500fc9b3mshe6c1761dbf8d65ap1e8badjsn61349e1f972f",
-    "X-RapidAPI-Host": "ott-details.p.rapidapi.com",
+    "Accept": "*/*",
+    "User-Agent": "Thunder Client (https://www.thunderclient.com)" 
   },
 };
-export const fetchOtt = createAsyncThunk("fetch", async () => {
+export const fetchOtt = createAsyncThunk("fetchVideo", async () => {
   const response = await fetch(url, options);
   const result = await response.json();
-  return result;
+  console.log("🚀 ~ fetchOtt ~ result:", result.data.PVOD);
+  return result.data.PVOD;
 });
 const OttSlice = createSlice({
-  name: "ott",
+  name: "video",
   initialState: {
     data: null,
     isLoader: false,
