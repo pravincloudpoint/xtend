@@ -7,7 +7,7 @@ import Search from "../screens/Search";
 import MyCurses from "../screens/MyCourses";
 import MyProfile from "../screens/MyProfile";
 
-import { UserTab, BookOpenTab, SearchTab, HomeTab } from "../svg";
+import { UserTab, BookOpenTab, SearchTab, HomeTab, Download } from "../svg";
 import { COLORS, FONTS } from "../constants";
 
 export default function MainLayout() {
@@ -39,11 +39,11 @@ export default function MainLayout() {
     },
     {
       id: "3",
-      screen: "My Curses",
+      screen: "Downloads",
       icon: (
-        <BookOpenTab
+        <Download
           strokeColor={
-            selectedTab == "My Curses"
+            selectedTab == "Downloads"
               ? COLORS.black
               : COLORS.secondaryTextColor
           }
@@ -69,7 +69,7 @@ export default function MainLayout() {
     <View style={{ flex: 1, backgroundColor: COLORS.white }}>
       {selectedTab == "Home" && <Home />}
       {selectedTab == "Search" && <Search />}
-      {selectedTab == "My Curses" && <MyCurses />}
+      {selectedTab == "Downloads" && <MyCurses />}
       {selectedTab == "My Profile" && <MyProfile />}
 
       <View

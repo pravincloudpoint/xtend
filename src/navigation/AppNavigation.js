@@ -38,6 +38,7 @@ import {
 import Player from "../screens/Player";
 import TopRatedList from "../screens/TopRatedList";
 import ClassGrid from "../screens/ClassGrid";
+import OffLinePlayer from "../screens/OffLinePlayer";
 
 const Stack = createStackNavigator();
 //test
@@ -89,6 +90,7 @@ function Navigation() {
         component={ChoosePaymentMethod}
       />
       <Stack.Screen name="Player" component={Player} />
+      <Stack.Screen name="OffLinePlayer" component={OffLinePlayer} />
       <Stack.Screen name="PaymentSuccess" component={PaymentSuccess} />
       <Stack.Screen name="HelpAndSupport" component={HelpAndSupport} />
       <Stack.Screen name="ConfirmationCode" component={ConfirmationCode} />

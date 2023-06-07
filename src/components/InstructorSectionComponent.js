@@ -25,7 +25,7 @@ export default function InstructorSectionComponent({ item }) {
                         textTransform: "capitalize",
                     }}
                 >
-                    {item.instructor}
+                    {item.Filename}
                 </Text>
                 <Text
                     style={{
@@ -36,7 +36,7 @@ export default function InstructorSectionComponent({ item }) {
                         marginBottom: 10,
                     }}
                 >
-                    {item.position}
+                    {item.Tag}
                 </Text>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <Image

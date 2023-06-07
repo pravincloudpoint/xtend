@@ -22,6 +22,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ResizeMode, Video } from "expo-av";
 export default function SignIn() {
   const [rememberMe, setRememberMe] = useState(true);
+  const [video, setVideo] = useState([]);
   const navigation = useNavigation();
   useEffect(() => {});
   const loginData = { title: "test" };
@@ -31,6 +32,28 @@ export default function SignIn() {
   };
   const [state, setState] = useState("");
 
+  const storagePath = `${FileSystem.documentDirectory}`;
+  const [info, setInfo] = useState("");
+  const resume = async () => {
+    // try {
+    //   const { uri } = await downloadResumable.resumeAsync();
+    //   console.log("Finished downloading to ", uri);
+    // } catch (e) {
+    //   console.error(e);
+    // }
+
+    const { exists, isDirectory, uri } = await FileSystem.getInfoAsync(
+      storagePath
+    );
+    console.log(
+      "exists: " + exists + " isDirectory: " + isDirectory + " uri: " + uri
+    );
+    FileSystem.readAsStringAsync(FileSystem.documentDirectory + "small.mp4")
+      .then((info) => setInfo(info.toString()))
+      .catch((error) => {
+        console.log("🚀 ~ resume ~ error:", error);
+      });
+  };
   const callback = (downloadProgress) => {
     const progress =
       downloadProgress.totalBytesWritten /
@@ -41,10 +64,28 @@ export default function SignIn() {
   };
   const downloadResumable = FileSystem.createDownloadResumable(
     "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
-    FileSystem.documentDirectory + "big.mp4",
+    FileSystem.documentDirectory + "pravin.mp4",
     {},
     callback
   );
+  const infoFile = async () => {
+    try {
+      // const infoFile = await FileSystem.getInfoAsync(storagePath);;
+      // console.log("Finished info to ", infoFile.uri);
+
+      const data = FileSystem.readDirectoryAsync(storagePath);
+      data
+        .then((data) => {
+          console.log("🚀 ~ infoFile ~ data:", data);
+          setVideo(data);
+        })
+        .catch((err) => {
+          console.log("error", err);
+        });
+    } catch (e) {
+      console.error(e);
+    }
+  };
   const download = async () => {
     try {
       const { uri } = await downloadResumable.downloadAsync();
@@ -53,19 +94,32 @@ export default function SignIn() {
       console.error(e);
     }
   };
+
+const fileName="bunny.mp4";
+const downloadVideo = async () => {
+  //const videoUrl="http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4";
+  const videoUrl="http://192.168.30.1/frm/ui/cat/frmpackage/64755a0eda055/content/CLASS 10 GEOGRAPHY - RESOURCES AND DEVELOPMENT.mp4";
+  const fileUri = FileSystem.documentDirectory + fileName;
+
+  try {
+    const { uri } = await FileSystem.downloadAsync(videoUrl, fileUri);
+    console.log('Video downloaded to:', uri);
+  } catch (error) {
+    console.error('Failed to download video:', error);
+  }
+};
+
   const deleteFile = async () => {
     try {
       console.log("deleteFile ===>");
-    // await FileSystem.deleteAsync(
-    //     "file:///data/user/0/host.exp.exponent/files/ExperienceData/%2540pravin1desh%252Fextend/small.mp4"
-
-    //   );
-    //    console.log("deleteAsync ===>");
-    const size=await FileSystem.getFreeDiskStorageAsync()
-    const totalSize= await FileSystem.getTotalDiskCapacityAsync()
-    console.log("🚀 ~ deleteFile ~ totalSize:",JSON.stringify(totalSize));
-    console.log("🚀 ~ deleteFile ~ size:", size);
-    
+      await FileSystem.deleteAsync(
+        `file:///data/user/0/host.exp.exponent/files/ExperienceData/%2540pravin1desh%252Fextend/${fileName}`
+      );
+      console.log("deleteAsync ===>");
+      // const size=await FileSystem.getFreeDiskStorageAsync()
+      // const totalSize= await FileSystem.getTotalDiskCapacityAsync()
+      // console.log("🚀 ~ deleteFile ~ totalSize:",JSON.stringify(totalSize));
+      // console.log("🚀 ~ deleteFile ~ size:", size);
     } catch (e) {
       console.error(e);
     }
@@ -101,30 +155,6 @@ export default function SignIn() {
       console.error(e);
     }
   };
-  const storagePath = `${FileSystem.documentDirectory}`;
-const [info, setInfo] = useState("")
-  const resume = async () => {
-    // try {
-    //   const { uri } = await downloadResumable.resumeAsync();
-    //   console.log("Finished downloading to ", uri);
-    // } catch (e) {
-    //   console.error(e);
-    // }
-
-    const { exists, isDirectory, uri } = await FileSystem.getInfoAsync(storagePath);
-    console.log(
-      'exists: ' + exists + ' isDirectory: ' + isDirectory + ' uri: ' + uri
-    );
-    FileSystem.readAsStringAsync(FileSystem.documentDirectory + 'small.mp4')
-    .then(info => 
-    setInfo(info.toString())
-    )
-    .catch(error => {
-      console.log("🚀 ~ resume ~ error:", error);
-    })
-    
-  };
- 
 
   function renderBackground() {
     return (
@@ -340,7 +370,7 @@ const [info, setInfo] = useState("")
         <Button
           title="download"
           containerStyle={{ marginBottom: 20 }}
-          onPress={() => download()}
+          onPress={() => downloadVideo()}
         ></Button>
         <Button
           title="pause"
@@ -352,17 +382,21 @@ const [info, setInfo] = useState("")
           containerStyle={{ marginBottom: 20 }}
           onPress={() => resume()}
         ></Button>
-           <Button
+        <Button
           title="downloadSnapshotJson"
           containerStyle={{ marginBottom: 20 }}
           onPress={() => downloadSnapshotJson()}
         ></Button>
-          <Button
+        <Button
           title="deleteFile"
           containerStyle={{ marginBottom: 20 }}
           onPress={() => deleteFile()}
         ></Button>
-
+        <Button
+          title="Info File"
+          containerStyle={{ marginBottom: 20 }}
+          onPress={() => infoFile()}
+        ></Button>
 
         <View
           style={{
@@ -422,7 +456,34 @@ const [info, setInfo] = useState("")
       {renderBackground()}
       {renderHeader()}
       {renderContent()}
-      <Video
+      {video.map((item, index, array) => {
+        const lastIndex = array.length - 1;
+        return (
+          <View
+            key={index}
+            style={{
+              marginHorizontal: 20,
+            }}
+          >
+           <TouchableOpacity
+            onPress={() => navigation.navigate("Player",{item,storagePath})}
+            
+          >
+            <Text
+              style={{
+                ...FONTS.Lato_700Bold,
+                fontSize: 16,
+                color: COLORS.black,
+                lineHeight: 16 * 1.7,
+              }}
+            >
+           {item}
+            </Text>
+          </TouchableOpacity>
+          </View>
+        );
+      })}
+      {/* <Video
         style={styles.video}
         // resizeMode="contain"
         resizeMode={ResizeMode.CONTAIN}
@@ -432,7 +493,7 @@ const [info, setInfo] = useState("")
           uri: "file:///data/user/0/host.exp.exponent/files/ExperienceData/%2540abhikale7%252Fextend/big_buck.mp4",
         }}
         useNativeControls
-      />
+      /> */}
     </SafeAreaView>
   );
 }

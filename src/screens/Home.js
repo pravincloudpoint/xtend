@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  Dimensions,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -34,18 +35,32 @@ import { useDispatch, useSelector } from "react-redux";
 import OttSlice, { fetchOtt } from "../Slice/OttSlice";
 import { Video, ResizeMode } from "expo-av";
 import { classes } from "../constants/constants";
+import * as ScreenOrientation from "expo-screen-orientation";
 
 export default function Home() {
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const navigation = useNavigation();
-  const dispatch = useDispatch();
-  const ott = useSelector((state) => state);
-  // console.log(ott.ott.data);
-  // setFirst(ott.ott.data.results);
-  useEffect(() => {
-    // dispatch(fetchOtt());
-  }, []);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [data, setData] = useState();
+  console.log("🚀 ~ Home ~ data:", data);
 
+  const dispatch = useDispatch();
+  const video = useSelector((state) => state);
+
+  // console.log("🚀 ~ Home ~ video:", JSON.stringify(video));
+
+  // setFirst(ott.ott.data.results);
+
+  const getData = async () => {
+    const videos = await video;
+    setData(videos.video.data[2]);
+  };
+  // console.log("data",data.Package.Name);
+  // console.log("data",data.Files);
+
+  useEffect(() => {
+    dispatch(fetchOtt());
+    getData();
+  }, []);
   function updateCurrentSlideIndex(e) {
     const contentOffsetX = e.nativeEvent.contentOffset.x;
     const currentIndex = Math.round(contentOffsetX / SIZES.width);
@@ -158,14 +173,23 @@ export default function Home() {
       </View>
     );
   }
-
+  function setOrientation() {
+    if (Dimensions.get("window").height > Dimensions.get("window").width) {
+      //Device is in portrait mode, rotate to landscape mode.
+      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+    } else {
+      //Device is in landscape mode, rotate to portrait mode.
+      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+    }
+  }
+  const videContent=data? data.Files:""
   function renderPromo() {
     return (
       <View>
         <FlatList
           horizontal={true}
           index={2}
-          data={promo}
+          data={videContent}
           pagingEnabled={true}
           showsHorizontalScrollIndicator={false}
           onMomentumScrollEnd={updateCurrentSlideIndex}
@@ -186,10 +210,13 @@ export default function Home() {
               resizeMode={ResizeMode.CONTAIN}
               isLooping
               source={{
-                uri: "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+                // uri: "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+                uri:  `http://192.168.30.1/frm/${item.URL}`,
               }}
               useNativeControls
+              onFullscreenUpdate={setOrientation}
             />
+
           )}
         />
         {renderDots()}
@@ -270,7 +297,9 @@ export default function Home() {
       <View style={{ marginBottom: 30 }}>
         <CategoryComponent
           title={"Class List"}
-          onPress={() => navigation.navigate("ClassGrid",{className:classes})}
+          onPress={() =>
+            navigation.navigate("ClassGrid", { className: classes })
+          }
         />
         <FlatList
           data={classes}
@@ -328,27 +357,31 @@ export default function Home() {
             })
           }
         />
-        {topRated.map((item, index, array) => {
-          const lastIndex = array.length - 1;
-          return (
-            <View
-              key={index}
-              style={{
-                marginHorizontal: 20,
-              }}
-            >
-              <CardComponent
-                item={item}
-                lastComponent={index == lastIndex ? true : false}
-                onPress={() =>
-                  navigation.navigate("CourseDetails", {
-                    item: item,
-                  })
-                }
-              />
-            </View>
-          );
-        })}
+        {data ? (
+          data.Files.map((item, index, array) => {
+            const lastIndex = array.length - 1;
+            return (
+              <View
+                key={index}
+                style={{
+                  marginHorizontal: 20,
+                }}
+              >
+                <CardComponent
+                  item={item}
+                  lastComponent={index == lastIndex ? true : false}
+                  onPress={() =>
+                    navigation.navigate("Player", {
+                      item: item,
+                    })
+                  }
+                />
+              </View>
+            );
+          })
+        ) : (
+          <Text>Null</Text>
+        )}
       </View>
     );
   }

@@ -7,13 +7,11 @@ import {
   StyleSheet,
   StatusBar,
   Image,
-  ToastAndroid,
   Dimensions,
 } from "react-native";
 import React from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-import * as ScreenOrientation from "expo-screen-orientation";
 
 import { COLORS, FONTS, SIZES } from "../constants";
 import { ArrowWhite, Heart, Reload, Book, CourseUser, Rating } from "../svg";
@@ -28,17 +26,18 @@ import { Video, ResizeMode } from "expo-av";
 import { downloadAsync } from "expo-file-system";
 import * as FileSystem from "expo-file-system";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as ScreenOrientation from "expo-screen-orientation";
+import { ToastAndroid } from "react-native";
 
-export default function Player() {
+export default function OffLinePlayer() {
   const storagePath = `${FileSystem.documentDirectory}`;
   const navigation = useNavigation();
   const route = useRoute();
   const { item } = route.params;
-  console.log("🚀 ~ Player ~ item:", item);
-  const videoURL = `http://192.168.30.1/frm/${item.URL}`;
+  console.log("🚀 ~ OffLinePlayer ~ item:", item);
 
   // console.log("🚀 ~ Player ~ item:", item, storagePath);
-  //const FirstRoute = () => <DescriptionSectionComponent item={item} />;
+  //   const FirstRoute = () => <DescriptionSectionComponent item={item} />;
   //   const SecondRoute = () => <LessonsSectionComponent item={item} />;
   const ThirdRoute = () => <InstructorSectionComponent item={item} />;
   // const FourthRoute = () => <ReviewsSectionComponent item={item} />;
@@ -76,10 +75,8 @@ export default function Player() {
     try {
       const { uri } = await FileSystem.downloadAsync(Url, fileUri);
       console.log("Video downloaded to:", uri);
-      ToastAndroid.show("Successfully download!", ToastAndroid.SHORT);
     } catch (error) {
       console.error("Failed to download video:", error);
-      ToastAndroid.show("Failed download!", ToastAndroid.SHORT);
     }
   };
 
@@ -88,12 +85,14 @@ export default function Player() {
       console.log("deleteFile ===>", videoUrl);
       await FileSystem.deleteAsync(videoUrl);
       console.log("deleteAsync ===>");
+      ToastAndroid.show('Successfully delete!', ToastAndroid.SHORT);
       // const size=await FileSystem.getFreeDiskStorageAsync()
       // const totalSize= await FileSystem.getTotalDiskCapacityAsync()
       // console.log("🚀 ~ deleteFile ~ totalSize:",JSON.stringify(totalSize));
       // console.log("🚀 ~ deleteFile ~ size:", size);
     } catch (e) {
       console.error(e);
+      ToastAndroid.show('Failed delete!', ToastAndroid.SHORT);
     }
   };
 
@@ -148,7 +147,7 @@ export default function Player() {
               resizeMode={ResizeMode.CONTAIN}
               isLooping
               source={{
-                uri: videoURL,
+                uri: item,
               }}
               useNativeControls
               shouldPlay
@@ -222,20 +221,15 @@ export default function Player() {
         }}
       >
         <Button
-          title="download"
+          title="delete"
           containerStyle={{ width: "95%", height: 50 }}
-          onPress={() => downloadVideo(item)}
+          onPress={() => deleteFile(item)}
         ></Button>
         {/* <Button
-          title="delete"
-          containerStyle={{ width: "100%", height: 50 }}
-          onPress={() => deleteFile(item)}
-        ></Button> */}
-        {/* <Button
-          title="infoFile"
-          containerStyle={{ width: "100%", height: 50 }}
-          onPress={() => infoFile(item)}
-        ></Button> */}
+            title="infoFile"
+            containerStyle={{ width: "100%", height: 50 }}
+            onPress={() => infoFile(item)}
+          ></Button> */}
       </View>
       {renderTabView()}
     </View>
@@ -250,12 +244,12 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: COLORS.gray,
   },
-  video: {
-    alignSelf: "center",
-    width: SIZES.width - 10,
-    // height: 220,
-    marginHorizontal: 20,
-    //width: "100%",
-    height: "100%",
-  },
+  // video: {
+  //   alignSelf: "center",
+  //   width: SIZES.width - 10,
+  //   // height: 220,
+  //   marginHorizontal: 20,
+  //   //width: "100%",
+  //   height: "100%",
+  // },
 });
