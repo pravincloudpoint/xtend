@@ -23,7 +23,6 @@ import { useDispatch } from "react-redux";
 import { fetchOtt } from "../Slice/OttSlice";
 
 export default function OnBoarding() {
-
   const navigation = useNavigation();
 
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
@@ -31,7 +30,7 @@ export default function OnBoarding() {
 
   const dispatch = useDispatch();
   dispatch(fetchOtt());
-  
+
   function updateCurrentSlideIndex(e) {
     const contentOffsetX = e.nativeEvent.contentOffset.x;
     const currentIndex = Math.round(contentOffsetX / SIZES.width);
@@ -123,8 +122,18 @@ export default function OnBoarding() {
         renderItem={({ item, index }) => {
           return (
             <View style={{ width: SIZES.width }}>
+              {/* <Image
+                source={item.image}
+                style={{
+                  width: "100%",
+                  height: SIZES.height / 2.7,
+                  marginBottom: SIZES.height / 60,
+                }}
+              /> */}
+
               <Image
                 source={item.image}
+                resizeMode='contain'
                 style={{
                   width: "100%",
                   height: SIZES.height / 2.7,

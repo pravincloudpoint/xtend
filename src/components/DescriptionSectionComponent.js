@@ -68,7 +68,6 @@ export default function DescriptionSectionComponent({ item }) {
             lineHeight: 16 * 1.5,
           }}
         >
-          {/* About course */}
           About
         </Text>
         <Text
@@ -78,12 +77,27 @@ export default function DescriptionSectionComponent({ item }) {
             marginBottom: 1,
           }}
         >
-          {/* Welcome to Udemy's first, No Coding Required, VR development course,
-          using VRTK 4. Build once and deploy to both Oculus and Steam VR
-          devices. {"\n"} {"\n"}This course, teaches you everything you need to
-          know to build your very own VR apps and games using the world class
-          Unity Engine. */}
-          {item.Filename}
+          {item.about}
+        </Text>
+        <Text
+          style={{
+            ...FONTS.H5,
+            textTransform: "capitalize",
+            color: COLORS.mainColor,
+            marginBottom: 10,
+            lineHeight: 16 * 1.5,
+          }}
+        >
+          Duration
+        </Text>
+        <Text
+          style={{
+            ...FONTS.BodyText,
+            color: COLORS.bodyTextColor,
+            marginBottom: 1,
+          }}
+        >
+          {item.duration}
         </Text>
         <Text
           style={{
@@ -122,7 +136,7 @@ export default function DescriptionSectionComponent({ item }) {
           New Additions
         </Text>
         <View style={{ marginBottom: 30 }}>
-          {topRated.map((item, index) => {
+          {item.additions && item.additions.map((item, index) => {
             return (
               <View
                 key={index}
@@ -141,14 +155,14 @@ export default function DescriptionSectionComponent({ item }) {
                     color: COLORS.bodyTextColor,
                   }}
                 >
-                  {item.description}
+                  {item}
                 </Text>
               </View>
             );
           })}
         </View>
 
-        <Text
+        {/* <Text
           style={{
             ...FONTS.H5,
             textTransform: "capitalize",
@@ -194,8 +208,8 @@ export default function DescriptionSectionComponent({ item }) {
           >
             16 downloadable resources
           </Text>
-        </View>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
+        </View> */}
+        {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Certificate />
           <Text
             style={{
@@ -206,7 +220,7 @@ export default function DescriptionSectionComponent({ item }) {
           >
             Certificate of completion
           </Text>
-        </View>
+        </View> */}
       </ScrollView>
 
       <Button

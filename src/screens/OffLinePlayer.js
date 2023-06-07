@@ -85,17 +85,17 @@ export default function OffLinePlayer() {
       console.log("deleteFile ===>", videoUrl);
       await FileSystem.deleteAsync(videoUrl);
       console.log("deleteAsync ===>");
-      ToastAndroid.show('Successfully delete!', ToastAndroid.SHORT);
+      ToastAndroid.show('Successfully delete!', ToastAndroid.LONG);
       // const size=await FileSystem.getFreeDiskStorageAsync()
       // const totalSize= await FileSystem.getTotalDiskCapacityAsync()
       // console.log("🚀 ~ deleteFile ~ totalSize:",JSON.stringify(totalSize));
       // console.log("🚀 ~ deleteFile ~ size:", size);
+      navigation.goBack(null) 
     } catch (e) {
       console.error(e);
-      ToastAndroid.show('Failed delete!', ToastAndroid.SHORT);
+      ToastAndroid.show('Failed delete!', ToastAndroid.LONG);
     }
   };
-
   const infoFile = async () => {
     try {
       const data = FileSystem.readDirectoryAsync(storagePath);

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "extend",
-    "slug": "extend",
+    "name": "xtend",
+    "slug": "xtend",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -38,7 +38,7 @@
           "xhdpi": "./assets/splash.png"
         }
       },
-      "package": "com.pravin1desh.extend"
+      "package": "com.pravin1desh.xtend"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -61,7 +61,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "782f08b7-0377-4d47-a21d-e526849713e6"
+        "projectId": "3c5f446f-4526-47be-9b1d-5c2a2782b758"
       }
     }
   }

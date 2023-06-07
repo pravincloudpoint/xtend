@@ -11,23 +11,48 @@ const categories = [
   },
   {
     id: 3,
+    name: "Marathi",
+    image: require("../assets/images/categories/technology.png"),
+  },
+  {
+    id: 4,
+    name: "Hindi",
+    image: require("../assets/images/categories/technology.png"),
+  },
+  {
+    id: 5,
     name: "Mathematics",
     image: require("../assets/images/categories/digital-marketing.png"),
   },
   {
-    id: 4,
+    id: 6,
     name: "Chemistry",
     image: require("../assets/images/categories/business.png"),
   },
   {
-    id: 5,
+    id: 7,
     name: "Music",
     image: require("../assets/images/categories/technology.png"),
   },
   {
-    id: 6,
+    id: 8,
     name: "Physics",
     image: require("../assets/images/categories/digital-marketing.png"),
+  },
+    {
+    id: 9,
+    name: "Civics",
+    image: require("../assets/images/categories/technology.png"),
+  },
+  {
+    id: 10,
+    name: "History",
+    image: require("../assets/images/categories/business.png"),
+  },
+  {
+    id: 11,
+    name: "Computer",
+    image: require("../assets/images/categories/business.png"),
   },
 ];
 
@@ -60,7 +85,27 @@ const classes = [
   {
     id: 6,
     class: "Class 6",
+    image: require("../assets/images/categories/business.png"),
+  },
+  {
+    id: 7,
+    class: "Class 7",
+    image: require("../assets/images/categories/technology.png"),
+  },
+  {
+    id: 8,
+    class: "Class 8",
     image: require("../assets/images/categories/digital-marketing.png"),
+  },
+   {
+    id: 9,
+    class: "Class 9",
+    image: require("../assets/images/categories/business.png"),
+  },
+  {
+    id: 10,
+    class: "Class 10",
+    image: require("../assets/images/categories/technology.png"),
   },
 ];
 
@@ -246,33 +291,33 @@ const reviews = [
 const onboardingSlide = [
   {
     id: "1",
-    title: "Discover useful resources",
+    title: "Overcoming infrastructure limitations",
     description:
-      "Welcome to Extend, the groundbreaking eLearning platform that takes your learning experience beyond the boundaries of the internet. With Extend, you have the power to explore and expand your knowledge even in offline environments, thanks to our innovative setup box and satellite-enabled WiFi connectivity.",
+      "Overcoming infrastructure limitations: Internet connectivity is often limited or unavailable in rural areas due to infrastructure challenges. By utilizing satellite technology and local WiFi hotspots, schools can enable the delivery of educational content directly to the students' devices without internet.",
     // image: {
     //   uri: "https://via.placeholder.com/1125x1125",
     // },
-    image: require("../assets/images/3950.png"),
+    image: require("../assets/images/03.png"),
   },
   {
     id: "2",
-    title: "Learn offline",
+    title: "Offline learning",
     description:
-      "Discover Extend, the innovative e-learning platform that takes your educational journey beyond the limitations of the internet. With our unique setup box and satellite-enabled Wi-Fi, you can now expand your knowledge even in offline environments. ",
+      "Offline learning: Content downloaded via satellite can be stored locally on devices, allowing students to access and study the material even when they are offline. This is particularly beneficial in areas with intermittent or unreliable internet connectivity.",
     // image: {
     //   uri: "https://via.placeholder.com/1125x1125",
     // },
-    image: require("../assets/images/3950.png"),
+    image: require("../assets/images/01.png"),
   },
-  {
+  { 
     id: "3",
-    title: "Move forward",
+    title: "Bridging the digital divide",
     description:
-      "We have created a comfortable learning environment so that you always have the motivation to move forward.Experience the freedom to learn anytime, anywhere, and unlock a world of endless possibilities with Extend.",
+      "Bridging the digital divide: By implementing content download through satellite, schools can bridge this digital divide and enable the students residing in rural region to compete on a more level playing field with their urban counterparts.",
     // image: {
     //   uri: "https://via.placeholder.com/1125x1125",
     // },
-    image: require("../assets/images/3950.png"),
+    image: require("../assets/images/02.png"),
   },
 ];
 

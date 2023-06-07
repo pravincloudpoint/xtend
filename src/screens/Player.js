@@ -9,8 +9,9 @@ import {
   Image,
   ToastAndroid,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
-import React from "react";
+import React, { useRef } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import * as ScreenOrientation from "expo-screen-orientation";
@@ -28,6 +29,7 @@ import { Video, ResizeMode } from "expo-av";
 import { downloadAsync } from "expo-file-system";
 import * as FileSystem from "expo-file-system";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useState } from "react";
 
 export default function Player() {
   const storagePath = `${FileSystem.documentDirectory}`;
@@ -35,18 +37,20 @@ export default function Player() {
   const route = useRoute();
   const { item } = route.params;
   console.log("🚀 ~ Player ~ item:", item);
+  console.log("🚀 ~ Player ~ item: url", item.url);
   const videoURL = `http://192.168.30.1/frm/${item.URL}`;
+  const video = useRef(null);
 
   // console.log("🚀 ~ Player ~ item:", item, storagePath);
-  //const FirstRoute = () => <DescriptionSectionComponent item={item} />;
+  const FirstRoute = () => <DescriptionSectionComponent item={item} />;
   //   const SecondRoute = () => <LessonsSectionComponent item={item} />;
-  const ThirdRoute = () => <InstructorSectionComponent item={item} />;
+//  const ThirdRoute = () => <InstructorSectionComponent item={item} />;
   // const FourthRoute = () => <ReviewsSectionComponent item={item} />;
 
   const renderScene = SceneMap({
-    // first: FirstRoute,
+     first: FirstRoute,
     // second: SecondRoute,
-    third: ThirdRoute,
+   // third: ThirdRoute,
     // fourth: FourthRoute,
   });
 
@@ -54,32 +58,49 @@ export default function Player() {
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    // { key: "first", title: "Description" },
+    { key: "first", title: "Description" },
     // { key: "second", title: "Lessons" },
-    { key: "third", title: "Instructor" },
+   // { key: "third", title: "Instructor" },
     // { key: "fourth", title: "Reviews" },
   ]);
   // const fileName = item.Filename;
+  const [downloadProgress, setDownloadProgress] = useState("");
+  console.log("🚀 ~ Player ~ downloadProgress:", downloadProgress);
+
+  const downloadCallback = (downloadProgress) => {
+    console.log("downloadCallbacks", downloadProgress);
+    const progress =
+      downloadProgress.totalBytesWritten /
+      downloadProgress.totalBytesExpectedToWrite;
+    setDownloadProgress(progress * 100);
+    console.log("🚀 ~ downloadCallback ~ progress:", progress);
+  };
+
   const downloadVideo = async (item) => {
     console.log("🚀 ~ downloadVideo ~ item:", item);
     //const videoUrl="http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4";
-    const { URL, Filename } = item;
-    console.log("🚀 ~ downloadVideo ~ URL:", URL);
-    console.log("🚀 ~ downloadVideo ~ Filename:", Filename);
+    // const { URL, Filename } = item;
+    const { url, name } = item;
+    console.log("🚀 ~ downloadVideo ~ URL:", url);
+    console.log("🚀 ~ downloadVideo ~ Filename:", name);
 
-    const Url = `http://192.168.30.1/frm/${URL}`;
+    // const Url = `http://192.168.30.1/frm/${URL}`;
+    // console.log("🚀 ~ downloadVideo ~ Url:", Url);
+    // const fileUri = FileSystem.documentDirectory + Filename;
 
-    console.log("🚀 ~ downloadVideo ~ Url:", Url);
-
-    const fileUri = FileSystem.documentDirectory + Filename;
-
+    const fileUri = FileSystem.documentDirectory + name;
+    console.log("🚀 ~ downloadVideo ~ fileUri:", fileUri);
     try {
-      const { uri } = await FileSystem.downloadAsync(Url, fileUri);
+      setDownloadProgress(1);
+      const { uri } = await FileSystem.downloadAsync(url, fileUri);
       console.log("Video downloaded to:", uri);
-      ToastAndroid.show("Successfully download!", ToastAndroid.SHORT);
+      ToastAndroid.show("Successfully download!", ToastAndroid.LONG);
+      setDownloadProgress(-1);
+      downloadCallback;
+      console.log("Successfully download");
     } catch (error) {
       console.error("Failed to download video:", error);
-      ToastAndroid.show("Failed download!", ToastAndroid.SHORT);
+      ToastAndroid.show("Failed download!", ToastAndroid.LONG);
     }
   };
 
@@ -111,6 +132,7 @@ export default function Player() {
       console.error(e);
     }
   };
+  
   function setOrientation() {
     if (Dimensions.get("window").height > Dimensions.get("window").width) {
       //Device is in portrait mode, rotate to landscape mode.
@@ -142,13 +164,16 @@ export default function Player() {
             }}
           >
             <Video
+              ref={video}
               // style={styles.video}
               style={{ width: Dimensions.get("window").width, height: "100%" }}
               // resizeMode="contain"
               resizeMode={ResizeMode.CONTAIN}
               isLooping
               source={{
-                uri: videoURL,
+                uri: item.url,
+                //  uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
+                //uri: "http://192.168.30.1/frm/ui/cat/frmpackage/647dd7000a87b/content/3_Class 8 ICT Understanding HTML C10S1 _ WATCH ALL SESSIONS ONLY ON AAS VIDYALAYA APP.mp4",
               }}
               useNativeControls
               shouldPlay
@@ -221,11 +246,34 @@ export default function Player() {
           marginVertical: 10,
         }}
       >
-        <Button
-          title="download"
+        {downloadProgress == 0 && (
+          <Button
+            title="download"
+            containerStyle={{ width: "95%", height: 50 }}
+            onPress={() => downloadVideo(item)}
+          ></Button>
+        )}
+        {downloadProgress == 1 && (
+          <ActivityIndicator size="large" color="#000" />
+        )}
+        {/* {downloadProgress == -1 && (
+          <Text>Download completed</Text>
+        )} */}
+        {downloadProgress == -1 && (
+         <Button
+            title="View Downloads"
+            containerStyle={{ width: "95%", height: 50 }}
+            onPress={() =>
+                navigation.navigate("MyCourses")
+              }
+          ></Button>
+        )}
+        {/* <Button 
+         
+          title="download" 
           containerStyle={{ width: "95%", height: 50 }}
           onPress={() => downloadVideo(item)}
-        ></Button>
+        ></Button> */}
         {/* <Button
           title="delete"
           containerStyle={{ width: "100%", height: 50 }}
