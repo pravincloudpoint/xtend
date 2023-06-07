@@ -6,6 +6,7 @@ import RatingComponent from "../components/RatingComponent";
 import { COLORS, FONTS } from "../constants";
 
 export default function PlayAudioComponent({ item, onPress }) {
+    console.log("🚀 ~ PlayAudioComponent ~ item:", item.image);
     return (
         <TouchableOpacity
             style={{ marginRight: 16, width: 230 }}

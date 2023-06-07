@@ -1,9 +1,11 @@
 import { View, Text, SafeAreaView, ScrollView } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
 import { Header, CardComponent } from "../components";
 import { AndroidSafeArea, courses } from "../constants";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchOtt } from "../Slice/OttSlice";
 
 export default function CategoryList({ route }) {
   console.log("🚀 ~ CategoryList ~ CategoryList:", CategoryList);
@@ -12,7 +14,28 @@ export default function CategoryList({ route }) {
   console.log("==================id==================", item);
   const navigation = useNavigation();
 
+
+  const [data, setData] = useState();
+  console.log("🚀 ~ Home ~ data:", data);
+
+  const dispatch = useDispatch();
+  const video = useSelector((state) => state);
+
+  const getData = async () => {
+    const videos = await video;
+    setData(videos.video.data);
+  };
+ 
+
+  useEffect(() => {
+    dispatch(fetchOtt());
+    getData();
+  }, []);
   const popular = courses.filter(function (course) {
+    console.log('====================================',course.category);
+    console.log('====================================',item.name );
+    console.log('====================================',course.class);
+    console.log('====================================',className.class);
     return course.category == item.name && course.class == className.class;
   });
   console.log("popular", popular);
@@ -71,7 +94,7 @@ export default function CategoryList({ route }) {
   return (
     <SafeAreaView style={{ ...AndroidSafeArea.AndroidSafeArea }}>
       {renderHeader()}
-      {renderContent()}
+      { data && renderContent()}
     </SafeAreaView>
   );
 }

@@ -57,7 +57,7 @@ export default function PaymentFailed() {
             marginBottom: 22,
           }}
         >
-          extend
+          xtend
         </Text>
         <Image
           source={{ uri: "https://via.placeholder.com/552x552" }}

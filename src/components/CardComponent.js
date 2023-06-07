@@ -21,8 +21,9 @@ export default function CardComponent({ item, lastComponent, onPress }) {
     >
       <ImageBackground
         source={item.thumbnail}
-        style={{ width: 90, height: 90 }}
-        imageStyle={{ borderRadius: 10 }}
+        // style={{ width: 160, height: 120 }}
+        style={{ width: 160, height: 100 }}
+        imageStyle={{ borderRadius: 10,resizeMode: 'stretch'  }}
       >
         <View
           style={{

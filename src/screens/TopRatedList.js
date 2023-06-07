@@ -9,7 +9,8 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 export default function TopRatedList({ route }) {
   const navigation = useNavigation();
   // console.log("==================route==================", route.params);
-  const { topRated, popular, name, speciallyForYou, isNew } = route.params;
+  const { topRated, popular, name, speciallyForYou, isNew ,skill} = route.params;
+  console.log("🚀 ~ TopRatedList ~ skill:", skill);
   console.log(name, "name");
   // const data = topRated ? topRated : popular;
   if (topRated) {
@@ -23,6 +24,9 @@ export default function TopRatedList({ route }) {
   }
   if (isNew) {
     var data = isNew;
+  }
+  if (skill) {
+    var data = skill;
   }
   function renderTopRated() {
     return (

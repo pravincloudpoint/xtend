@@ -50,7 +50,7 @@ export default function YourPasswordHasBeenReset() {
           }}
           allowFontScaling={true}
         >
-          extend
+          xtend
         </Text>
         <Image
           source={{ uri: "https://via.placeholder.com/618x618" }}

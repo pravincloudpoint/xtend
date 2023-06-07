@@ -25,16 +25,17 @@ export default function CourseDetails() {
   const navigation = useNavigation();
   const route = useRoute();
   const { item } = route.params;
+  console.log("🚀 ~ CourseDetails ~ item:", item);
 
   const FirstRoute = () => <DescriptionSectionComponent item={item} />;
-  const SecondRoute = () => <LessonsSectionComponent item={item} />;
+  // const SecondRoute = () => <LessonsSectionComponent item={item} />;
   const ThirdRoute = () => <InstructorSectionComponent item={item} />;
   // const FourthRoute = () => <ReviewsSectionComponent item={item} />;
   const FifthRoute = () => <Quiz item={item} />;
-
+  console.log("🚀 ~ CourseDetails ~ item:", item);
   const renderScene = SceneMap({
     first: FirstRoute,
-    second: SecondRoute,
+    // second: SecondRoute,
     third: ThirdRoute,
     // fourth: FourthRoute,
     Fifth: FifthRoute,
@@ -45,7 +46,7 @@ export default function CourseDetails() {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     { key: "first", title: "Description" },
-    { key: "second", title: "Lessons" },
+    // { key: "second", title: "Lessons" },
     { key: "third", title: "Instructor" },
     // { key: "fourth", title: "Reviews" },
     { key: "Fifth", title: "Quiz" },

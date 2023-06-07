@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 import React, { useState } from "react";
-import { Header, MyCoursesComponent } from "../components";
+import { Button, Header, MyCoursesComponent } from "../components";
 import { AREA, COLORS, FONTS, SIZES, courses } from "../constants";
 import { useEffect } from "react";
 import * as FileSystem from "expo-file-system";
@@ -54,6 +54,22 @@ export default function MyCourses() {
     }
   };
 
+  const allFileSystemDataDelete = () => {
+    FileSystem.readDirectoryAsync(storagePath)
+      .then((response) => {
+        console.log("🚀 ~ FileSystem.readDirectoryAsync ~ response:", response);
+        for (const dir of video) {
+          console.log("🚀 ~ FileSystem.readDirectoryAsync ~ dir:", dir);
+          FileSystem.deleteAsync(`${storagePath}/${dir}`);
+        }
+      })
+      .then(() => {
+        infoFile();
+      })
+      .catch((err) => {
+        console.log("🚀 ~ FileSystem.readDirectoryAsync ~ err:", err);
+      });
+  };
   useEffect(() => {
     infoFile();
   }, [isFocused]);
@@ -146,6 +162,11 @@ export default function MyCourses() {
       <>
         <View
           style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-around",
+            alignItems: "flex-start",
+
             alignContent: "flex-end",
             alignItems: "flex-end",
             paddingRight: 10,
@@ -161,6 +182,17 @@ export default function MyCourses() {
           >
             Free Size : {freeSize}
           </Text>
+          <Text
+            style={{
+              ...FONTS.Lato_Regular,
+              fontSize: 10,
+              lineHeight: 14 * 1.7,
+              color: COLORS.lightGray,
+            }}
+            onPress={() => allFileSystemDataDelete()}
+          >
+            Delete All
+          </Text>
         </View>
 
         <FlatList
@@ -170,11 +202,7 @@ export default function MyCourses() {
             paddingTop: 20,
             // paddingHorizontal: 20,
           }}
-          numColumns={2}
-          columnWrapperStyle={{
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-          }}
+          numColumns={1}
           renderItem={({ item, index }) => {
             return (
               // <MyCoursesComponent
@@ -189,6 +217,8 @@ export default function MyCourses() {
                   flexDirection: "row",
                   alignItems: "center",
                   flex: 1,
+                  borderBottomWidth: 1,
+                  borderBottomColor: "#E7E6E7",
                 }}
                 onPress={() =>
                   navigation.navigate("OffLinePlayer", {
@@ -201,8 +231,7 @@ export default function MyCourses() {
                   style={{
                     marginLeft: 8,
                     flex: 1,
-                    borderBottomWidth: 1,
-                    borderBottomColor: "#E7E6E7",
+                    marginVertical: 20,
                   }}
                 >
                   <Text

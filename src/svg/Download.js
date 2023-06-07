@@ -5,7 +5,7 @@ const Download = (props) => (
     <Svg
     width={23}
     height={23}
-    fill="null"
+    fill="gray"
     color="black"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 18 18"

@@ -29,6 +29,7 @@ import {
   CardComponent,
   PlayAudioComponent,
   Button,
+  DescriptionSectionComponent,
 } from "../components";
 import { InputSearch } from "../svg";
 import { useDispatch, useSelector } from "react-redux";
@@ -36,6 +37,7 @@ import OttSlice, { fetchOtt } from "../Slice/OttSlice";
 import { Video, ResizeMode } from "expo-av";
 import { classes } from "../constants/constants";
 import * as ScreenOrientation from "expo-screen-orientation";
+import { TouchableHighlight } from "react-native-gesture-handler";
 
 export default function Home() {
   const navigation = useNavigation();
@@ -73,7 +75,10 @@ export default function Home() {
   const popular = courses.filter(function (course) {
     return course.popular;
   });
-
+  const skill = courses.filter(function (course) {
+    return course.class == "Skill Development";
+  });
+  console.log("=====================skill===============", skill);
   function renderDots() {
     return (
       <View
@@ -83,7 +88,7 @@ export default function Home() {
           flexDirection: "row",
         }}
       >
-        {promo.map((_, index) => {
+        {courses.slice(0, 5).map((_, index) => {
           return (
             <View
               key={index}
@@ -182,41 +187,78 @@ export default function Home() {
       ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
     }
   }
-  const videContent=data? data.Files:""
   function renderPromo() {
     return (
-      <View>
+      <View
+        style={{
+          padding: 10,
+          borderRadius: 10,
+        }}
+      >
         <FlatList
           horizontal={true}
-          index={2}
-          data={videContent}
+          index={4}
+          data={courses.slice(0, 5)}
           pagingEnabled={true}
           showsHorizontalScrollIndicator={false}
           onMomentumScrollEnd={updateCurrentSlideIndex}
           contentContainerStyle={{ marginBottom: 16 }}
           renderItem={({ item }) => (
             // <ImageBackground
-            //   source={item.image}
+            //   source={item.thumbnail}
             //   style={{
-            //     width: SIZES.width - 40,
-            //     height: 220,
-            //     marginHorizontal: 20,
+            //     width: SIZES.width - 10,
+            //     height: 280,
+            //     // marginHorizontal: 20,
             //   }}
             //   imageStyle={{ borderRadius: 10 }}
-            // ></ImageBackground>
-            <Video
-              style={styles.video}
-              // resizeMode="contain"
-              resizeMode={ResizeMode.CONTAIN}
-              isLooping
-              source={{
-                // uri: "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
-                uri:  `http://192.168.30.1/frm/${item.URL}`,
-              }}
-              useNativeControls
-              onFullscreenUpdate={setOrientation}
-            />
 
+            // >
+            // </ImageBackground>
+            // <TouchableOpacity
+            //   style={{ flex: 1 / 3, aspectRatio: 1 }}
+            //   onPress={() => navigation.navigate("Player", { item: item })}
+            // >
+            //   <Image
+            //     style={{
+            //       width: 300,
+            //       height: SIZES.height,
+            //     }}
+            //     resizeMode="cover"
+            //     // style={{
+            //     //   width: SIZES.width - 4,
+            //     //   height: 280,
+            //     // }}
+            //     imageStyle={{ borderRadius: 10 }}
+            //     source={item.thumbnail}
+            //   ></Image>
+            // </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Player", { item: item })}
+            >
+              <ImageBackground
+                source={item.image}
+                style={{
+                  width: SIZES.width - 40,
+                  height: 220,
+                  marginHorizontal: 10,
+                }}
+                imageStyle={{ borderRadius: 10 }}
+              ></ImageBackground>
+            </TouchableOpacity>
+
+            // <Video
+            //   style={styles.video}
+            //   // resizeMode="contain"
+            //   resizeMode={ResizeMode.CONTAIN}
+            //   isLooping
+            //   source={{
+            //     // uri: "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+            //     uri: item.url,
+            //   }}
+            //   useNativeControls
+            //   onFullscreenUpdate={setOrientation}
+            // />
           )}
         />
         {renderDots()}
@@ -237,7 +279,7 @@ export default function Home() {
           }}
         />
         {/* {renderSearch()} */}
-        {renderPromo()}
+        {data && renderPromo()}
       </View>
     );
   }
@@ -358,7 +400,7 @@ export default function Home() {
           }
         />
         {data ? (
-          data.Files.map((item, index, array) => {
+          popular.map((item, index, array) => {
             const lastIndex = array.length - 1;
             return (
               <View
@@ -371,7 +413,7 @@ export default function Home() {
                   item={item}
                   lastComponent={index == lastIndex ? true : false}
                   onPress={() =>
-                    navigation.navigate("Player", {
+                    navigation.navigate("CourseDetails", {
                       item: item,
                     })
                   }
@@ -380,12 +422,97 @@ export default function Home() {
             );
           })
         ) : (
-          <Text>Null</Text>
+          <Text
+            style={{
+              alignSelf: "center",
+              color: COLORS.lightGray,
+            }}
+          >
+            Disconnected
+          </Text>
+        )}
+        {/* {data ? (
+          <FlatList
+            data={popular}
+            horizontal={false}
+            keyExtractor={({ id }, index) => id}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item, index }) => {
+              return (
+                item.popular === true && (
+                  <PlayAudioComponent
+                    item={item}
+                    onPress={() =>
+                      navigation.navigate("CourseDetails", {
+                        item: item,
+                      })
+                    }
+                  />
+                )
+              );
+            }}
+            contentContainerStyle={{ paddingLeft: 20 }}
+          />
+        ) : (
+          <Text
+            style={{
+              alignSelf: "center",
+              color: COLORS.lightGray,
+            }}
+          >
+            Disconnected
+          </Text>
+        )} */}
+      </View>
+    );
+  }
+  function renderSkill() {
+    return (
+      <View style={{ marginBottom: 30 }}>
+        <CategoryComponent
+          title={"Skill Development"}
+          onPress={() =>
+            navigation.navigate("TopRatedList", {
+              name: "Skill Development",
+              skill,
+            })
+          }
+        />
+        {data ? (
+          <FlatList
+            data={skill}
+            horizontal={true}
+            keyExtractor={({ id }, index) => id}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item, index }) => {
+              return (
+                item.popular === true && (
+                  <PlayAudioComponent
+                    item={item}
+                    onPress={() =>
+                      navigation.navigate("CourseDetails", {
+                        item: item,
+                      })
+                    }
+                  />
+                )
+              );
+            }}
+            contentContainerStyle={{ paddingLeft: 20 }}
+          />
+        ) : (
+          <Text
+            style={{
+              alignSelf: "center",
+              color: COLORS.lightGray,
+            }}
+          >
+            Disconnected
+          </Text>
         )}
       </View>
     );
   }
-
   function renderPopular() {
     return (
       <View style={{ marginBottom: 30 }}>
@@ -398,27 +525,38 @@ export default function Home() {
             })
           }
         />
-        <FlatList
-          data={popular}
-          horizontal={true}
-          keyExtractor={({ id }, index) => id}
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item, index }) => {
-            return (
-              item.popular === true && (
-                <PlayAudioComponent
-                  item={item}
-                  onPress={() =>
-                    navigation.navigate("CourseDetails", {
-                      item: item,
-                    })
-                  }
-                />
-              )
-            );
-          }}
-          contentContainerStyle={{ paddingLeft: 20 }}
-        />
+        {data ? (
+          <FlatList
+            data={popular}
+            horizontal={true}
+            keyExtractor={({ id }, index) => id}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item, index }) => {
+              return (
+                item.popular === true && (
+                  <PlayAudioComponent
+                    item={item}
+                    onPress={() =>
+                      navigation.navigate("CourseDetails", {
+                        item: item,
+                      })
+                    }
+                  />
+                )
+              );
+            }}
+            contentContainerStyle={{ paddingLeft: 20 }}
+          />
+        ) : (
+          <Text
+            style={{
+              alignSelf: "center",
+              color: COLORS.lightGray,
+            }}
+          >
+            Disconnected
+          </Text>
+        )}
       </View>
     );
   }
@@ -434,6 +572,7 @@ export default function Home() {
       <View style={{ flex: 1 }}>
         {renderHeader()}
         {renderClasses()}
+        {renderSkill()}
         {renderTopRated()}
         {renderPopular()}
         {/* <Button

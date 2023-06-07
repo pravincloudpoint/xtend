@@ -49,7 +49,7 @@ export default function SignUpAccountCreated() {
             marginBottom: 10,
           }}
         >
-          extend
+          xtend
         </Text>
         <Image
           style={{
