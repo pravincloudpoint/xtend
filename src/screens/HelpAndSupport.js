@@ -154,7 +154,7 @@ export default function HelpAndSupport() {
                         }}
                     />
                 </Shadow>
-                <MenuComponent />
+                {/* <MenuComponent /> */}
             </ScrollView>
         </SafeAreaView>
     );

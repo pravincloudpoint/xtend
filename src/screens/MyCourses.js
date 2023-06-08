@@ -15,32 +15,49 @@ import * as FileSystem from "expo-file-system";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { ResizeMode, Video } from "expo-av";
 import { Play } from "../svg";
+import Modal from "react-native-modal";
 
 export default function MyCourses() {
   const navigation = useNavigation();
   const [category, setCategory] = useState("Ongoing");
+  const [showModal, setShowModal] = useState(false);
   const [video, setVideo] = useState([]);
+  
   const [freeSize, setFreeSize] = useState("");
-  // console.log("🚀 ~ MyCourses ~ video:", video);
+  console.log("🚀 ~ MyCourses ~ freeSize:", freeSize);
+  const [useSize, setUseSize] = useState("");
+  console.log("🚀 ~ MyCourses ~ useSize:", useSize);
+
+  console.log("🚀 ~ MyCourses ~ video:", video);
   const storagePath = `${FileSystem.documentDirectory}`;
   const isFocused = useIsFocused();
 
   const infoFile = async () => {
     try {
       const size = await FileSystem.getFreeDiskStorageAsync();
+      const infoAsync = await FileSystem.getInfoAsync(storagePath);
+      // console.log("🚀 ~ infoFile ~ iinfo:", infoAsync);
+
       const totalSize = await FileSystem.getTotalDiskCapacityAsync();
       console.log("🚀 ~ totalSize:", JSON.stringify(totalSize));
       console.log("🚀 ~ size:", size);
-      const totalSizeKB = size / Math.pow(1024, 1);
-      console.log("🚀 ~ infoFile ~ totalSizeKB:", totalSizeKB);
-      const totalSizeMB = size / Math.pow(1024, 2);
-      console.log("🚀 ~ infoFile ~ totalSizeMB:", totalSizeMB);
-      const totalSizeGB = size / Math.pow(1024, 3);
-      console.log("🚀 ~ infoFile ~ totalSizeGB:", totalSizeGB);
-      setFreeSize(totalSizeGB.toFixed(2));
 
-      const data = FileSystem.readDirectoryAsync(storagePath);
-      data
+      // const totalSizeKB = size / Math.pow(1024, 1);
+      // console.log("🚀 ~ infoFile ~ totalSizeKB:", totalSizeKB);
+      // const totalSizeMB = size / Math.pow(1024, 2);
+      // console.log("🚀 ~ infoFile ~ totalSizeMB:", totalSizeMB);
+      const totalSizeGB = size / Math.pow(1024, 2);
+      console.log("🚀 ~ infoFile ~ totalSizeGB:", totalSizeGB);
+
+      const allFileSize = infoAsync.size / Math.pow(1024, 2);
+      // console.log("🚀 ~ infoFile ~ allFileSize:", allFileSize.toFixed(2));
+      setFreeSize(totalSizeGB.toFixed(2));
+      setUseSize(allFileSize.toFixed(2));
+
+      // const getInfoAsync = await FileSystem.getInfoAsync(storagePath);
+      // console.log("🚀 ~ infoFile ~ getInfoAsync:", getInfoAsync);
+      // allFreeSize()
+      await FileSystem.readDirectoryAsync(storagePath)
         .then((data) => {
           console.log("🚀 ~ .then ~ data:", data);
           // setVideo(data.slice(1));
@@ -54,6 +71,19 @@ export default function MyCourses() {
     }
   };
 
+
+  const allFreeSize = () => {
+    FileSystem.getFreeDiskStorageAsync()
+      .then((response) => {
+        console.log("🚀 ~ .then ~ response:", response);
+        const totalSizeGB = response / Math.pow(1024, 2);
+        console.log("🚀 ~ infoFile ~ totalSizeGB:", totalSizeGB);
+        setFreeSize(totalSizeGB.toFixed(2));
+      })
+      .catch((err) => {
+        console.log("🚀 ~ FileSystem.readDirectoryAsync ~ err:", err);
+      });
+  };
   const allFileSystemDataDelete = () => {
     FileSystem.readDirectoryAsync(storagePath)
       .then((response) => {
@@ -90,6 +120,103 @@ export default function MyCourses() {
 
   function renderHeader() {
     return <Header title="Downloads" goBack={false} />;
+  }
+
+  function renderModal() {
+    return (
+      <Modal
+        isVisible={showModal}
+        onBackdropPress={setShowModal}
+        hideModalContentWhileAnimating={true}
+        backdropTransitionOutTiming={0}
+        style={{ margin: 0 }}
+        animationIn="zoomIn"
+        animationOut="zoomOut"
+      >
+        <View
+          style={{
+            width: SIZES.width - 40,
+            backgroundColor: COLORS.white,
+            marginHorizontal: 20,
+            borderRadius: 10,
+            paddingHorizontal: 20,
+            paddingTop: 40,
+            paddingBottom: 30,
+          }}
+        >
+          <Text
+            style={{
+              textAlign: "center",
+              ...FONTS.H2,
+              lineHeight: 20 * 1.5,
+              marginBottom: 30,
+              textTransform: "capitalize",
+            }}
+          >
+            Are you sure you {"\n"} want to Delete All Files ?
+          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <TouchableOpacity
+              style={{
+                width: 130,
+                height: 48,
+                backgroundColor: COLORS.white,
+                borderRadius: 10,
+                justifyContent: "center",
+                alignItems: "center",
+                marginHorizontal: 7.5,
+                borderColor: COLORS.goldenTransparent_05,
+                borderWidth: 1,
+              }}
+              onPress={() => {
+                setShowModal(false);
+                allFileSystemDataDelete();
+              }}
+            >
+              <Text
+                style={{
+                  color: COLORS.mainColor,
+                  ...FONTS.Lato_700Bold,
+                  fontSize: 18,
+                  textTransform: "capitalize",
+                }}
+              >
+                Sure
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                width: 130,
+                height: 48,
+                backgroundColor: COLORS.btnColor,
+                borderRadius: 10,
+                justifyContent: "center",
+                alignItems: "center",
+                marginHorizontal: 7.5,
+              }}
+              onPress={() => setShowModal(false)}
+            >
+              <Text
+                style={{
+                  color: COLORS.white,
+                  ...FONTS.Lato_700Bold,
+                  fontSize: 18,
+                  textTransform: "capitalize",
+                }}
+              >
+                Cancel
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    );
   }
 
   function renderCategories() {
@@ -180,7 +307,8 @@ export default function MyCourses() {
               color: COLORS.lightGray,
             }}
           >
-            Free Size : {freeSize}
+            Used Size : {useSize} MB
+            {/* Used Size : {useSize} GB */}
           </Text>
           <Text
             style={{
@@ -189,7 +317,19 @@ export default function MyCourses() {
               lineHeight: 14 * 1.7,
               color: COLORS.lightGray,
             }}
-            onPress={() => allFileSystemDataDelete()}
+          >
+            Free Size : {freeSize} MB
+            {/* Free Size : {freeSize} GB */}
+          </Text>
+          <Text
+            style={{
+              ...FONTS.Lato_Regular,
+              fontSize: 10,
+              lineHeight: 14 * 1.7,
+              color: COLORS.lightGray,
+            }}
+            // onPress={() => allFileSystemDataDelete()}
+            onPress={() => setShowModal(true)}
           >
             Delete All
           </Text>
@@ -197,7 +337,7 @@ export default function MyCourses() {
 
         <FlatList
           data={video}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item}
           contentContainerStyle={{
             paddingTop: 20,
             // paddingHorizontal: 20,
@@ -259,6 +399,7 @@ export default function MyCourses() {
       {renderHeader()}
       {renderCategories()}
       {renderContent()}
+      {renderModal()}
     </SafeAreaView>
   );
 }

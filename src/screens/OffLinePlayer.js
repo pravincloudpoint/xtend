@@ -9,10 +9,10 @@ import {
   Image,
   Dimensions,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-
+import Modal from "react-native-modal";
 import { COLORS, FONTS, SIZES } from "../constants";
 import { ArrowWhite, Heart, Reload, Book, CourseUser, Rating } from "../svg";
 import {
@@ -33,6 +33,8 @@ export default function OffLinePlayer() {
   const storagePath = `${FileSystem.documentDirectory}`;
   const navigation = useNavigation();
   const route = useRoute();
+  const [showModal, setShowModal] = useState(false);
+
   const { item } = route.params;
   console.log("🚀 ~ OffLinePlayer ~ item:", item);
 
@@ -204,7 +206,102 @@ export default function OffLinePlayer() {
       />
     );
   }
-
+  function renderModal() {
+    return (
+        <Modal
+            isVisible={showModal}
+            onBackdropPress={setShowModal}
+            hideModalContentWhileAnimating={true}
+            backdropTransitionOutTiming={0}
+            style={{ margin: 0 }}
+            animationIn="zoomIn"
+            animationOut="zoomOut"
+        >
+            <View
+                style={{
+                    width: SIZES.width - 40,
+                    backgroundColor: COLORS.white,
+                    marginHorizontal: 20,
+                    borderRadius: 10,
+                    paddingHorizontal: 20,
+                    paddingTop: 40,
+                    paddingBottom: 30,
+                }}
+            >
+                <Text
+                    style={{
+                        textAlign: "center",
+                        ...FONTS.H2,
+                        lineHeight: 20 * 1.5,
+                        marginBottom: 30,
+                        textTransform: "capitalize",
+                    }}
+                >
+                    Are you sure you {"\n"} want to Delete File ?
+                </Text>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
+                    <TouchableOpacity
+                        style={{
+                            width: 130,
+                            height: 48,
+                            backgroundColor: COLORS.white,
+                            borderRadius: 10,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            marginHorizontal: 7.5,
+                            borderColor: COLORS.goldenTransparent_05,
+                            borderWidth: 1,
+                        }}
+                        onPress={() => {
+                            setShowModal(false);
+                            deleteFile(item)
+                        }}
+                    >
+                        <Text
+                            style={{
+                                color: COLORS.mainColor,
+                                ...FONTS.Lato_700Bold,
+                                fontSize: 18,
+                                textTransform: "capitalize",
+                            }}
+                        >
+                            Sure
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={{
+                            width: 130,
+                            height: 48,
+                            backgroundColor: COLORS.btnColor,
+                            borderRadius: 10,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            marginHorizontal: 7.5,
+                        }}
+                        onPress={() => setShowModal(false)}
+                    >
+                        <Text
+                            style={{
+                                color: COLORS.white,
+                                ...FONTS.Lato_700Bold,
+                                fontSize: 18,
+                                textTransform: "capitalize",
+                            }}
+                        >
+                            Cancel
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </Modal>
+    );
+}
   return (
     <View style={{ flex: 1 }}>
       <StatusBar barStyle="light-content" />
@@ -223,7 +320,8 @@ export default function OffLinePlayer() {
         <Button
           title="delete"
           containerStyle={{ width: "95%", height: 50 }}
-          onPress={() => deleteFile(item)}
+          // onPress={() => deleteFile(item)}
+          onPress={() => setShowModal(true)}
         ></Button>
         {/* <Button
             title="infoFile"
@@ -232,6 +330,7 @@ export default function OffLinePlayer() {
           ></Button> */}
       </View>
       {renderTabView()}
+      {renderModal()}
     </View>
   );
 }

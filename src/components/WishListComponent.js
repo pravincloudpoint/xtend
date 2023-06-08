@@ -3,8 +3,11 @@ import React from "react";
 
 import { Clock, Heart, Star } from "../svg";
 import { COLORS, FONTS } from "../constants";
+import { useNavigation } from "@react-navigation/native";
 
 export default function WishListComponent({ item, onPress }) {
+    const navigation = useNavigation();
+
     return (
         <TouchableOpacity
             style={{
@@ -16,10 +19,15 @@ export default function WishListComponent({ item, onPress }) {
                 borderBottomColor: "#EBEEF5",
                 flex: 1,
             }}
-            onPress={onPress}
+            onPress={() =>
+                      navigation.navigate("CourseDetails", {
+                        item: item,
+                      })
+                    }
         >
             <ImageBackground
-                source={item.preview_330x330}
+                // source={item.preview_330x330}
+                source={item.image}
                 style={{ width: 110, height: 110 }}
                 imageStyle={{ borderRadius: 10 }}
             >
@@ -86,7 +94,7 @@ export default function WishListComponent({ item, onPress }) {
                     </Text>
                 </View>
 
-                <View
+                {/* <View
                     style={{
                         flexDirection: "row",
                         alignItems: "center",
@@ -123,7 +131,7 @@ export default function WishListComponent({ item, onPress }) {
                             buy now
                         </Text>
                     </TouchableOpacity>
-                </View>
+                </View> */}
                 <TouchableOpacity
                     style={{ position: "absolute", right: 0, top: 2 }}
                 >

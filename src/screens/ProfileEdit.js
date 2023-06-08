@@ -64,19 +64,25 @@ export default function ProfileEdit() {
                 </TouchableOpacity>
                 <ProfileEditCategoryComponent
                     title="Name"
-                    placeholder="Kristin Watson"
+                    // placeholder="Kristin Watson"
+                    placeholder="Xtend"
+                    contaynerStyle={{ marginBottom: 5 }}
                 />
                 <ProfileEditCategoryComponent
                     title="Email"
-                    placeholder="kristinwatson@mail.com"
+                    //placeholder="kristinwatson@mail.com"
+                    placeholder="xtend@mail.com"
+                    contaynerStyle={{ marginBottom: 5 }}
                 />
                 <ProfileEditCategoryComponent
                     title="Phone number"
-                    placeholder="+17 123456789"
+                    placeholder="+91 123456789"
+                    contaynerStyle={{ marginBottom: 5 }}
                 />
                 <ProfileEditCategoryComponent
                     title="Location"
-                    placeholder="Chicago, USA"
+                    placeholder="India"
+                    contaynerStyle={{ marginBottom: 5 }}
                 />
                 <Button
                     title="Save changes"

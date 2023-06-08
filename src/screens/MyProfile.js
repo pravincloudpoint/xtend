@@ -180,7 +180,7 @@ export default function MyProfile() {
                         </View>
                     </ImageBackground>
                 </TouchableOpacity>
-
+     
                 <Text
                     style={{
                         textAlign: "center",
@@ -189,7 +189,7 @@ export default function MyProfile() {
                         lineHeight: 20 * 1.4,
                     }}
                 >
-                    Kristin Watson
+                   Xtend
                 </Text>
                 <Text
                     style={{
@@ -201,7 +201,7 @@ export default function MyProfile() {
                         marginBottom: 20,
                     }}
                 >
-                    kristinwatson@mail.com
+                    Xtend@mail.com
                 </Text>
                 <ProfileCategoryComponent
                     title="Wishlist"

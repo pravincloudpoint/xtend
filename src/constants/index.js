@@ -9,7 +9,7 @@ import {
     onboardingSlide,
 } from "./constants";
 import { COLORS, SIZES, FONTS, AREA, AndroidSafeArea } from "./theme";
-import { courses } from "./dummyData";
+import { courses ,courses1} from "./dummyData";
 
 export {
     COLORS,
@@ -17,6 +17,7 @@ export {
     FONTS,
     AREA,
     courses,
+    courses1,
     categories,
     promo,
     tags,

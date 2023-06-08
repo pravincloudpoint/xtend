@@ -10,6 +10,7 @@ import {
   ToastAndroid,
   Dimensions,
   ActivityIndicator,
+  ProgressBarAndroid,
 } from "react-native";
 import React, { useRef } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -43,24 +44,24 @@ export default function Player() {
 
   // console.log("🚀 ~ Player ~ item:", item, storagePath);
   const FirstRoute = () => <DescriptionSectionComponent item={item} />;
-  //   const SecondRoute = () => <LessonsSectionComponent item={item} />;
-//  const ThirdRoute = () => <InstructorSectionComponent item={item} />;
-  // const FourthRoute = () => <ReviewsSectionComponent item={item} />;
+  const SecondRoute = () => <LessonsSectionComponent item={item} />;
+  const ThirdRoute = () => <InstructorSectionComponent item={item} />;
+  const FourthRoute = () => <ReviewsSectionComponent item={item} />;
 
   const renderScene = SceneMap({
      first: FirstRoute,
-    // second: SecondRoute,
-   // third: ThirdRoute,
-    // fourth: FourthRoute,
+    second: SecondRoute,
+   third: ThirdRoute,
+     fourth: FourthRoute,
   });
 
   const layout = useWindowDimensions();
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: "first", title: "Description" },
+   // { key: "first", title: "Description" },
     // { key: "second", title: "Lessons" },
-   // { key: "third", title: "Instructor" },
+    { key: "third", title: "Instructor" },
     // { key: "fourth", title: "Reviews" },
   ]);
   // const fileName = item.Filename;
@@ -254,7 +255,11 @@ export default function Player() {
           ></Button>
         )}
         {downloadProgress == 1 && (
-          <ActivityIndicator size="large" color="#000" />
+          <View style={{flexDirection:"row"}}>
+          {/* <ActivityIndicator size="large" color="#000" /> */}
+          <ActivityIndicator styleAttr="small" color="#2196F3" />
+          <Text>downloading...</Text>
+          </View>
         )}
         {/* {downloadProgress == -1 && (
           <Text>Download completed</Text>

@@ -107,7 +107,11 @@ export default function Search() {
             return (
               <NewCourseComponent
                 item={item}
-                onPress={() => navigation.navigate("CourseDetails")}
+                onPress={() =>
+                  navigation.navigate("CourseDetails", {
+                    item: item,
+                  })
+                }
               />
             );
           }}
@@ -139,7 +143,12 @@ export default function Search() {
             >
               <CardComponent
                 item={item}
-                onPress={() => navigation.navigate("CourseDetailsTwo")}
+                // onPress={() => navigation.navigate("CourseDetailsTwo")}
+                onPress={() =>
+                      navigation.navigate("CourseDetails", {
+                        item: item,
+                      })
+                    }
                 lastComponent={index == lastIndex ? true : false}
               />
             </View>
@@ -268,8 +277,8 @@ export default function Search() {
         {renderSearch()}
         {renderNewCourses()}
         {renderTopRated()}
-        {SpeciallyForYou()}
-        {renderOftenSearched()}
+        {/* {SpeciallyForYou()} */}
+        {/* {renderOftenSearched()} */}
       </ScrollView>
     </SafeAreaView>
   );

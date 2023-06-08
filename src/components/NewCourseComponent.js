@@ -11,7 +11,8 @@ export default function NewCourseComponent({ item, onPress }) {
             style={{
                 width: 230,
                 height: 300,
-                backgroundColor: item.backgroundColor,
+                // backgroundColor: item.backgroundColor,
+                backgroundColor: "#ABC9FB",
                 marginRight: 16,
                 borderRadius: 10,
                 padding: 10,
@@ -25,7 +26,7 @@ export default function NewCourseComponent({ item, onPress }) {
                     alignItems: "center",
                 }}
             >
-                <Image source={item.icon} style={{ width: 160, height: 160 }} />
+                <Image source={item.image} style={{ width: 160, height: 160 }} />
             </View>
 
             <RatingComponent
@@ -88,7 +89,7 @@ export default function NewCourseComponent({ item, onPress }) {
                             lineHeight: 16 * 1.5,
                         }}
                     >
-                        ${item.price}
+                        {item.price}
                     </Text>
                 </View>
             </View>

@@ -25,7 +25,7 @@ export default function InstructorSectionComponent({ item }) {
                         textTransform: "capitalize",
                     }}
                 >
-                    {item.Filename}
+                    {item.name}
                 </Text>
                 <Text
                     style={{
@@ -36,9 +36,9 @@ export default function InstructorSectionComponent({ item }) {
                         marginBottom: 10,
                     }}
                 >
-                    {item.Tag}
+                    {item.duration}
                 </Text>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <Image
                         source={item.instructorPhoto}
                         style={{
@@ -129,7 +129,7 @@ export default function InstructorSectionComponent({ item }) {
                             </Text>
                         </View>
                     </View>
-                </View>
+                </View> */}
             </View>
             <View style={{ paddingHorizontal: 20, marginBottom: 30 }}>
                 <Text
@@ -140,7 +140,7 @@ export default function InstructorSectionComponent({ item }) {
                         textTransform: "capitalize",
                     }}
                 >
-                    About teacher
+                    About
                 </Text>
                 <Text
                     style={{
@@ -149,13 +149,13 @@ export default function InstructorSectionComponent({ item }) {
                         marginBottom: 10,
                     }}
                 >
-                    {item.aboutTeacher}
+                    {item.about}
                 </Text>
-                <TouchableOpacity>
+                {/* <TouchableOpacity>
                     <ShowMore />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
-            <View style={{ paddingHorizontal: 20, marginBottom: 30 }}>
+            {/* <View style={{ paddingHorizontal: 20, marginBottom: 30 }}>
                 <Text
                     style={{
                         ...FONTS.H5,
@@ -166,7 +166,7 @@ export default function InstructorSectionComponent({ item }) {
                 >
                     Student feedback
                 </Text>
-            </View>
+            </View> */}
         </ScrollView>
     );
 }

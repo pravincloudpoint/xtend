@@ -23,6 +23,7 @@ import {
   categories,
   promo,
   courses,
+  courses1,
 } from "../constants";
 import {
   CategoryComponent,
@@ -78,7 +79,7 @@ export default function Home() {
   const skill = courses.filter(function (course) {
     return course.class == "Skill Development";
   });
-  console.log("=====================skill===============", skill);
+  console.log("========skill===============", skill);
   function renderDots() {
     return (
       <View
@@ -517,7 +518,8 @@ export default function Home() {
     return (
       <View style={{ marginBottom: 30 }}>
         <CategoryComponent
-          title={"Recently Viewed"}
+          // title={"Recently Viewed"}
+          title={"Popular"}
           onPress={() =>
             navigation.navigate("TopRatedList", {
               name: "Recently Viewed",

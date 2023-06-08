@@ -3,7 +3,7 @@ import React from "react";
 import { COLORS, FONTS } from "../constants";
 import { Shadow } from "react-native-shadow-2";
 
-export default function ProfileEditCategoryComponent({ title, placeholder }) {
+export default function ProfileEditCategoryComponent({ title, placeholder,contaynerStyle }) {
     return (
         <Shadow
             offset={[0, 0]}
@@ -11,6 +11,7 @@ export default function ProfileEditCategoryComponent({ title, placeholder }) {
             startColor={"rgba(6, 38, 100, 0.04)"}
             finalColor={"rgba(6, 38, 100, 0.0)"}
             viewStyle={{ width: "100%", marginBottom: 10 }}
+            style={{ ...contaynerStyle }}
         >
             <TouchableOpacity
                 style={{
