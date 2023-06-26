@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 import React, { useState, useRef } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 
 import {
   SIZES,
@@ -21,15 +21,36 @@ import { Button } from "../components";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useDispatch } from "react-redux";
 import { fetchOtt } from "../Slice/OttSlice";
+import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function OnBoarding() {
   const navigation = useNavigation();
 
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [data, setData] = useState();
+  console.log("🚀 ~ OnBoarding ~ data:", data);
   const ref = useRef();
+  const isFocused = useIsFocused();
 
   const dispatch = useDispatch();
   dispatch(fetchOtt());
+
+  const checkUserLogin = async () => {
+    console.log("🚀 ~ checkUserLogin ~ checkUserLogin:", checkUserLogin);
+    await AsyncStorage.getItem("data")
+      .then((jsonValue) => {
+        const d = jsonValue != null ? JSON.parse(jsonValue) : null;
+        console.log("🚀 ~ .then ~ d:", d);
+        setData(d);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+  useEffect(() => {
+    isFocused && checkUserLogin()
+  }, [isFocused]);
 
   function updateCurrentSlideIndex(e) {
     const contentOffsetX = e.nativeEvent.contentOffset.x;
@@ -101,7 +122,7 @@ export default function OnBoarding() {
               zIndex: 999,
               alignSelf: "flex-end",
             }}
-            onPress={() => navigation.navigate("MainLayout")}
+            onPress={() => navigation.navigate("SignIn")}
           >
             <Text>Skip</Text>
           </TouchableOpacity>
@@ -133,7 +154,7 @@ export default function OnBoarding() {
 
               <Image
                 source={item.image}
-                resizeMode='contain'
+                resizeMode="contain"
                 style={{
                   width: "100%",
                   height: SIZES.height / 2.7,
@@ -182,9 +203,19 @@ export default function OnBoarding() {
           marginHorizontal: 20,
           marginBottom: SIZES.height / 25,
         }}
+        // onPress={
+        //   currentSlideIndex == onboardingSlide.length - 1
+        //     ? () =>
+        //     navigation.navigate("SignIn")
+        //     : goToNextSlide
+        // }
         onPress={
           currentSlideIndex == onboardingSlide.length - 1
-            ? () => navigation.navigate("MainLayout")
+            ? () => {
+                data != null
+                  ? navigation.navigate("MainLayout")
+                  : navigation.navigate("SignIn");
+              }
             : goToNextSlide
         }
       />

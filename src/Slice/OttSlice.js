@@ -1,19 +1,29 @@
 const { createSlice, createAsyncThunk } = require("@reduxjs/toolkit");
+
+// import file from "./../constants/file.json"
 // http://20.204.171.156/frm
 const url =
-  "http://192.168.30.1/frm/api/v1/packages";
+ "http://192.168.30.1/frm/api/v1/packages";
+  // "http://192.168.30.1/frm/ui/cat/file.json";
+  // "http://192.168.30.1/frm/ui/cat/file.json";
 
 const options = {
   method: "GET",
   headers: {
-    "Accept": "*/*",
-    "User-Agent": "Thunder Client (https://www.thunderclient.com)" 
+    Accept: "*/*",
+    "User-Agent": "Thunder Client (https://www.thunderclient.com)",
+    "Content-Type": "application/json",
+    Accept: "application/json",
   },
 };
 export const fetchOtt = createAsyncThunk("fetchVideo", async () => {
   const response = await fetch(url, options);
   const result = await response.json();
-  console.log("🚀 ~ fetchOtt ~ result:", result.data.PVOD);
+  // console.log("🚀 ~ fetchOtt ~ result:", result);
+  // // console.log("🚀 ~ fetchOtt ~ result:", result.data.PVOD);
+  // // return result.data.PVOD;
+  // return result;
+    console.log("🚀 ~ fetchOtt ~ result:", result.data.PVOD);
   return result.data.PVOD;
 });
 const OttSlice = createSlice({

@@ -65,7 +65,7 @@ export default function CardComponent({ item, lastComponent, onPress }) {
             color: COLORS.black,
           }}
         >
-          {item.name ? item.name : item.Filename}
+         {item.name? item.name: item.Filename}
         </Text>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Clock strokeColor={COLORS.secondaryTextColor} />

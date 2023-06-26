@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import {
   View,
   Text,
@@ -20,6 +21,7 @@ import { addDoc, collection } from "firebase/firestore";
 import * as FileSystem from "expo-file-system";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ResizeMode, Video } from "expo-av";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 export default function SignIn() {
   const [rememberMe, setRememberMe] = useState(true);
   const [video, setVideo] = useState([]);
@@ -95,19 +97,20 @@ export default function SignIn() {
     }
   };
 
-const fileName="bunny.mp4";
-const downloadVideo = async () => {
-  //const videoUrl="http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4";
-  const videoUrl="http://192.168.30.1/frm/ui/cat/frmpackage/64755a0eda055/content/CLASS 10 GEOGRAPHY - RESOURCES AND DEVELOPMENT.mp4";
-  const fileUri = FileSystem.documentDirectory + fileName;
+  const fileName = "bunny.mp4";
+  const downloadVideo = async () => {
+    //const videoUrl="http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4";
+    const videoUrl =
+      "http://192.168.30.1/frm/ui/cat/frmpackage/64755a0eda055/content/CLASS 10 GEOGRAPHY - RESOURCES AND DEVELOPMENT.mp4";
+    const fileUri = FileSystem.documentDirectory + fileName;
 
-  try {
-    const { uri } = await FileSystem.downloadAsync(videoUrl, fileUri);
-    console.log('Video downloaded to:', uri);
-  } catch (error) {
-    console.error('Failed to download video:', error);
-  }
-};
+    try {
+      const { uri } = await FileSystem.downloadAsync(videoUrl, fileUri);
+      console.log("Video downloaded to:", uri);
+    } catch (error) {
+      console.error("Failed to download video:", error);
+    }
+  };
 
   const deleteFile = async () => {
     try {
@@ -171,7 +174,15 @@ const downloadVideo = async () => {
   }
 
   function renderHeader() {
-    return <Header title="Sign In" onPress={() => navigation.goBack()} />;
+    return (
+      <Header
+        title="Sign In"
+        onPress={() =>
+          //  navigation.goBack()
+          navigation.navigate("MainLayout")
+        }
+      />
+    );
   }
 
   function renderContent() {
@@ -184,10 +195,29 @@ const downloadVideo = async () => {
       formState: { errors },
     } = useForm({});
     //console.log("🚀 ~ renderContent ~ errors:", errors);
-    const onSignInForm = (loginData) => {
+    const onSignInForm = async (data) => {
       //  console.log("🚀 ~ onSignUpForm ~ data:", loginData);
-      const doc = addDoc(collection(db, "user"), loginData);
+      // const doc = addDoc(collection(db, "user"), loginData);
       //console.log("🚀 ~ getUserInfo ~ doc:", doc);
+
+      try {
+        const auth = getAuth();
+        await signInWithEmailAndPassword(auth, data.email, data.password).then(
+          async (userCredential) => {
+            // Signed in
+            const user = userCredential.user;
+            const jsonValue = JSON.stringify(user);
+            await AsyncStorage.setItem("data", jsonValue).then(() => {
+              console.log("success to set email", user);
+              navigation.navigate("MainLayout");
+            });
+          }
+        );
+        // Additional logic after successful login
+      } catch (error) {
+        console.log("User login failed:", error.message);
+        // Handle login error
+      }
     };
     return (
       <KeyboardAwareScrollView
@@ -361,7 +391,7 @@ const downloadVideo = async () => {
           //   onPress={() => navigation.navigate("MainLayout")}
           onPress={handleSubmit(onSignInForm)}
         />
-        <Button
+        {/* <Button
           title="getUserInfo"
           containerStyle={{ marginBottom: 20 }}
           onPress={getUserInfo}
@@ -396,7 +426,7 @@ const downloadVideo = async () => {
           title="Info File"
           containerStyle={{ marginBottom: 20 }}
           onPress={() => infoFile()}
-        ></Button>
+        ></Button> */}
 
         <View
           style={{
@@ -426,11 +456,11 @@ const downloadVideo = async () => {
                 lineHeight: 16 * 1.7,
               }}
             >
-              Sign up.
+               &nbsp; Sign up.
             </Text>
           </TouchableOpacity>
         </View>
-        <View
+        {/* <View
           style={{
             flexDirection: "row",
             alignItems: "center",
@@ -446,7 +476,7 @@ const downloadVideo = async () => {
           <TouchableOpacity>
             <Google />
           </TouchableOpacity>
-        </View>
+        </View> */}
       </KeyboardAwareScrollView>
     );
   }
@@ -465,21 +495,22 @@ const downloadVideo = async () => {
               marginHorizontal: 20,
             }}
           >
-           <TouchableOpacity
-            onPress={() => navigation.navigate("Player",{item,storagePath})}
-            
-          >
-            <Text
-              style={{
-                ...FONTS.Lato_700Bold,
-                fontSize: 16,
-                color: COLORS.black,
-                lineHeight: 16 * 1.7,
-              }}
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("Player", { item, storagePath })
+              }
             >
-           {item}
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  ...FONTS.Lato_700Bold,
+                  fontSize: 16,
+                  color: COLORS.black,
+                  lineHeight: 16 * 1.7,
+                }}
+              >
+                {item}
+              </Text>
+            </TouchableOpacity>
           </View>
         );
       })}

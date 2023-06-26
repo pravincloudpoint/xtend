@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "xtend",
+    "name": "Xtend",
     "slug": "xtend",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icon.png",  
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "cover",
@@ -38,7 +38,8 @@
           "xhdpi": "./assets/splash.png"
         }
       },
-      "package": "com.pravin1desh.xtend"
+      "package": "com.sat.xtend",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -57,7 +58,9 @@
       "preview3": {
         "developmentClient": true
       },
-      "production": {}
+      "production": {
+        "autoIncrement": true
+      }
     },
     "extra": {
       "eas": {

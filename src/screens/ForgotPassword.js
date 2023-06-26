@@ -6,6 +6,8 @@ import { useNavigation } from "@react-navigation/native";
 import { Header, InputField, Button } from "../components";
 import { AREA, COLORS, FONTS, SIZES } from "../constants";
 import { Controller, useForm } from "react-hook-form";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+import { async } from "@firebase/util";
 
 export default function ForgotPassword() {
   const navigation = useNavigation();
@@ -19,15 +21,32 @@ export default function ForgotPassword() {
   function renderContent() {
     const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
     const [hidePass, setHidePass] = useState(true);
+    const [error, setError] = useState(null);
 
     const {
       control,
       handleSubmit,
       formState: { errors },
     } = useForm({});
-    console.log("🚀 ~ renderContent ~ errors:", errors);
-    const onForgotForm = (data) => {
+    // console.log("🚀 ~ renderContent ~ errors:", errors);
+
+    const onForgotForm = async (data) => {
       console.log("🚀 ~ onForgotForm ~ data:", data);
+      const email=data.email
+      const auth = getAuth();
+
+      sendPasswordResetEmail(auth, email)
+        .then(() => {
+          // Password reset email sent!
+          // ..
+        })
+        .catch((error) => {
+          if (error.code === 'auth/user-not-found') {
+            setError('User not found');
+          } else {
+            setError('There was a problem with your request');
+          }
+        });
     };
     return (
       <KeyboardAwareScrollView
@@ -75,7 +94,7 @@ export default function ForgotPassword() {
         />
         <Button
           title="Send"
-        //   onPress={() => navigation.navigate("ResetPassword")}
+          //   onPress={() => navigation.navigate("ResetPassword")}
           onPress={handleSubmit(onForgotForm)}
         />
       </KeyboardAwareScrollView>

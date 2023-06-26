@@ -24,6 +24,7 @@ import {
   signInWithCredential,
 } from "firebase/auth";
 import fbConfig from "../../config/firebase";
+import { ToastAndroid } from "react-native";
 
 export default function VerifyYourPhoneNumber() {
   const navigation = useNavigation();
@@ -72,9 +73,18 @@ export default function VerifyYourPhoneNumber() {
       console.log("verificationId", verificationId);
 
       setVerificationID(verificationId); // set the verification id
-      setInfo("Success : Verification code has been sent to your phone"); // If Ok, show message.
+      setInfo("Success : Verification code has been sent to your phone");
+      ToastAndroid.show("Verification code has been sent to your phone", ToastAndroid.LONG);
+      // If Ok, show message.
     } catch (error) {
-      setInfo(`Error : ${error.message}`); // show the error
+      console.log("🚀 ~ handleSendVerificationCode ~ error:", error.code);
+      // setInfo(`Error : ${error.message}`);
+      if (error.code === 'auth/invalid-phone-number') {
+        setInfo('Invalid Phone Number');
+        ToastAndroid.show("Invalid Phone Number!", ToastAndroid.LONG);
+      } else {
+        setInfo('There was a problem with your request');
+      }
     }
   };
   const handleVerifyVerificationCode = async () => {
@@ -135,7 +145,7 @@ export default function VerifyYourPhoneNumber() {
             marginBottom: 20,
           }}
         >
-          We have sent you an SMS with a code to number +17 0123456789.
+          We have sent you an SMS with a code to number +91 0123456789.
         </Text>
 
         <FirebaseRecaptchaVerifierModal

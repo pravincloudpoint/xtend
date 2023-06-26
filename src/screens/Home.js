@@ -39,15 +39,18 @@ import { Video, ResizeMode } from "expo-av";
 import { classes } from "../constants/constants";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { TouchableHighlight } from "react-native-gesture-handler";
+import file from "./../constants/file.json";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Home() {
   const navigation = useNavigation();
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [data, setData] = useState();
-  console.log("🚀 ~ Home ~ data:", data);
-
+  // console.log("🚀 ~ Home ~ data:", data);
+  // console.log("🚀 ~ file:", file);
   const dispatch = useDispatch();
   const video = useSelector((state) => state);
+  // console.log("🚀 ~ Home ~ video:", video);
 
   // console.log("🚀 ~ Home ~ video:", JSON.stringify(video));
 
@@ -55,14 +58,30 @@ export default function Home() {
 
   const getData = async () => {
     const videos = await video;
+    console.log("🚀 ~ getData ~ videos:", videos.video.isLoader);
+    // setData(videos.video.data);
+    // setData(videos.video.data);
+    // setData(videos.video.data.data);
+    //setData(file.data);
     setData(videos.video.data[2]);
+
   };
   // console.log("data",data.Package.Name);
   // console.log("data",data.Files);
-
-  useEffect(() => {
+  const getDataa = async () => {
+    console.log("========================================>");
+    try {
+      const jsonValue = await AsyncStorage.getItem('data');
+      console.log("🚀 ~ getDataa ~ jsonValue:", jsonValue);
+      return jsonValue != null ? JSON.parse(jsonValue) : null;
+    } catch (e) {
+      // error reading value
+    }
+  };
+  useEffect(() => { 
     dispatch(fetchOtt());
     getData();
+    getDataa();
   }, []);
   function updateCurrentSlideIndex(e) {
     const contentOffsetX = e.nativeEvent.contentOffset.x;
@@ -79,7 +98,7 @@ export default function Home() {
   const skill = courses.filter(function (course) {
     return course.class == "Skill Development";
   });
-  console.log("========skill===============", skill);
+  // console.log("========skill===============", skill);
   function renderDots() {
     return (
       <View
@@ -597,7 +616,6 @@ export default function Home() {
     </KeyboardAwareScrollView>
   );
 }
-
 const styles = StyleSheet.create({
   dot: {
     width: 10,

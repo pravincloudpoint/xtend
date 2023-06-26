@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import {
   View,
   Text,
@@ -5,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
+  ToastAndroid,
 } from "react-native";
 import React, { useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -25,9 +27,14 @@ import { ScrollView } from "react-native-gesture-handler";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { updatePhoneNumber } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  updatePhoneNumber,
+} from "firebase/auth";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import EyeOn from "../svg/EyeOn";
+import { auth, db } from "../../firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 export default function SignUp({ route, navigation }) {
   const { phoneNumber } = route.params;
@@ -94,12 +101,52 @@ export default function SignUp({ route, navigation }) {
 
     const pwd = watch("password");
     const role = watch("role");
+
     const onSignUpForm = async (data) => {
       console.log("🚀 ~ onSignUpForm ~ data:", data);
-      await AsyncStorage.setItem("data", JSON.stringify(data));
-      const asyncvalue = AsyncStorage.getItem("data");
-      console.log("async data", await asyncvalue);
+      try {
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          data.email,
+          data.password
+        );
+        const user = userCredential.user;
+        console.log("User sign-up successful:", user.uid);
+        try {
+          const docRef = doc(db, "User", user.email);
+          setDoc(docRef,  data)
+            .then(() => {
+              console.log("Document has been added successfully");
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+
+          await AsyncStorage.setItem("email", user.email).then(() => {
+            console.log("success to set email");
+            navigation.navigate("MainLayout");
+          });
+          const jsonValue = JSON.stringify(data);
+          await AsyncStorage.setItem("data", jsonValue);
+          const asyncvalue = AsyncStorage.getItem("data");
+          console.log("async data", await asyncvalue);
+          navigation.navigate("MainLayout");
+        } catch (e) {
+          console.error("Error adding document: ", e);
+        }
+        ToastAndroid.show("User Successfully Register", ToastAndroid.LONG);
+      } catch (error) {
+        console.log("User sign-up failed:", error.message);
+        if (error.code === "auth/email-already-in-use") {
+          ToastAndroid.show("Email Already Used!", ToastAndroid.LONG);
+        } else {
+        }
+      }
+      // await AsyncStorage.setItem("data", JSON.stringify(data));
+      // const asyncvalue = AsyncStorage.getItem("data");
+      // console.log("async data", await asyncvalue);
     };
+
     return (
       <KeyboardAwareScrollView
         contentContainerStyle={{
@@ -130,7 +177,7 @@ export default function SignUp({ route, navigation }) {
           Sign up
         </Text>
 
-        <View style={{ zIndex: 10, marginBottom: 10 }}>
+        {/* <View style={{ zIndex: 10, marginBottom: 10 }}>
           <Controller
             control={control}
             name="role"
@@ -187,7 +234,7 @@ export default function SignUp({ route, navigation }) {
               message: "School Name should be max 23 characters long",
             },
             pattern: {
-              value: /^[A-Za-z]+$/i,
+              value: /[^A-Za-z]/ig,
               message: "Enter characters only",
             },
           }}
@@ -250,23 +297,23 @@ export default function SignUp({ route, navigation }) {
               )}
             />
           </View>
-        )}
+        )} */}
 
         <Controller
           control={control}
           name="username"
           rules={{
-            required: "UserName is required",
+            required: "User Name is required",
             minLength: {
               value: 3,
-              message: "UserName should be at least 3 characters long",
+              message: "User Name should be at least 3 characters long",
             },
             maxLength: {
               value: 20,
-              message: "UserName should be max 23 characters long",
+              message: "User Name should be max 23 characters long",
             },
             pattern: {
-              value: /^[A-Za-z]+$/i,
+              value: /[^A-Za-z]/gi,
               message: "Enter characters only",
             },
           }}
@@ -275,8 +322,8 @@ export default function SignUp({ route, navigation }) {
             fieldState: { error },
           }) => (
             <InputField
-              title="UserName"
-              placeholder="test"
+              title="User Name"
+              placeholder="username"
               contaynerStyle={{ marginBottom: 10 }}
               value={value}
               onBlur={onBlur}
