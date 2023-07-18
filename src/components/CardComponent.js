@@ -1,10 +1,38 @@
 import { View, Text, ImageBackground, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 
-import { Clock, Heart, Star } from "../svg";
+import { Clock, Heart, Star, User } from "../svg";
 import { COLORS, FONTS } from "../constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { doc } from "firebase/firestore";
+import { useDispatch } from "react-redux";
+import {
+  addFavorite,
+  removeFavorite,
+} from "../Slice/Favorites/AddFavoriteSlice";
+
 
 export default function CardComponent({ item, lastComponent, onPress }) {
+// console.log("🚀 ~ CardComponent ~ item:", item);
+const dispatch = useDispatch();
+const [itemStatus, setItemStatus] = useState(false);
+console.log("🚀 ~ CourseDetails ~ itemStatus:", itemStatus);
+// console.log("🚀 ~ CourseDetails ~ item:", item);
+
+
+const addFavoriteItem = (item) => {
+  // console.log("🚀 ~ addFavorite ~ item:", item);
+  dispatch(addFavorite(item));
+  setItemStatus(true);
+};
+
+const removeFavoriteItem = (item) => {
+  // console.log("🚀 ~ removeFavoriteItem ~ item:", item);
+  dispatch(removeFavorite(item.id));
+  setItemStatus(false);
+};
+
+
   return (
     <TouchableOpacity
       style={{
@@ -25,7 +53,7 @@ export default function CardComponent({ item, lastComponent, onPress }) {
         style={{ width: 160, height: 100 }}
         imageStyle={{ borderRadius: 10,resizeMode: 'stretch'  }}
       >
-        <View
+        {/* <View
           style={{
             backgroundColor: COLORS.white,
             position: "absolute",
@@ -50,7 +78,7 @@ export default function CardComponent({ item, lastComponent, onPress }) {
           >
             {item.rating}
           </Text>
-        </View>
+        </View> */}
       </ImageBackground>
       <View style={{ flex: 1, paddingVertical: 4, paddingLeft: 12 }}>
         <Text
@@ -67,6 +95,35 @@ export default function CardComponent({ item, lastComponent, onPress }) {
         >
          {item.name? item.name: item.Filename}
         </Text>
+        <Text
+          numberOfLines={2}
+          style={{
+            flex: 1,
+            width: "80%",
+            ...FONTS.Lato_500Medium,
+            fontSize: 14,
+            textTransform: "capitalize",
+            lineHeight: 14 * 1.5,
+            color: COLORS.black,
+          }}
+        >
+         {item.class? item.class: item.class}
+        </Text>
+        <Text
+          numberOfLines={2}
+          style={{
+            flex: 1,
+            width: "80%",
+            ...FONTS.Lato_500Medium,
+            fontSize: 14,
+            textTransform: "capitalize",
+            lineHeight: 14 * 1.5,
+            color: COLORS.black,
+          }}
+        >
+        {item.board? item.board: item.board}
+        </Text>
+        
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Clock strokeColor={COLORS.secondaryTextColor} />
           <Text
@@ -97,11 +154,19 @@ export default function CardComponent({ item, lastComponent, onPress }) {
               ${item.price}
             </Text>
           </View> */}
+      
         </View>
-        <TouchableOpacity style={{ position: "absolute", right: 0, top: 2 }}>
-          <Heart strokeColor={COLORS.gray} />
-        </TouchableOpacity>
+        {itemStatus ? (
+              <TouchableOpacity style={{ position: "absolute", right: 0, top: 2 }} onPress={() => removeFavoriteItem(item)}>
+                <Heart strokeColor={COLORS.pink} fillColor={COLORS.pink} />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity style={{ position: "absolute", right: 0, top: 2 }} onPress={() => addFavoriteItem(item)}>
+                <Heart strokeColor={COLORS.gray} fillColor={COLORS.white} />
+              </TouchableOpacity>
+            )}
       </View>
+
     </TouchableOpacity>
   );
 }

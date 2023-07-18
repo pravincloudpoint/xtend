@@ -1,12 +1,19 @@
 import { View, Text, ImageBackground, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Play, Heart, Star } from "../svg";
-import RatingComponent from "../components/RatingComponent";
+import RatingComponent from "./RatingComponent";
 import { COLORS, FONTS } from "../constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { doc } from "firebase/firestore";
 
-export default function PlayAudioComponent({ item, onPress }) {
-    // console.log("🚀 ~ PlayAudioComponent ~ item:", item.image);
+export default function HomeSectionComponent({ item, onPress }) {
+    //  console.log("🚀 ~ HomeSectionComponent ~ item:", item);
+
+    //  const jsonValue = JSON.stringify(item);
+    // AsyncStorage.setItem("wishlist", jsonValue);
+  
+
     return (
         <TouchableOpacity
             style={{ marginRight: 16, width: 230 }}
@@ -26,12 +33,12 @@ export default function PlayAudioComponent({ item, onPress }) {
                         left: 2,
                     }}
                 />
-                <View style={{ position: "absolute", right: 11.29, top: 12.5 }}>
+                {/* <View style={{ position: "absolute", right: 11.29, top: 12.5 }}>
                     <Heart
                         strokeColor={COLORS.white}
                         fillColor={COLORS.white}
                     />
-                </View>
+                </View> */}
             </ImageBackground>
             <TouchableOpacity
                 style={{
@@ -54,7 +61,7 @@ export default function PlayAudioComponent({ item, onPress }) {
                     >
                         {item.name}
                     </Text>
-                    <Text
+                    {/* <Text
                         style={{
                             ...FONTS.Lato_400Regular,
                             fontSize: 14,
@@ -63,7 +70,7 @@ export default function PlayAudioComponent({ item, onPress }) {
                         }}
                     >
                         {item.location}
-                    </Text>
+                    </Text> */}
                 </View>
             </TouchableOpacity>
         </TouchableOpacity>

@@ -60,52 +60,62 @@ const classes = [
   {
     id: 1,
     class: "Class 1",
-    image: require("../assets/images/categories/business.png"),
+    image: require("../assets/subjects/webinar.png"),
   },
   {
     id: 2,
     class: "Class 2",
-    image: require("../assets/images/categories/technology.png"),
+    image: require("../assets/subjects/webinar.png"),
   },
   {
     id: 3,
     class: "Class 3",
-    image: require("../assets/images/categories/digital-marketing.png"),
+    image: require("../assets/subjects/webinar.png"),
   },
   {
     id: 4,
     class: "Class 4",
-    image: require("../assets/images/categories/business.png"),
+    image: require("../assets/subjects/webinar.png"),
   },
   {
     id: 5,
     class: "Class 5",
-    image: require("../assets/images/categories/technology.png"),
+    image: require("../assets/subjects/webinar.png"),
   },
   {
     id: 6,
     class: "Class 6",
-    image: require("../assets/images/categories/business.png"),
+    image: require("../assets/subjects/webinar.png"),
   },
   {
     id: 7,
     class: "Class 7",
-    image: require("../assets/images/categories/technology.png"),
+    image: require("../assets/subjects/webinar.png"),
   },
   {
     id: 8,
     class: "Class 8",
-    image: require("../assets/images/categories/digital-marketing.png"),
+    image: require("../assets/subjects/webinar.png"),
   },
    {
     id: 9,
     class: "Class 9",
-    image: require("../assets/images/categories/business.png"),
+    image: require("../assets/subjects/webinar.png"),
   },
   {
     id: 10,
     class: "Class 10",
-    image: require("../assets/images/categories/technology.png"),
+    image: require("../assets/subjects/webinar.png"),
+  },
+  {
+    id: 11,
+    class: "Class 11",
+    image: require("../assets/subjects/webinar.png"),
+  },
+  {
+    id: 12,
+    class: "Class 12",
+    image: require("../assets/subjects/webinar.png"),
   },
 ];
 

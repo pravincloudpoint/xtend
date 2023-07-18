@@ -3,7 +3,7 @@ import Header from "./Header";
 import InputField from "./InputField";
 import CategoryComponent from "./CategoryComponent";
 import CardComponent from "./CardComponent";
-import PlayAudioComponent from "./PlayAudioComponent";
+import HomeSectionComponent from "./HomeSectionComponent";
 import RatingComponent from "./RatingComponent";
 import NewCourseComponent from "./NewCourseComponent";
 import ProfileCategoryComponent from "./ProfileCategoryComponent";
@@ -23,7 +23,7 @@ export {
     InputField,
     CategoryComponent,
     CardComponent,
-    PlayAudioComponent,
+    HomeSectionComponent,
     RatingComponent,
     NewCourseComponent,
     ProfileCategoryComponent,

@@ -65,6 +65,7 @@ import CheckSvg from "./CheckSvg";
 import EmailSvg from "./EmailSvg";
 import Username from "./Username";
 import EyeOn from "./EyeOn";
+import DeleteSvg from "./DeleteSvg";
 
 export {
   Arrow,
@@ -134,4 +135,5 @@ export {
   EmailSvg,
   Username,
   EyeOn,
+  DeleteSvg,
 };

@@ -6,8 +6,8 @@ export default function MenuComponent() {
         <TouchableOpacity style={{ width: 160, height: 140 }}>
             <ImageBackground
                 style={{
-                    width: 160,
-                    height: 140,
+                    // width: 160,
+                    // height: 140,
                     backgroundColor: "red",
                     flex: 1,
                     resizeMode: "stretch",

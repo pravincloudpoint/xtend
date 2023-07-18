@@ -34,7 +34,6 @@ export default function OnBoarding() {
   const isFocused = useIsFocused();
 
   const dispatch = useDispatch();
-  dispatch(fetchOtt());
 
   const checkUserLogin = async () => {
     console.log("🚀 ~ checkUserLogin ~ checkUserLogin:", checkUserLogin);
@@ -49,7 +48,9 @@ export default function OnBoarding() {
       });
   };
   useEffect(() => {
-    isFocused && checkUserLogin()
+    isFocused && checkUserLogin();
+  dispatch(fetchOtt());
+
   }, [isFocused]);
 
   function updateCurrentSlideIndex(e) {
@@ -118,11 +119,15 @@ export default function OnBoarding() {
             style={{
               height: "100%",
               justifyContent: "center",
-              alignItems: "flex-end",
+              // alignItems: "flex-end",
               zIndex: 999,
               alignSelf: "flex-end",
             }}
-            onPress={() => navigation.navigate("SignIn")}
+            onPress={() =>
+              data != null
+                ? navigation.navigate("MainLayout")
+                : navigation.navigate("SignIn")
+            }
           >
             <Text>Skip</Text>
           </TouchableOpacity>
@@ -158,7 +163,7 @@ export default function OnBoarding() {
                 style={{
                   width: "100%",
                   height: SIZES.height / 2.7,
-                  marginBottom: SIZES.height / 20,
+                  marginBottom: 1,
                 }}
               />
               <Text

@@ -9,43 +9,22 @@ import { fetchOtt } from "../Slice/OttSlice";
 
 export default function CategoryList({ route }) {
   console.log("🚀 ~ CategoryList ~ CategoryList:", CategoryList);
-  console.log("==================route==================", route.params);
-  const { item, className } = route.params;
-  console.log("==================id==================", item);
+  const { item, className ,categoryList} = route.params;
+  // console.log("🚀 ~ CategoryList ~ categoryList: ===============>", categoryList);
+  //  console.log("==================item==================", item.category);
   const navigation = useNavigation();
 
-
-  const [data, setData] = useState();
-  console.log("🚀 ~ Home ~ data:", data);
-
-  const dispatch = useDispatch();
-  const video = useSelector((state) => state);
-
-  const getData = async () => {
-    const videos = await video;
-    setData(videos.video.data);
-  };
- 
-
-  useEffect(() => {
-    dispatch(fetchOtt());
-    getData();
-  }, []);
-  const popular = courses.filter(function (course) {
-    console.log('====================================',course.category);
-    console.log('====================================',item.name );
-    console.log('====================================',course.class);
-    console.log('====================================',className.class);
-    return course.category == item.name && course.class == className.class;
+  const chapters = categoryList.filter(function (course) {
+    return course.category === item.category;
   });
-  console.log("popular", popular);
+  // console.log("chapters=========================>",  chapters);
   function renderHeader() {
     return (
       <Header
-        title={item.name}
+        title={item.category}
         goBack={true}
         filter={true}
-        onPress={() => navigation.goBack()}
+        onPress={() => navigation.goBack(null)}
         filterOnPress={() => navigation.navigate("Filter")}
       />
     );
@@ -61,7 +40,7 @@ export default function CategoryList({ route }) {
         }}
         showsVerticalScrollIndicator={false}
       >
-        {popular.map((item, index, array) => {
+        {chapters?.map((item, index, array) => {
           const lastIndex = array.length - 1;
           return (
             <View
@@ -86,7 +65,7 @@ export default function CategoryList({ route }) {
               />
             </View>
           );
-        })}
+        })} 
       </ScrollView>
     );
   }
@@ -94,7 +73,7 @@ export default function CategoryList({ route }) {
   return (
     <SafeAreaView style={{ ...AndroidSafeArea.AndroidSafeArea }}>
       {renderHeader()}
-      { data && renderContent()}
+      {renderContent()}
     </SafeAreaView>
   );
 }

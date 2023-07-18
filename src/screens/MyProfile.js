@@ -21,6 +21,11 @@ import {
   FileText,
   LogOut,
   Edit,
+  ViewAll,
+  UserTab,
+  Star,
+  Point,
+  Plus,
 } from "../svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
@@ -31,7 +36,7 @@ export default function MyProfile() {
   const [showModal, setShowModal] = useState(false);
   const [data, setData] = useState("");
   console.log("🚀 ~ MyProfile ~ data:", data);
-  
+
   const checkUserLogin = async () => {
     console.log("🚀 ~ checkUserLogin ~ checkUserLogin:", checkUserLogin);
     await AsyncStorage.getItem("data")
@@ -173,7 +178,7 @@ export default function MyProfile() {
       >
         <TouchableOpacity onPress={() => navigation.navigate("ProfileEdit")}>
           <ImageBackground
-            source={{ uri: "https://via.placeholder.com/360x360" }}
+            source={require("../assets/images/user.png")}
             style={{
               width: 120,
               height: 120,
@@ -196,7 +201,7 @@ export default function MyProfile() {
                 bottom: -10,
               }}
             >
-              <Edit />
+              <Plus/>
             </View>
           </ImageBackground>
         </TouchableOpacity>
@@ -209,7 +214,7 @@ export default function MyProfile() {
             lineHeight: 20 * 1.4,
           }}
         >
-         {data? data.username : "Xtend" }
+          {data ? data.username : ""}
         </Text>
         <Text
           style={{
@@ -221,7 +226,7 @@ export default function MyProfile() {
             marginBottom: 20,
           }}
         >
-          {data? data.email : "Xtend@mail.com" }
+          {data ? data.email : ""}
         </Text>
         <ProfileCategoryComponent
           title="Wishlist"
@@ -269,7 +274,8 @@ export default function MyProfile() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, ...AREA.AndroidSafeArea }}>
+    // <SafeAreaView style={{ flex: 1, ...AREA.AndroidSafeArea }}>
+     <SafeAreaView  style={{ flex: 1}}>
       {renderBackground()}
       {renderHeader()}
       {renderContent()}

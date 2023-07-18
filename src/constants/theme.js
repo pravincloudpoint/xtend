@@ -8,8 +8,9 @@ export const COLORS = {
   white: "#FFFFFF",
   gray: "#666666",
   black: "#000000",
-  gray: "#333333",
+  green: "#3CB371",
   lightGray: "#666666",
+  lightBlue: "#ADD8E6",
 
   mainColor: "#111111",
   bodyTextColor: "#333333",

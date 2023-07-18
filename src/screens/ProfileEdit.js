@@ -10,7 +10,12 @@ import {
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
-import { Header, Button, ProfileEditCategoryComponent } from "../components";
+import {
+  Header,
+  Button,
+  ProfileEditCategoryComponent,
+  InputField,
+} from "../components";
 import { AREA, COLORS, SIZES } from "../constants";
 import { Camera } from "../svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -40,9 +45,9 @@ export default function ProfileEdit() {
   function renderHeader() {
     return (
       <Header
-        title="Profile Edit"
+        title="View Profile"
         goBack={true}
-        onPress={() => navigation.goBack()}
+        onPress={() => navigation.goBack(null)}
       />
     );
   }
@@ -53,9 +58,10 @@ export default function ProfileEdit() {
         contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 20 }}
         showsVerticalScrollIndicator={false}
       >
-        <TouchableOpacity style={{ marginBottom: 45, marginTop: 20 }}>
+        <TouchableOpacity style={{ marginBottom: 25, marginTop: 20 }}>
           <ImageBackground
-            source={{ uri: "https://via.placeholder.com/360x360" }}
+            // source={{ uri: "https://via.placeholder.com/360x360" }}
+            source={require("../assets/images/user.png")}
             style={{
               width: 120,
               height: 120,
@@ -65,7 +71,7 @@ export default function ProfileEdit() {
             }}
             imageStyle={{ borderRadius: 60 }}
           >
-            <View
+            {/* <View
               style={{
                 width: 40,
                 height: 40,
@@ -79,42 +85,83 @@ export default function ProfileEdit() {
               }}
             >
               <Camera />
-            </View>
+            </View> */}
           </ImageBackground>
         </TouchableOpacity>
-        <ProfileEditCategoryComponent
+        {/* <ProfileEditCategoryComponent
           title="Name"
           // placeholder="Kristin Watson"
-          placeholder= {data? data.username : "Xtend" }
-          contaynerStyle={{ marginBottom: 5 ,width:"100%"}}
+          placeholder={data ? data.username : "Xtend"}
+          contaynerStyle={{ marginBottom: 5, width: "100%" }}
         />
         <ProfileEditCategoryComponent
           title="Email"
           //placeholder="kristinwatson@mail.com"
-          placeholder= {data? data.email : "Xtend@mail.com" }
-          contaynerStyle={{ marginBottom: 5 ,width:"100%"}}
+          placeholder={data ? data.email : "Xtend@mail.com"}
+          contaynerStyle={{ marginBottom: 5, width: "100%" }}
         />
         <ProfileEditCategoryComponent
           title="Phone number"
-          placeholder={data? data.phoneNumber : "+91 123456789" }
-          contaynerStyle={{ marginBottom: 5 ,width:"100%"}}
+          placeholder={data ? data.phoneNumber : "+91 123456789"}
+          contaynerStyle={{ marginBottom: 5, width: "100%" }}
         />
         <ProfileEditCategoryComponent
           title="Location"
           placeholder="India"
-          contaynerStyle={{ marginBottom: 5 ,width:"100%"}}
+          contaynerStyle={{ marginBottom: 5, width: "100%" }}
+        /> */}
+      
+        <InputField
+          title="Name"
+          placeholder={data ? data.username : ""}
+          contaynerStyle={{
+            marginBottom: 10,
+          }}
+          value={data ? data.username : ""}
+          selectTextOnFocus={false}
+          editable={false}
         />
-        <Button
+        <InputField
+          title="Email"
+          placeholder={data ? data.email : ""}
+          contaynerStyle={{
+            marginBottom: 10,
+          }}
+          value={data ? data.username : ""}
+          selectTextOnFocus={false}
+          editable={false}
+        />
+           <InputField
+          title="Phone number"
+          placeholder={data ? data.phoneNumber : ""}
+          contaynerStyle={{
+            marginBottom: 10,
+          }}
+          selectTextOnFocus={false}
+          editable={false}
+        />
+        <InputField
+          title="Location"
+          placeholder={ data.location ? data.location : "India"}
+          contaynerStyle={{
+            marginBottom: 10,
+          }}
+          selectTextOnFocus={false}
+          editable={false}
+        />
+        {/* <Button
           title="Save changes"
           containerStyle={{ marginTop: 10 }}
           onPress={() => navigation.navigate("MyProfile")}
-        />
+        /> */}
+     
       </ScrollView>
     );
   }
 
   return (
     <SafeAreaView style={{ flex: 1, ...AREA.AndroidSafeArea }}>
+    <View style={{ flex: 1 }}>
       <Image
         source={require("../assets/images/background/background-01.png")}
         style={{
@@ -126,6 +173,7 @@ export default function ProfileEdit() {
       />
       {renderHeader()}
       {renderContent()}
+    </View>
     </SafeAreaView>
   );
 }

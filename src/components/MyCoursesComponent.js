@@ -24,7 +24,7 @@ export default function MyCoursesComponent({ item, ongoingCourse = false }) {
             >
                 <TouchableOpacity
                     style={{
-                        width: "100%",
+                        // width: "100%",
                         height: "100%",
                         backgroundColor: "#F1F7FF",
                         borderRadius: 10,
@@ -92,7 +92,7 @@ export default function MyCoursesComponent({ item, ongoingCourse = false }) {
                                     <View
                                         style={{
                                             flexDirection: "row",
-                                            alignItems: "center",
+                                            // alignItems: "center",
                                         }}
                                     >
                                         <Star />

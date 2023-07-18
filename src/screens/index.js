@@ -9,6 +9,7 @@ import VerifyYourPhoneNumber from "./VerifyYourPhoneNumber";
 import ConfirmationCode from "./ConfirmationCode";
 import Home from "./Home";
 import CategoryGrid from "./CategoryGrid";
+import BoardCategoryGrid from "./BoardCategoryGrid";
 import Search from "./Search";
 import CategoryList from "./CategoryList";
 import Filter from "./Filter";
@@ -45,6 +46,7 @@ export {
     ConfirmationCode,
     Home,
     CategoryGrid,
+    BoardCategoryGrid,
     Search,
     CategoryList,
     Filter,

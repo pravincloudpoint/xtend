@@ -12,7 +12,7 @@ import {
   ActivityIndicator,
   ProgressBarAndroid,
 } from "react-native";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import * as ScreenOrientation from "expo-screen-orientation";
@@ -49,17 +49,17 @@ export default function Player() {
   const FourthRoute = () => <ReviewsSectionComponent item={item} />;
 
   const renderScene = SceneMap({
-     first: FirstRoute,
+    first: FirstRoute,
     second: SecondRoute,
-   third: ThirdRoute,
-     fourth: FourthRoute,
+    third: ThirdRoute,
+    fourth: FourthRoute,
   });
 
   const layout = useWindowDimensions();
-
+  const [status, setStatus] = React.useState({});
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-   // { key: "first", title: "Description" },
+    // { key: "first", title: "Description" },
     // { key: "second", title: "Lessons" },
     { key: "third", title: "Instructor" },
     // { key: "fourth", title: "Reviews" },
@@ -97,14 +97,35 @@ export default function Player() {
       console.log("Video downloaded to:", uri);
       ToastAndroid.show("Successfully download!", ToastAndroid.LONG);
       setDownloadProgress(-1);
-      downloadCallback;
+      // downloadCallback;
       console.log("Successfully download");
     } catch (error) {
       console.error("Failed to download video:", error);
       ToastAndroid.show("Failed download!", ToastAndroid.LONG);
     }
   };
-
+  useEffect(() => {
+    const infoFile = async () => {
+      await FileSystem.readDirectoryAsync(storagePath)
+        .then((data) => {
+          console.log("🚀 ~ .then ~ data:", data);
+          data.map((down) => {
+            if (down === item.name) {
+              console.log("🚀This video is downloaded", down);
+              setDownloadProgress(-1);
+            } else {
+              console.log("🚀 ~ .then ~ error");
+            }
+          });
+          // setVideo(data.slice(1));
+        })
+        .catch((err) => {
+          console.log("error", err);
+        });
+    };
+    infoFile();
+    video.current.playAsync();
+  }, []);
   const deleteFile = async (videoUrl) => {
     try {
       console.log("deleteFile ===>", videoUrl);
@@ -118,7 +139,6 @@ export default function Player() {
       console.error(e);
     }
   };
-
   const infoFile = async () => {
     try {
       const data = FileSystem.readDirectoryAsync(storagePath);
@@ -133,7 +153,7 @@ export default function Player() {
       console.error(e);
     }
   };
-  
+
   function setOrientation() {
     if (Dimensions.get("window").height > Dimensions.get("window").width) {
       //Device is in portrait mode, rotate to landscape mode.
@@ -143,6 +163,7 @@ export default function Player() {
       ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
     }
   }
+
   function renderHeader() {
     return (
       <ImageBackground
@@ -158,9 +179,9 @@ export default function Player() {
           <View
             style={{
               flexDirection: "column",
-              alignItems: "center",
+               alignItems: "center",
               justifyContent: "space-around",
-              alignItems: "flex-start",
+              //alignItems: "flex-start",
               // marginBottom: 17,
             }}
           >
@@ -177,8 +198,8 @@ export default function Player() {
                 //uri: "http://192.168.30.1/frm/ui/cat/frmpackage/647dd7000a87b/content/3_Class 8 ICT Understanding HTML C10S1 _ WATCH ALL SESSIONS ONLY ON AAS VIDYALAYA APP.mp4",
               }}
               useNativeControls
-              shouldPlay
               onFullscreenUpdate={setOrientation}
+              onPlaybackStatusUpdate={(status) => setStatus(() => status)}
             />
           </View>
         </View>
@@ -243,7 +264,6 @@ export default function Player() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "space-around",
-          alignItems: "center",
           marginVertical: 10,
         }}
       >
@@ -255,22 +275,26 @@ export default function Player() {
           ></Button>
         )}
         {downloadProgress == 1 && (
-          <View style={{flexDirection:"row"}}>
-          {/* <ActivityIndicator size="large" color="#000" /> */}
-          <ActivityIndicator styleAttr="small" color="#2196F3" />
-          <Text>downloading...</Text>
+          <View style={{ flexDirection: "row" }}>
+            {/* <ActivityIndicator size="large" color="#000" /> */}
+            <ActivityIndicator styleAttr="small" color="#2196F3" />
+            <Text>downloading...</Text>
           </View>
         )}
         {/* {downloadProgress == -1 && (
           <Text>Download completed</Text>
         )} */}
         {downloadProgress == -1 && (
-         <Button
+          <Button
             title="View Downloads"
             containerStyle={{ width: "95%", height: 50 }}
-            onPress={() =>
-                navigation.navigate("MyCourses")
-              }
+            onPress={() => {
+              navigation.navigate("MyCourses");
+              // video.current.pauseAsync();
+              status.isPlaying
+                ? video.current.pauseAsync()
+                : video.current.pauseAsync();
+            }}
           ></Button>
         )}
         {/* <Button 

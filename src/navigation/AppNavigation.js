@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import {
@@ -27,6 +27,7 @@ import {
   MyCourses,
   CategoryList,
   CategoryGrid,
+  BoardCategoryGrid,
   MyProfile,
   CourseDetails,
   CourseCompletedOne,
@@ -38,11 +39,35 @@ import {
 import Player from "../screens/Player";
 import TopRatedList from "../screens/TopRatedList";
 import ClassGrid from "../screens/ClassGrid";
+import BoardGrid from "../screens/BoardGrid";
 import OffLinePlayer from "../screens/OffLinePlayer";
+import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch } from "react-redux";
+import { fetchOtt } from "../Slice/OttSlice";
 
 const Stack = createStackNavigator();
 //test
+
+
+
 function Navigation() {
+  const dispatch = useDispatch();
+  const [data, setData] = useState(false);
+
+useEffect(() => {
+  AsyncStorage.getItem("data")
+  .then((jsonValue) => {
+    const d = jsonValue != null ? JSON.parse(jsonValue) : null;
+    console.log("🚀 ~ .then ~ d:", d);
+    setData(true);
+  })
+  .catch((e) => {
+    console.log(e);
+  });
+  dispatch(fetchOtt());
+}, [])
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -53,12 +78,21 @@ function Navigation() {
         },
         headerShown: false,
       }}
-      initialRouteName="OnBoarding"
+      // initialRouteName= { data? "OnBoarding" : "MainLayout"}
+      initialRouteName= "OnBoarding"
     >
       <Stack.Screen name="OnBoarding" component={OnBoarding} />
       <Stack.Screen name="SignIn" component={SignIn} />
       <Stack.Screen name="SignUp" component={SignUp} />
-      <Stack.Screen name="MyProfile" component={MyProfile} />
+      <Stack.Screen
+        screenOptions={{
+          headerShown: false,
+          headerMode: "none",
+        }}
+        
+        name="MyProfile"
+        component={MyProfile}
+      />
       <Stack.Screen
         name="VerifyYourPhoneNumber"
         component={VerifyYourPhoneNumber}
@@ -68,7 +102,9 @@ function Navigation() {
       <Stack.Screen name="CourseCompletedOne" component={CourseCompletedOne} />
       <Stack.Screen name="Filter" component={Filter} />
       <Stack.Screen name="CategoryGrid" component={CategoryGrid} />
+      <Stack.Screen name="BoardCategoryGrid" component={BoardCategoryGrid} />
       <Stack.Screen name="ClassGrid" component={ClassGrid} />
+      <Stack.Screen name="BoardGrid" component={BoardGrid} />
       <Stack.Screen name="CategoryList" component={CategoryList} />
       <Stack.Screen name="TopRatedList" component={TopRatedList} />
       <Stack.Screen name="ResetPassword" component={ResetPassword} />
@@ -78,7 +114,20 @@ function Navigation() {
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="MyWishlist" component={MyWishlist} />
       <Stack.Screen name="ProfileEdit" component={ProfileEdit} />
-      <Stack.Screen name="MainLayout" component={MainLayout} />
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          title: "Xtend",
+          headerTitleStyle: {
+            fontWeight: "bold",
+          },
+          headerLeft: () => {
+            return null;
+          },
+        }}
+        name="MainLayout"
+        component={MainLayout}
+      />
       <Stack.Screen name="MyCoupons" component={MyCoupons} />
       <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
       <Stack.Screen name="PaymentFailed" component={PaymentFailed} />

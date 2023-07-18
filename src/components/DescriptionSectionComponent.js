@@ -46,6 +46,7 @@ const topRated = [
 ];
 
 export default function DescriptionSectionComponent({ item }) {
+  console.log("🚀 ~ DescriptionSectionComponent ~ item:", item);
   const navigation = useNavigation();
 
   return (
@@ -101,6 +102,26 @@ export default function DescriptionSectionComponent({ item }) {
         </Text>
         <Text
           style={{
+            ...FONTS.H5,
+            textTransform: "capitalize",
+            color: COLORS.mainColor,
+            marginBottom: 10,
+            lineHeight: 16 * 1.5,
+          }}
+        >
+          Board
+        </Text>
+        <Text
+          style={{
+            ...FONTS.BodyText,
+            color: COLORS.bodyTextColor,
+            marginBottom: 1,
+          }}
+        >
+          {item.board}
+        </Text>
+        <Text
+          style={{
             ...FONTS.Lato_400Regular,
             fontSize: 10,
             color: COLORS.secondaryTextColor,
@@ -114,15 +135,10 @@ export default function DescriptionSectionComponent({ item }) {
           style={{
             ...FONTS.BodyText,
             color: COLORS.bodyTextColor,
-            marginBottom: 30,
+            marginBottom: 10,
           }}
         >
-          {/* Welcome to Udemy's first, No Coding Required, VR development course,
-          using VRTK 4. Build once and deploy to both Oculus and Steam VR
-          devices. {"\n"} {"\n"}This course, teaches you everything you need to
-          know to build your very own VR apps and games using the world class
-          Unity Engine. */}
-          {item.Description}
+          {item.description}
         </Text>
         <Text
           style={{

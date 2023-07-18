@@ -145,7 +145,7 @@ export default function VerifyYourPhoneNumber() {
             marginBottom: 20,
           }}
         >
-          We have sent you an SMS with a code to number +91 0123456789.
+          We have sent you an SMS with a code to number {phoneNumber} .
         </Text>
 
         <FirebaseRecaptchaVerifierModal

@@ -6,6 +6,10 @@ import { NavigationContainer } from "@react-navigation/native";
 import AppNavigation from "./src/navigation/AppNavigation";
 import { Provider } from "react-redux";
 import { store } from "./src/Slice/Store";
+import persistStore from "redux-persist/es/persistStore";
+import { PersistGate } from "redux-persist/integration/react";
+
+let persistor = persistStore(store);
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -25,16 +29,17 @@ export default function App() {
 
     Spartan_700Bold: require("./src/assets/fonts/Spartan-Bold.ttf"),
   });
-
   if (!fontsLoaded) {
     return <AppLoading />;
   } else {
     return (
-        <NavigationContainer>
-          <Provider store={store}>
-          <AppNavigation />
-          </Provider>
-        </NavigationContainer>
+      <NavigationContainer>
+        <Provider store={store}>
+          <PersistGate persistor={persistor}>
+            <AppNavigation />
+          </PersistGate>
+        </Provider>
+      </NavigationContainer>
     );
   }
 }

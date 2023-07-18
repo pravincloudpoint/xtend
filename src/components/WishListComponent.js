@@ -1,12 +1,17 @@
 import { View, Text, ImageBackground, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Clock, Heart, Star } from "../svg";
 import { COLORS, FONTS } from "../constants";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch } from "react-redux";
+import { removeFavorite } from "../Slice/Favorites/AddFavoriteSlice";
 
 export default function WishListComponent({ item, onPress }) {
+    // console.log("🚀 ~ WishListComponent ~ item:", item);
     const navigation = useNavigation();
+    const dispatch = useDispatch();
 
     return (
         <TouchableOpacity
@@ -134,6 +139,7 @@ export default function WishListComponent({ item, onPress }) {
                 </View> */}
                 <TouchableOpacity
                     style={{ position: "absolute", right: 0, top: 2 }}
+                    onPress={() => dispatch(removeFavorite(item.id))}
                 >
                     <Heart strokeColor={COLORS.pink} fillColor={COLORS.pink} />
                 </TouchableOpacity>

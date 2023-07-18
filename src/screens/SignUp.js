@@ -33,8 +33,8 @@ import {
 } from "firebase/auth";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import EyeOn from "../svg/EyeOn";
-import { auth, db } from "../../firebase";
 import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "../../config/firebase";
 
 export default function SignUp({ route, navigation }) {
   const { phoneNumber } = route.params;
@@ -312,10 +312,6 @@ export default function SignUp({ route, navigation }) {
               value: 20,
               message: "User Name should be max 23 characters long",
             },
-            pattern: {
-              value: /[^A-Za-z]/gi,
-              message: "Enter characters only",
-            },
           }}
           render={({
             field: { value, onChange, onBlur },
@@ -494,7 +490,7 @@ export default function SignUp({ route, navigation }) {
           >
             Already have an account?
           </Text>
-          <TouchableOpacity onPress={() => addDocument()}>
+          <TouchableOpacity onPress={() =>  navigation.navigate("SignIn")}>
             <Text
               style={{
                 ...FONTS.Lato_700Bold,
@@ -503,12 +499,12 @@ export default function SignUp({ route, navigation }) {
                 lineHeight: 16 * 1.7,
               }}
             >
-              {" "}
+             &nbsp;
               Sign in.
             </Text>
           </TouchableOpacity>
         </View>
-        <View
+        {/* <View
           style={{
             flexDirection: "row",
             alignItems: "center",
@@ -525,7 +521,7 @@ export default function SignUp({ route, navigation }) {
           <TouchableOpacity>
             <Google />
           </TouchableOpacity>
-        </View>
+        </View> */}
       </KeyboardAwareScrollView>
     );
   }
@@ -553,7 +549,7 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     borderColor: "#B7B7B7",
-    height: 50,
+    // height: 50,
     width: "100%",
     height: 60,
     backgroundColor: COLORS.white,

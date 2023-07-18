@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-expressions */
+/* eslint-disable no-undef */
 /* eslint-disable react-hooks/rules-of-hooks */
 import {
   View,
@@ -7,6 +9,7 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
+  ToastAndroid,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -16,12 +19,19 @@ import { Header, InputField, Button } from "../components";
 import { AREA, COLORS, FONTS, SIZES } from "../constants";
 import { Check, EyeOff, CheckSmall, Facebook, Twitter, Google } from "../svg";
 import { Controller, useForm } from "react-hook-form";
-import { db } from "../../config/firebase";
-import { addDoc, collection } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc,
+} from "firebase/firestore";
 import * as FileSystem from "expo-file-system";
+import { db } from "../../config/firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ResizeMode, Video } from "expo-av";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
 export default function SignIn() {
   const [rememberMe, setRememberMe] = useState(true);
   const [video, setVideo] = useState([]);
@@ -146,18 +156,18 @@ export default function SignIn() {
       console.error(e);
     }
   };
-  const pause = async () => {
-    try {
-      await downloadResumable.pauseAsync();
-      console.log("Paused download operation, saving for future retrieval");
-      AsyncStorage.setItem(
-        "pausedDownload",
-        JSON.stringify(downloadResumable.savable())
-      );
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  // const pause = async () => {
+  //   try {
+  //     await downloadResumable.pauseAsync();
+  //     console.log("Paused download operation, saving for future retrieval");
+  //     AsyncStorage.setItem(
+  //       "pausedDownload",
+  //       JSON.stringify(downloadResumable.savable())
+  //     );
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  // };
 
   function renderBackground() {
     return (
@@ -178,8 +188,7 @@ export default function SignIn() {
       <Header
         title="Sign In"
         onPress={() =>
-          //  navigation.goBack()
-          navigation.navigate("MainLayout")
+          navigation.navigate("OnBoarding")
         }
       />
     );
@@ -206,17 +215,37 @@ export default function SignIn() {
           async (userCredential) => {
             // Signed in
             const user = userCredential.user;
-            const jsonValue = JSON.stringify(user);
-            await AsyncStorage.setItem("data", jsonValue).then(() => {
-              console.log("success to set email", user);
-              navigation.navigate("MainLayout");
-            });
+             const jsonValue = JSON.stringify(user);
           }
-        );
+        ).then(async()=>{
+          const usersCollection = collection(db, "User");
+          const userQuery = query(
+            usersCollection,
+            where("email", "==", data.email)
+          );
+          const querySnapshot = await getDocs(userQuery);
+
+          querySnapshot?.forEach(async (doc) => {
+            console.log("doc data()",doc.data());
+            const jsonValue = JSON.stringify(doc.data());
+            console.log("🚀 ~ querySnapshot?.forEach ~ jsonValue:", jsonValue);
+            await AsyncStorage.setItem("data", jsonValue);
+
+            // await AsyncStorage.setItem("data",  JSON.stringify(doc.data())).then(async () => {
+            //   console.log("success to set email", user.email);
+            // });
+          });
+           navigation.navigate("MainLayout");
+        })
         // Additional logic after successful login
       } catch (error) {
         console.log("User login failed:", error.message);
-        // Handle login error
+        if (error.code === "auth/wrong-password") {
+          ToastAndroid.show("incorrect password!", ToastAndroid.LONG);
+        }
+        if (error.code === "auth/network-request-failed") {
+          ToastAndroid.show("Please connect internet connection!", ToastAndroid.LONG);
+        }
       }
     };
     return (
@@ -364,7 +393,7 @@ export default function SignIn() {
                 marginRight: 8,
                 borderColor: COLORS.lightBlack,
                 justifyContent: "center",
-                alignItems: "center",
+                // alignItems: "center",
               }}
             >
               {rememberMe && <CheckSmall />}
@@ -456,7 +485,7 @@ export default function SignIn() {
                 lineHeight: 16 * 1.7,
               }}
             >
-               &nbsp; Sign up.
+              &nbsp; Sign up.
             </Text>
           </TouchableOpacity>
         </View>

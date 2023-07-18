@@ -7,7 +7,7 @@ import {
   StatusBar,
   Image,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 
@@ -20,12 +20,34 @@ import {
   ReviewsSectionComponent,
 } from "../components";
 import Quiz from "../components/QuizsectionComponent";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch } from "react-redux";
+import {
+  addFavorite,
+  removeFavorite,
+} from "../Slice/Favorites/AddFavoriteSlice";
 
 export default function CourseDetails() {
   const navigation = useNavigation();
   const route = useRoute();
+  const dispatch = useDispatch();
   const { item } = route.params;
-  console.log("🚀 ~ CourseDetails ~ item:", item);
+  const [itemStatus, setItemStatus] = useState(false);
+  console.log("🚀 ~ CourseDetails ~ itemStatus:", itemStatus);
+  // console.log("🚀 ~ CourseDetails ~ item:", item);
+
+  
+  const addFavoriteItem = (item) => {
+    // console.log("🚀 ~ addFavorite ~ item:", item);
+    dispatch(addFavorite(item));
+    setItemStatus(true);
+  };
+
+  const removeFavoriteItem = (item) => {
+    // console.log("🚀 ~ removeFavoriteItem ~ item:", item);
+    dispatch(removeFavorite(item.id));
+    setItemStatus(false);
+  };
 
   const FirstRoute = () => <DescriptionSectionComponent item={item} />;
   // const SecondRoute = () => <LessonsSectionComponent item={item} />;
@@ -75,41 +97,60 @@ export default function CourseDetails() {
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <ArrowWhite />
             </TouchableOpacity>
-            <TouchableOpacity>
-              <Heart strokeColor={COLORS.white} />
-            </TouchableOpacity>
+
+            {itemStatus ? (
+              <TouchableOpacity onPress={() => removeFavoriteItem(item)}>
+                <Heart strokeColor={COLORS.pink} fillColor={COLORS.pink} />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={() => addFavoriteItem(item)}>
+                <Heart strokeColor={COLORS.white} fillColor={COLORS.white} />
+              </TouchableOpacity>
+            )}
           </View>
-          <View style={{ flexDirection: "row", alignItems: "center",justifyContent: "space-between",}}>
-          <View style={{ flexDirection: "row", alignItems: "center",justifyContent: "space-between",}}>
-          <Text
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <View
               style={{
-                ...FONTS.Lato_700Bold,
-                fontSize: 10,
-                color: "#FFC700",
-                marginRight: 3,
-                lineHeight: 10 * 1.7,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
               }}
             >
-              {item.rating}
-            </Text>
-            <Rating />
-          </View>
-            
+              <Text
+                style={{
+                  ...FONTS.Lato_700Bold,
+                  fontSize: 10,
+                  color: "#FFC700",
+                  marginRight: 3,
+                  lineHeight: 10 * 1.7,
+                }}
+              >
+                {item.rating}
+              </Text>
+              <Rating />
+            </View>
+
             <View>
-            <Text
-              style={{
-                ...FONTS.Lato_700Bold,
-                fontSize: 14,
-                color: "#000",
-                marginRight: 3,
-                lineHeight: 10 * 1.7,
-              }}
-            >
-              {item.class}
-            </Text>
+              <Text
+                style={{
+                  ...FONTS.Lato_700Bold,
+                  fontSize: 14,
+                  color: "#000",
+                  marginRight: 3,
+                  lineHeight: 10 * 1.7,
+                }}
+              >
+                {item.class}
+              </Text>
             </View>
           </View>
-         
+
           <Text
             style={{
               ...FONTS.H4,
@@ -138,7 +179,7 @@ export default function CourseDetails() {
                 lineHeight: 10 * 1.7,
               }}
             >
-              Last Update Apr. 5, 2022{" "}
+              Last Update Apr. 5, 2022
             </Text>
           </View>
           <View

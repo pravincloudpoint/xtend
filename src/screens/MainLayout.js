@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, Image } from "react-native";
-import React, { useState } from "react";
+import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
+import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
 import Home from "../screens/Home";
@@ -9,10 +9,16 @@ import MyProfile from "../screens/MyProfile";
 
 import { UserTab, BookOpenTab, SearchTab, HomeTab, Download } from "../svg";
 import { COLORS, FONTS } from "../constants";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchOtt } from "../Slice/OttSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function MainLayout() {
   const navigation = useNavigation();
   const [selectedTab, setSelectedTab] = useState("Home");
+  useEffect(() => {
+    setSelectedTab("Home")
+  }, []);
 
   const tabs = [
     {
@@ -40,15 +46,21 @@ export default function MainLayout() {
     {
       id: "3",
       screen: "Downloads",
-      icon: (
-        <Download
-          strokeColor={
-            selectedTab == "Downloads"
-              ? COLORS.black
-              : COLORS.secondaryTextColor
-          }
-        />
-      ),
+      // icon: (
+      //   <Download
+      //     strokeColor={
+      //       selectedTab == "Downloads"
+      //         ? COLORS.black
+      //         : COLORS.secondaryTextColor
+      //     }
+      //   />
+      // ),
+      icon:
+        selectedTab == "Downloads" ? (
+          <Download strokeColor={COLORS.black} hight={28} width={23} color={COLORS.black}/>
+        ) : (
+          <Download strokeColor={COLORS.black} hight={28} width={23}  color={COLORS.secondaryTextColor}/>
+        ),
     },
     {
       id: "4",
@@ -71,7 +83,6 @@ export default function MainLayout() {
       {selectedTab == "Search" && <Search />}
       {selectedTab == "Downloads" && <MyCurses />}
       {selectedTab == "My Profile" && <MyProfile />}
-
       <View
         style={{
           flexDirection: "row",

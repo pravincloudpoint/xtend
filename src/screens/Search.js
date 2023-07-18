@@ -9,9 +9,10 @@ import {
   ScrollView,
   Image,
 } from "react-native";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-
+import { useDispatch, useSelector } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { InputSearch, Filter, EllipseSvg } from "../svg";
 import { AREA, courses, FONTS, tags, SIZES } from "../constants";
 import {
@@ -23,14 +24,47 @@ import {
 export default function Search() {
   const navigation = useNavigation();
 
-  const topRated = courses.filter(function (course) {
-    speciallyForYou;
+  const [data, setData] = useState([]);
+  const [flag, setFlag] = useState(false);
+  const dispatch = useDispatch();
+
+  const video = useSelector((state) => state.video);
+  //const video = useSelector(selectContents);
+  console.log("🚀 ~ Home ~ data:",  video.length);
+
+  // console.log("🚀 ~ Home ~ video:", video);
+  // console.log("🚀 ~ Home ~ video:", JSON.stringify(video));
+
+  const getData = async () => {
+    const videos = await video;
+    console.log("🚀 ~ getData ~ isLoader:", videos.isLoader);
+    setFlag(videos.isLoader);
+    setData(videos.data.data);
+    // setData(videos.video.data[2]);
+  };
+
+  const getLoginData = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem("data");
+      // console.log("🚀 ~ getDataa ~ jsonValue:", jsonValue);
+      return jsonValue != null ? JSON.parse(jsonValue) : null;
+    } catch (e) {
+      // error reading value
+    }
+  };
+  useEffect(() => {
+    // dispatch(fetchOtt());
+     getData();
+    getLoginData();
+  }, []);
+
+  const topRated = data.filter(function (course) {
     return course.topRated;
   });
-  const speciallyForYou = courses.filter(function (course) {
+  const speciallyForYou = data.filter(function (course) {
     return course.speciallyForYou;
   });
-  const isNew = courses.filter(function (course) {
+  const isNew = data.filter(function (course) {
     return course.isNew;
   });
   function renderBackground() {
@@ -96,7 +130,7 @@ export default function Search() {
           onPress={() =>
             navigation.navigate("TopRatedList", {
               name: "New courses",
-              isNew,
+              listSection: isNew,
             })
           }
         />
@@ -128,7 +162,7 @@ export default function Search() {
         <CategoryComponent
           title={"Top rated"}
           onPress={() =>
-            navigation.navigate("TopRatedList", { name: "Top rated", topRated })
+            navigation.navigate("TopRatedList", { name: "Top rated",listSection: topRated })
           }
         />
 
@@ -167,7 +201,7 @@ export default function Search() {
           onPress={() =>
             navigation.navigate("TopRatedList", {
               name: "Specially for you",
-              speciallyForYou,
+              listSection: speciallyForYou,
             })
           }
         />
@@ -268,7 +302,7 @@ export default function Search() {
   }
 
   return (
-    <SafeAreaView style={{ ...AREA.AndroidSafeArea }}>
+    // <SafeAreaView style={{ ...AREA.AndroidSafeArea }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ flexGrow: 1 }}
@@ -280,6 +314,6 @@ export default function Search() {
         {/* {SpeciallyForYou()} */}
         {/* {renderOftenSearched()} */}
       </ScrollView>
-    </SafeAreaView>
+    // </SafeAreaView>
   );
 }

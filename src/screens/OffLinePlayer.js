@@ -138,7 +138,7 @@ export default function OffLinePlayer() {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "space-around",
-              alignItems: "flex-start",
+              // alignItems: "flex-start",
               // marginBottom: 17,
             }}
           >
@@ -313,7 +313,6 @@ export default function OffLinePlayer() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "space-around",
-          alignItems: "center",
           marginVertical: 10,
         }}
       >

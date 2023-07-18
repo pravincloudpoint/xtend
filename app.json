@@ -4,9 +4,9 @@
     "slug": "xtend",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",  
+    "icon": "./assets/appIcon.png",  
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splashScreen.png",
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
@@ -24,22 +24,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "intentFilters": [
-        {
-          "action": "MAIN",
-          "category": [
-            "LEANBACK_LAUNCHER"
-          ]
-        }
-      ],
-      "tv": {
-        "category": "leanback",
-        "mainTVBanner": {
-          "xhdpi": "./assets/splash.png"
-        }
-      },
       "package": "com.sat.xtend",
-      "versionCode": 2
+      "versionCode": 8
     },
     "web": {
       "favicon": "./assets/favicon.png"
