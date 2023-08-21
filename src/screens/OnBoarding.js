@@ -37,7 +37,7 @@ export default function OnBoarding() {
 
   const checkUserLogin = async () => {
     console.log("🚀 ~ checkUserLogin ~ checkUserLogin:", checkUserLogin);
-    await AsyncStorage.getItem("data")
+    await AsyncStorage.getItem("userData")
       .then((jsonValue) => {
         const d = jsonValue != null ? JSON.parse(jsonValue) : null;
         console.log("🚀 ~ .then ~ d:", d);

@@ -11,6 +11,7 @@ import {
 } from "../svg";
 
 export default function InstructorSectionComponent({ item }) {
+    // console.log("🚀 ~ file: InstructorSectionComponent.js:14 ~ item:", item);
     return (
         <ScrollView
             contentContainerStyle={{ flexGrow: 1, paddingVertical: 20 }}
@@ -26,6 +27,16 @@ export default function InstructorSectionComponent({ item }) {
                     }}
                 >
                     {item.name}
+                </Text>
+                <Text
+                    style={{
+                        ...FONTS.H5,
+                        marginBottom: 2,
+                        lineHeight: 16 * 1.5,
+                        textTransform: "capitalize",
+                    }}
+                >
+                    {item.id}
                 </Text>
                 <Text
                     style={{

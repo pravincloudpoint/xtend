@@ -1,10 +1,12 @@
 import { View, Text, ScrollView } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 
 import { FONTS, COLORS, SIZES } from "../constants";
 import Button from "./Button";
 import { TopRatedCheck, Video, Download, Certificate } from "../svg";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useState } from "react";
 
 const topRated = [
   {
@@ -46,7 +48,19 @@ const topRated = [
 ];
 
 export default function DescriptionSectionComponent({ item }) {
-  console.log("🚀 ~ DescriptionSectionComponent ~ item:", item);
+  // console.log("🚀 ~ DescriptionSectionComponent ~ item:", item);
+useEffect(() => {
+  getAsyncStorageVideo()
+  //AsyncStorage.removeItem('videoAnalytics')
+}, [])
+
+    const getAsyncStorageVideo = async() =>{
+     await AsyncStorage.getItem("videoAnalytics")
+      .then((readObjs) => {
+        const data = JSON.parse(readObjs);
+        console.log("🚀 ~AsyncStorage~ data:", data);
+      })
+    }
   const navigation = useNavigation();
 
   return (
@@ -152,30 +166,31 @@ export default function DescriptionSectionComponent({ item }) {
           New Additions
         </Text>
         <View style={{ marginBottom: 30 }}>
-          {item.additions && item.additions.map((item, index) => {
-            return (
-              <View
-                key={index}
-                style={{
-                  width: "100%",
-                  flexDirection: "row",
-                }}
-              >
-                <View style={{ bottom: -7 }}>
-                  <TopRatedCheck />
-                </View>
-                <Text
+          {item.additions &&
+            item.additions.map((item, index) => {
+              return (
+                <View
+                  key={index}
                   style={{
-                    ...FONTS.BodyText,
-                    marginLeft: 10,
-                    color: COLORS.bodyTextColor,
+                    width: "100%",
+                    flexDirection: "row",
                   }}
                 >
-                  {item}
-                </Text>
-              </View>
-            );
-          })}
+                  <View style={{ bottom: -7 }}>
+                    <TopRatedCheck />
+                  </View>
+                  <Text
+                    style={{
+                      ...FONTS.BodyText,
+                      marginLeft: 10,
+                      color: COLORS.bodyTextColor,
+                    }}
+                  >
+                    {item}
+                  </Text>
+                </View>
+              );
+            })}
         </View>
 
         {/* <Text
@@ -248,7 +263,9 @@ export default function DescriptionSectionComponent({ item }) {
           marginBottom: 20,
           width: SIZES.width - 40,
         }}
-        onPress={() => navigation.navigate("Player", { item: item })}
+        onPress={() =>
+          navigation.navigate("Player", { item: item })
+        }
       />
     </View>
   );

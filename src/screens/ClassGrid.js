@@ -13,9 +13,51 @@ import { useNavigation } from "@react-navigation/native";
 
 export default function ClassGrid({ route }) {
   const navigation = useNavigation();
-  const { className,courses } = route.params;
-  // console.log("🚀 ~ ClassGrid ~ courses:", courses);
-  // console.log("🚀 ~ ClassGrid ~ className:", className);
+  const { className, board, language } = route.params;
+  console.log("🚀 ~ file: ClassGrid.js:17 ~ className:", className);
+  console.log("🚀 ~ file: ClassGrid.js:17 ~ language:", language);
+  // console.log("🚀 ~ file: ClassGrid.js:17 ~ classList:", classList);
+//  console.log("🚀 ~ ClassGrid ~ courses:", courses);
+  //  console.log("🚀 ~ ClassGrid ~ className:", className);
+
+  //  console.log("🚀 ~ file: ClassGrid.js:17 ~ courses:", courses);
+  const data = board.filter(function (item) {
+    return item.language == language;
+  });
+  console.log("🚀 ~ file: ClassGrid.js:27 ~ data:", data);
+  
+  const unique = [...new Set(data.map((item) => item.class))]; // [ 'A', 'B']
+  // console.log("🚀 ~ Home ~ unique:", unique);
+
+  const classList = unique.filter((d) => d.includes("Class"));
+
+
+   function compareClasses(classObj1, classObj2) {
+    const classNumber1 = parseInt(classObj1.split(' ')[1]);
+    const classNumber2 = parseInt(classObj2.split(' ')[1]);
+    return classNumber1 - classNumber2;
+  }
+  classList.sort(compareClasses);
+  console.log("🚀 ~ file: ClassGrid.js:33 ~ classList:", classList);
+
+  // console.log("🚀 ~ file: Home.js:101 ~ classList:", classList);
+  // console.log("🚀 ~ file: Home.js:101 ~ classList:", classList);
+  // let classes = [
+  //   ...new Set(
+  //     courses.filter((t) => t.language == language)
+  //   ),
+  // ];
+  // console.log("🚀 ~ file: ClassGrid.js:31 ~ classes:", classes);
+
+  // function compareClasses(classObj1, classObj2) {
+  //   const classNumber1 = parseInt(classObj1.split(' ')[1]);
+  //   const classNumber2 = parseInt(classObj2.split(' ')[1]);
+  //   return classNumber1 - classNumber2;
+  // }
+  // classes.sort(compareClasses);
+  // console.log("🚀 ~ file: Home.js:101 ~ classList:", classes);
+
+  // console.log("🚀 ~ file: ClassGrid.js:17 ~ courses:", courses);
 
   return (
     <SafeAreaView
@@ -23,7 +65,7 @@ export default function ClassGrid({ route }) {
     >
       <Header title="Classes" goBack={true} onPress={() => navigation.goBack(null)}/>
       <FlatList
-        data={className}
+        data={classList}
         horizontal={false}
         numColumns={2}
         columnWrapperStyle={{
@@ -31,14 +73,13 @@ export default function ClassGrid({ route }) {
           flexWrap: "wrap",
         }}
         renderItem={({ item, index }) => {
-          console.log("item", item);
           return (
             <TouchableOpacity
               key={index}
               onPress={() =>
                 navigation.navigate("CategoryGrid", {
                   className: item,
-                  courses
+                  data
                 })
               }
               style={{
@@ -73,10 +114,10 @@ export default function ClassGrid({ route }) {
                     padding:10,
                     marginBottom:20
                   }}
-                source={item.image}
+                source={require("../assets/subjects/webinar.png")}
                 imageStyle={{ borderRadius: 10, height: 80, width: 80 }}
               >
-              
+
               </ImageBackground>
               <Text
                   style={{
@@ -86,7 +127,7 @@ export default function ClassGrid({ route }) {
                     fontSize: 14,
                   }}
                 >
-                  {item.class}
+                  {item}
                 </Text>
             </TouchableOpacity>
           );

@@ -8,20 +8,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchOtt } from "../Slice/OttSlice";
 
 export default function CategoryList({ route }) {
-  console.log("🚀 ~ CategoryList ~ CategoryList:", CategoryList);
-  const { item, className ,categoryList} = route.params;
-  // console.log("🚀 ~ CategoryList ~ categoryList: ===============>", categoryList);
-  //  console.log("==================item==================", item.category);
+  const { item, className ,subjectList} = route.params;
+  // console.log("🚀 ~ subjectList ~ subjectList: ===============>", subjectList);
+  //  console.log("==================item==================", item.subject);
   const navigation = useNavigation();
 
-  const chapters = categoryList.filter(function (course) {
-    return course.category === item.category;
+  const chapters = subjectList.filter(function (course) {
+    return course.subject === item.subject;
   });
   // console.log("chapters=========================>",  chapters);
   function renderHeader() {
     return (
       <Header
-        title={item.category}
+        title={item.subject}
         goBack={true}
         filter={true}
         onPress={() => navigation.goBack(null)}

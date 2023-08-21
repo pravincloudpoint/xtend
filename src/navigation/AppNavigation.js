@@ -24,7 +24,7 @@ import {
   MyWallet,
   MyCoupons,
   MyWishlist,
-  MyCourses,
+  MyDownloads,
   CategoryList,
   CategoryGrid,
   BoardCategoryGrid,
@@ -41,32 +41,25 @@ import TopRatedList from "../screens/TopRatedList";
 import ClassGrid from "../screens/ClassGrid";
 import BoardGrid from "../screens/BoardGrid";
 import OffLinePlayer from "../screens/OffLinePlayer";
-import { useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useDispatch } from "react-redux";
-import { fetchOtt } from "../Slice/OttSlice";
 
 const Stack = createStackNavigator();
 //test
 
-
-
 function Navigation() {
-  const dispatch = useDispatch();
-  const [data, setData] = useState(false);
 
-useEffect(() => {
-  AsyncStorage.getItem("data")
-  .then((jsonValue) => {
-    const d = jsonValue != null ? JSON.parse(jsonValue) : null;
-    console.log("🚀 ~ .then ~ d:", d);
-    setData(true);
-  })
-  .catch((e) => {
-    console.log(e);
-  });
-  dispatch(fetchOtt());
-}, [])
+  //   const dispatch = useDispatch();
+  // useEffect(() => {
+  //   AsyncStorage.getItem("userData")
+  //   .then((jsonValue) => {
+  //     const d = jsonValue != null ? JSON.parse(jsonValue) : null;
+  //     console.log("🚀 ~ .then ~ d:", d);
+  //     setData(true);
+  //   })
+  //   .catch((e) => {
+  //     console.log(e);
+  //   });
+  //   dispatch(fetchOtt());
+  // }, [])
 
   return (
     <Stack.Navigator
@@ -79,7 +72,7 @@ useEffect(() => {
         headerShown: false,
       }}
       // initialRouteName= { data? "OnBoarding" : "MainLayout"}
-      initialRouteName= "OnBoarding"
+      initialRouteName="OnBoarding"
     >
       <Stack.Screen name="OnBoarding" component={OnBoarding} />
       <Stack.Screen name="SignIn" component={SignIn} />
@@ -89,7 +82,6 @@ useEffect(() => {
           headerShown: false,
           headerMode: "none",
         }}
-        
         name="MyProfile"
         component={MyProfile}
       />
@@ -110,7 +102,7 @@ useEffect(() => {
       <Stack.Screen name="ResetPassword" component={ResetPassword} />
       <Stack.Screen name="CourseReviews" component={CourseReviews} />
       <Stack.Screen name="MyWallet" component={MyWallet} />
-      <Stack.Screen name="MyCourses" component={MyCourses} />
+      <Stack.Screen name="MyDownloads" component={MyDownloads} />
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="MyWishlist" component={MyWishlist} />
       <Stack.Screen name="ProfileEdit" component={ProfileEdit} />

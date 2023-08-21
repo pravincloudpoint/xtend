@@ -21,7 +21,7 @@ import CourseCompletedOne from "./CourseCompletedOne";
 import CourseCompletedTwo from "./CourseCompletedTwo";
 import MyProfile from "./MyProfile";
 import ProfileEdit from "./ProfileEdit";
-import MyCourses from "./MyCourses";
+import MyDownloads from "./MyDownloads";
 import MyWishlist from "./MyWishlist";
 import MyCoupons from "./MyCoupons";
 import MyWallet from "./MyWallet";
@@ -58,7 +58,7 @@ export {
     CourseCompletedTwo,
     MyProfile,
     ProfileEdit,
-    MyCourses,
+    MyDownloads,
     MyWishlist,
     MyCoupons,
     MyWallet,

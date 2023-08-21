@@ -7,8 +7,10 @@ import {
   TouchableOpacity,
   StyleSheet,
   ToastAndroid,
+  TextInput,
+  FlatList,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Header, InputField, Button } from "../components";
@@ -25,21 +27,69 @@ import {
 import DropDownPicker from "react-native-dropdown-picker";
 import { ScrollView } from "react-native-gesture-handler";
 import { Controller, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import {
   createUserWithEmailAndPassword,
   updatePhoneNumber,
 } from "firebase/auth";
-import { Colors } from "react-native/Libraries/NewAppScreen";
 import EyeOn from "../svg/EyeOn";
-import { doc, setDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { auth, db } from "../../config/firebase";
+import { format } from "date-fns";
+import { useRoute } from "@react-navigation/native";
 
-export default function SignUp({ route, navigation }) {
-  const { phoneNumber } = route.params;
+const countries = [
+  { country: "Afghanistan", code: "93", iso: "AF" },
+  { country: "Albania", code: "355", iso: "AL" },
+  { country: "Algeria", code: "213", iso: "DZ" },
+  { country: "American Samoa", code: "1-684", iso: "AS" },
+  { country: "Andorra", code: "376", iso: "AD" },
+  { country: "Angola", code: "244", iso: "AO" },
+  { country: "Anguilla", code: "1-264", iso: "AI" },
+  { country: "Antarctica", code: "672", iso: "AQ" },
+  { country: "Antigua and Barbuda", code: "1-268", iso: "AG" },
+  { country: "Argentina", code: "54", iso: "AR" },
+  { country: "Armenia", code: "374", iso: "AM" },
+  { country: "Aruba", code: "297", iso: "AW" },
+  { country: "Australia", code: "61", iso: "AU" },
+  { country: "Austria", code: "43", iso: "AT" },
+  { country: "Azerbaijan", code: "994", iso: "AZ" },
+  { country: "Comoros", code: "269", iso: "KM" },
+  { country: "Cook Islands", code: "682", iso: "CK" },
+  { country: "Lebanon", code: "961", iso: "LB" },
+  { country: "Lesotho", code: "266", iso: "LS" },
+  { country: "Liberia", code: "231", iso: "LR" },
+  { country: "Libya", code: "218", iso: "LY" },
+  { country: "Liechtenstein", code: "423", iso: "LI" },
+  { country: "Lithuania", code: "370", iso: "LT" },
+  { country: "Niue", code: "683", iso: "NU" },
+];
+export default function SignUp({navigation }) {
+  const route = useRoute();
+  const {phoneNumber, location } = route.params;
   console.log("phoneNumber===>", phoneNumber);
+ console.log("location===>", typeof location);
+ const locationData = location[0]; // Assuming there's only one object in the array
 
+ const postalCode = locationData.postalCode;
+ const country = locationData.country;
+ const isoCountryCode = locationData.isoCountryCode;
+ const subregion = locationData.subregion;
+ const city = locationData.city;
+ const street = locationData.street;
+ const district = locationData.district;
+ const name = locationData.name;
+ const streetNumber = locationData.streetNumber;
+ const region = locationData.region;
+ const timezone = locationData.timezone;
+
+// const phoneNumber="0000000";
   function renderBackground() {
     return (
       <Image
@@ -57,6 +107,28 @@ export default function SignUp({ route, navigation }) {
   function renderHeader() {
     return <Header title="Sign Up" onPress={() => navigation.goBack()} />;
   }
+  const [schoolsList, setSchoolsList] = useState();
+   console.log("🚀 ~ file: SignUp.js:89 ~ schoolsList:", schoolsList);
+
+  const getSchoolsList = async () => {
+    const usersCollection = collection(db, "schools");
+    const userQuery = query(
+      usersCollection,
+      where("state", "==", region),
+      where("city", "==", city),
+    );
+    const querySnapshot = await getDocs(userQuery);
+    items = [];
+    querySnapshot?.forEach(async (doc) => {
+      //  console.log("doc data()",doc.data());
+      items.push(doc.data());
+    });
+    setSchoolsList(items);
+  };
+
+  useEffect(() => {
+    getSchoolsList();
+  }, []);
 
   function renderContent() {
     const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
@@ -70,21 +142,47 @@ export default function SignUp({ route, navigation }) {
       { label: "Student", value: "student" },
       { label: "Teacher", value: "teacher" },
     ]);
+
     const [classItems, setClassItems] = useState([
       {
         label: "Class 1",
-        value: "class1",
+        value: "Class 1",
       },
-      { label: "Class 2", value: "class2" },
-      { label: "Class 3", value: "class3" },
-      { label: "Class 4", value: "class4" },
-      { label: "Class 5", value: "class5" },
-      { label: "Class 6", value: "class6" },
-      { label: "Class 7", value: "class7" },
-      { label: "Class 8", value: "class8" },
-      { label: "Class 9", value: "class9" },
-      { label: "Class 10", value: "class10" },
+      { label: "Class 2", value: "Class 2" },
+      { label: "Class 3", value: "Class 3" },
+      { label: "Class 4", value: "Class 4" },
+      { label: "Class 5", value: "Class 5" },
+      { label: "Class 6", value: "Class 6" },
+      { label: "Class 7", value: "Class 7" },
+      { label: "Class 8", value: "Class 8" },
+      { label: "Class 9", value: "Class 9" },
+      { label: "Class 10", value: "Class 10" },
     ]);
+
+    const [search, setSearch] = useState("");
+    const [clicked, setClicked] = useState(false);
+    const [data, setData] = useState(countries);
+    const [selectedSchoolName, setSelectedSchoolName] = useState("");
+    const searchRef = useRef();
+    const onSearch = (search) => {
+      console.log("🚀 ~ file: SignUp.js:151 ~ search:", search);
+      if (search !== "") {
+        let tempData = schoolsList.filter((item) => {
+          console.log("🚀 ~ file: SignUp.js:154 ~ item:", item);
+          return (
+            item.schoolName.toLowerCase().indexOf(search.toLowerCase()) > -1
+          );
+        });
+        setData(tempData);
+      } else {
+        setData(schoolsList);
+      }
+    };
+
+    //chip
+    const [classList, setClassList] = useState("");
+    const [clicked1, setClicked1] = useState(false);
+
     const {
       control,
       handleSubmit,
@@ -93,6 +191,8 @@ export default function SignUp({ route, navigation }) {
     } = useForm({
       defaultValues: {
         phoneNumber: phoneNumber,
+        // schoolName: selectedSchoolName,
+        // class: classList,
       },
     });
 
@@ -101,9 +201,10 @@ export default function SignUp({ route, navigation }) {
 
     const pwd = watch("password");
     const role = watch("role");
+    // const nameSchool = watch("schoolName");
 
     const onSignUpForm = async (data) => {
-      console.log("🚀 ~ onSignUpForm ~ data:", data);
+      console.log("🚀 ~ file: SignUp.js:189 ~ data:", data);
       try {
         const userCredential = await createUserWithEmailAndPassword(
           auth,
@@ -113,8 +214,19 @@ export default function SignUp({ route, navigation }) {
         const user = userCredential.user;
         console.log("User sign-up successful:", user.uid);
         try {
-          const docRef = doc(db, "User", user.email);
-          setDoc(docRef,  data)
+          const docRef = doc(db, "users", user.email);
+
+          const userDoc = {
+            ...data,
+            schoolName: selectedSchoolName,
+            phoneNumber: phoneNumber,
+            class: classList,
+            location:locationData,
+            createAt: format(new Date(), "dd-MM-yyyy hh:mm:ss"),
+          };
+          console.log("🚀 ~ file: SignUp.js:202 ~ userDoc:", userDoc);
+
+          setDoc(docRef, userDoc)
             .then(() => {
               console.log("Document has been added successfully");
             })
@@ -126,9 +238,14 @@ export default function SignUp({ route, navigation }) {
             console.log("success to set email");
             navigation.navigate("MainLayout");
           });
-          const jsonValue = JSON.stringify(data);
-          await AsyncStorage.setItem("data", jsonValue);
-          const asyncvalue = AsyncStorage.getItem("data");
+
+          const userData= {
+            ...data,
+            ...locationData
+          }
+          const jsonValue = JSON.stringify(userData);
+          await AsyncStorage.setItem("userData", jsonValue);
+          const asyncvalue = AsyncStorage.getItem("userData");
           console.log("async data", await asyncvalue);
           navigation.navigate("MainLayout");
         } catch (e) {
@@ -138,13 +255,10 @@ export default function SignUp({ route, navigation }) {
       } catch (error) {
         console.log("User sign-up failed:", error.message);
         if (error.code === "auth/email-already-in-use") {
-          ToastAndroid.show("Email Already Used!", ToastAndroid.LONG);
+          ToastAndroid.show("Email Id Already Used!", ToastAndroid.LONG);
         } else {
         }
       }
-      // await AsyncStorage.setItem("data", JSON.stringify(data));
-      // const asyncvalue = AsyncStorage.getItem("data");
-      // console.log("async data", await asyncvalue);
     };
 
     return (
@@ -177,7 +291,132 @@ export default function SignUp({ route, navigation }) {
           Sign up
         </Text>
 
-        {/* <View style={{ zIndex: 10, marginBottom: 10 }}>
+        <View style={{ zIndex: 11, marginBottom: 5, marginTop: 5 }}>
+          <Controller
+            control={control}
+            name="schoolName"
+            // rules={{
+            //   required: "School Name is required",
+            // }}
+            render={({ field, error }) => (
+              <>
+                <View style={{ flex: 1 }}>
+                  <TouchableOpacity
+                    style={{
+                      borderColor: "#B7B7B7",
+                      // height: 50,
+                      width: "100%",
+                      height: 60,
+                      backgroundColor: COLORS.white,
+                      borderRadius: 10,
+                      paddingLeft: 20,
+                      paddingVertical: 8,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginBottom: 5,
+                    }}
+                    onPress={() => {
+                      setClicked(!clicked);
+                    }}
+                  >
+                    <Text
+                      style={{
+                        ...FONTS.LeagueSpartan_400Regular,
+                        fontSize: 14,
+                        lineHeight: 12 * 1.7,
+                      }}
+                    >
+                      {selectedSchoolName == ""
+                        ? "Select School Name"
+                        : selectedSchoolName}
+                    </Text>
+
+                    {/* {clicked ? (
+          <Image
+            source={require('./upload.png')}
+            style={{width: 20, height: 20}}
+          />
+        ) : (
+          <Image
+            source={require('./dropdown.png')}
+            style={{width: 20, height: 20}}
+          />
+        )} */}
+                  </TouchableOpacity>
+
+                  {clicked ? (
+                    <View
+                      style={{
+                        elevation: 5,
+                        height: 200,
+                        alignSelf: "center",
+                        width: "100%",
+                        backgroundColor: "#fff",
+                        borderRadius: 10,
+                        marginBottom: 5,
+                      }}
+                    >
+                      <TextInput
+                        placeholder="Search.."
+                        placeholderTextColor={{
+                          ...FONTS.LeagueSpartan_400Regular,
+                          fontSize: 14,
+                          color: COLORS.gray,
+                          lineHeight: 12 * 1.7,
+                        }}
+                        value={search}
+                        ref={searchRef}
+                        onChangeText={(txt) => {
+                          onSearch(txt);
+                          setSearch(txt);
+                        }}
+                        style={{
+                          width: "95%",
+                          height: 50,
+                          alignSelf: "center",
+                          borderWidth: 0.2,
+                          borderColor: "#8e8e8e",
+                          borderRadius: 7,
+                          marginTop: 5,
+                          paddingLeft: 20,
+                        }}
+                      />
+
+                      <FlatList
+                        data={schoolsList}
+                        renderItem={({ item, index }) => {
+                          return (
+                            <TouchableOpacity
+                              style={{
+                                width: "90%",
+                                alignSelf: "center",
+                                height: 40,
+                                justifyContent: "center",
+                                borderBottomWidth: 0.5,
+                                borderColor: "#8e8e8e",
+                              }}
+                              onPress={() => {
+                                setSelectedSchoolName(item.schoolName);
+                                setClicked(!clicked);
+                                onSearch("");
+                                setSearch("");
+                              }}
+                            >
+                              <Text style={{ fontWeight: "600" }}>
+                                {item.schoolName}
+                              </Text>
+                            </TouchableOpacity>
+                          );
+                        }}
+                      />
+                    </View>
+                  ) : null}
+                </View>
+              </>
+            )}
+          />
+        </View>
+        <View style={{ zIndex: 11, marginBottom: 5, marginTop: 5 }}>
           <Controller
             control={control}
             name="role"
@@ -187,6 +426,7 @@ export default function SignUp({ route, navigation }) {
             render={({ field, error }) => (
               <>
                 <DropDownPicker
+                  placeholder="Select"
                   style={styles.dropdown}
                   open={open}
                   // value={value}
@@ -196,11 +436,20 @@ export default function SignUp({ route, navigation }) {
                   setOpen={setOpen}
                   // setValue={setValue}
                   setItems={setItems}
+                  placeholderStyle={{
+                    ...FONTS.LeagueSpartan_400Regular,
+                    fontSize: 14,
+                    color: COLORS.gray,
+                    lineHeight: 12 * 1.7,
+                  }}
                   dropDownContainerStyle={{
-                    backgroundColor: "grey",
+                    backgroundColor: COLORS.white,
+                    borderColor: COLORS.white,
+                    marginTop: 4,
+                    elevation: 5,
                   }}
                   selectedItemContainerStyle={{
-                    backgroundColor: "grey",
+                    backgroundColor: COLORS.white,
                   }}
                 />
                 {errors.role && (
@@ -220,7 +469,7 @@ export default function SignUp({ route, navigation }) {
             )}
           />
         </View>
-        <Controller
+        {/* <Controller
           control={control}
           name="schoolName"
           rules={{
@@ -234,7 +483,7 @@ export default function SignUp({ route, navigation }) {
               message: "School Name should be max 23 characters long",
             },
             pattern: {
-              value: /[^A-Za-z]/ig,
+              value: /[^A-Za-z]/gi,
               message: "Enter characters only",
             },
           }}
@@ -252,8 +501,8 @@ export default function SignUp({ route, navigation }) {
               error={error}
             />
           )}
-        />
-        {role == "student" && (
+        /> */}
+        {/* {role == "student" && (
           <View style={{ zIndex: 10, marginBottom: 10 }}>
             <Controller
               control={control}
@@ -274,10 +523,12 @@ export default function SignUp({ route, navigation }) {
                     // setValue={setValue}
                     setItems={setClassItems}
                     dropDownContainerStyle={{
-                      backgroundColor: "grey",
+                      backgroundColor: COLORS.lightGray,
+                      borderColor: COLORS.white,
                     }}
                     selectedItemContainerStyle={{
-                      backgroundColor: "grey",
+                      backgroundColor: COLORS.lightGray,
+                      borderColor: COLORS.white,
                     }}
                   />
                   {errors.role && (
@@ -298,6 +549,56 @@ export default function SignUp({ route, navigation }) {
             />
           </View>
         )} */}
+        {role == "student" && (
+          <View style={{ flex: 1, marginBottom: 5 }}>
+            <TouchableOpacity
+              style={{
+                borderColor: "#B7B7B7",
+                // height: 50,
+                width: "100%",
+                height: 60,
+                backgroundColor: COLORS.white,
+                borderRadius: 10,
+                paddingLeft: 20,
+                paddingVertical: 8,
+                flexDirection: "row",
+                alignItems: "center",
+                marginBottom: 5,
+              }}
+              onPress={() => {
+                setClicked1(!clicked1);
+              }}
+            >
+              <Text
+                style={{
+                  ...FONTS.LeagueSpartan_400Regular,
+                  fontSize: 14,
+                  lineHeight: 12 * 1.7,
+                }}
+              >
+                {classList == "" ? "Select class" : classList}
+              </Text>
+            </TouchableOpacity>
+
+            {clicked1 ? (
+              <ScrollView horizontal>
+                {classItems.map((chip, index) => (
+                  <View style={styles.chip}>
+                    {/* <Text>{chip.label}</Text> */}
+                    <TouchableOpacity
+                      onPress={() => {
+                        setClassList(chip.value);
+                        setClicked1(!clicked1);
+                      }}
+                    >
+                      <Text style={styles.chipLabel}>{chip.label}</Text>
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </ScrollView>
+            ) : null}
+          </View>
+        )}
 
         <Controller
           control={control}
@@ -339,7 +640,7 @@ export default function SignUp({ route, navigation }) {
           render={({}) => (
             <InputField
               title="Phone Number"
-              placeholder={`${phoneNumber}`}
+               placeholder={`${phoneNumber}`}
               contaynerStyle={{
                 marginBottom: 10,
               }}
@@ -387,8 +688,8 @@ export default function SignUp({ route, navigation }) {
           rules={{
             required: "Password is required",
             minLength: {
-              value: 3,
-              message: "Password should be minimum 3 characters long",
+              value: 8,
+              message: "Password should be minimum 8 characters long",
             },
             maxLength: {
               value: 20,
@@ -490,7 +791,7 @@ export default function SignUp({ route, navigation }) {
           >
             Already have an account?
           </Text>
-          <TouchableOpacity onPress={() =>  navigation.navigate("SignIn")}>
+          <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>
             <Text
               style={{
                 ...FONTS.Lato_700Bold,
@@ -499,8 +800,7 @@ export default function SignUp({ route, navigation }) {
                 lineHeight: 16 * 1.7,
               }}
             >
-             &nbsp;
-              Sign in.
+              &nbsp; Sign in.
             </Text>
           </TouchableOpacity>
         </View>
@@ -548,7 +848,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   dropdown: {
-    borderColor: "#B7B7B7",
+    borderColor: "#fff",
     // height: 50,
     width: "100%",
     height: 60,
@@ -559,5 +859,25 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 5,
+  },
+
+  chip: {
+    backgroundColor: "#f2f2f2",
+    borderRadius: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    margin: 3,
+    marginBottom: 10,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 0.5,
+    borderColor: COLORS.gray,
+    elevation: 5,
+  },
+  chipLabel: {
+    color: COLORS.gray,
   },
 });

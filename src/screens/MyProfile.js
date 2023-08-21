@@ -38,8 +38,7 @@ export default function MyProfile() {
   console.log("🚀 ~ MyProfile ~ data:", data);
 
   const checkUserLogin = async () => {
-    console.log("🚀 ~ checkUserLogin ~ checkUserLogin:", checkUserLogin);
-    await AsyncStorage.getItem("data")
+    await AsyncStorage.getItem("userData")
       .then((jsonValue) => {
         const d = jsonValue != null ? JSON.parse(jsonValue) : null;
         console.log("🚀 ~ .then ~ d:", d);
@@ -49,7 +48,6 @@ export default function MyProfile() {
         console.log(e);
       });
   };
-
   useEffect(() => {
     checkUserLogin();
   }, []);
@@ -176,7 +174,9 @@ export default function MyProfile() {
         contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 20 }}
         showsVerticalScrollIndicator={false}
       >
-        <TouchableOpacity onPress={() => navigation.navigate("ProfileEdit")}>
+        <TouchableOpacity onPress={() => navigation.navigate("ProfileEdit",{
+          data:data
+        })}>
           <ImageBackground
             source={require("../assets/images/user.png")}
             style={{
@@ -201,7 +201,7 @@ export default function MyProfile() {
                 bottom: -10,
               }}
             >
-              <Plus/>
+              <Plus />
             </View>
           </ImageBackground>
         </TouchableOpacity>

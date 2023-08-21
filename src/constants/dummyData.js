@@ -4547,5 +4547,111 @@ const courses=
     "lessons":""
 }
 ]
-export { courses};
+
+
+const apiRes =
+  {
+    "status": "ok",
+    "data": [
+      {
+        "Meta": {
+          "Type": "FrmPackage"
+        },
+        "Package": {
+          "Name": "test12",
+          "Uuid": "64d096f03a2c6",
+          "Description": "test11",
+          "PackageType": "NewPVOD",
+          "Tags": {
+            "id":"1",
+            "category":"Civics",
+            "class":"Class 10",
+            "name":"12th ?????? ??????? ?????????? ?????? 2023 ????? ??????? /Class 12th civics important question 2023",
+            "author":"XYZ",
+            "about":"12th ?????? ??????? ?????????? ?????? 2023 ????? ???????/Class 12th civics important question 2023",
+            "duration":"16m 59s",
+            "topRated":"TRUE",
+            "popular":"TRUE",
+            "isNew":"TRUE"
+          }
+        },
+        "Files": [
+          {
+            "Filename": "6_वैदिक संस्कृती वैदिक वाड्मय.mp4",
+            "FileType": "Video",
+            "Tag": "Video",
+            "Description": "",
+            "Tags": [],
+            "URL": "ui/cat/frmpackage/64d096f03a2c6/content/6_वैदिक संस्कृती वैदिक वाड्मय.mp4"
+          },
+          {
+            "Filename": "6_वैदिक संस्कृती वैदिक वाड्मय_T.jpeg",
+            "FileType": "Image",
+            "Tag": "thumbnail",
+            "Description": "",
+            "Tags": [],
+            "URL": "ui/cat/frmpackage/64d096f03a2c6/content/6_वैदिक संस्कृती वैदिक वाड्मय_T.jpeg"
+          },
+          {
+            "Filename": "6_वैदिक संस्कृती वैदिक वाड्मय_I.jpeg",
+            "FileType": "Image",
+            "Tag": "image",
+            "Description": "",
+            "Tags": [],
+            "URL": "ui/cat/frmpackage/64d096f03a2c6/content/6_वैदिक संस्कृती वैदिक वाड्मय_I.jpeg"
+          }
+        ]
+      },
+      {
+        "Meta": {
+          "Type": "FrmPackage"
+        },
+        "Package": {
+          "Name": "test12",
+          "Uuid": "64d096f03a2c6",
+          "Description": "test11",
+          "PackageType": "NewPVOD",
+          "Tags": {
+            "id":"1",
+            "category":"Math",
+            "class":"Class 10",
+            "name":"12th ?????? ??????? ?????????? ?????? 2023 ????? ??????? /Class 12th civics important question 2023",
+            "author":"XYZ",
+            "about":"12th ?????? ??????? ?????????? ?????? 2023 ????? ???????/Class 12th civics important question 2023",
+            "duration":"16m 59s",
+            "topRated":"TRUE",
+            "popular":"TRUE",
+            "isNew":"TRUE"
+          }
+        },
+        "Files": [
+          {
+            "Filename": "6_वैदिक संस्कृती वैदिक वाड्मय.mp4",
+            "FileType": "Video",
+            "Tag": "Video",
+            "Description": "",
+            "Tags": [],
+            "URL": "ui/cat/frmpackage/64d096f03a2c6/content/6_वैदिक संस्कृती वैदिक वाड्मय.mp4"
+          },
+          {
+            "Filename": "6_वैदिक संस्कृती वैदिक वाड्मय_T.jpeg",
+            "FileType": "Image",
+            "Tag": "thumbnail",
+            "Description": "",
+            "Tags": [],
+            "URL": "ui/cat/frmpackage/64d096f03a2c6/content/6_वैदिक संस्कृती वैदिक वाड्मय_T.jpeg"
+          },
+          {
+            "Filename": "6_वैदिक संस्कृती वैदिक वाड्मय_I.jpeg",
+            "FileType": "Image",
+            "Tag": "image",
+            "Description": "",
+            "Tags": [],
+            "URL": "ui/cat/frmpackage/64d096f03a2c6/content/6_वैदिक संस्कृती वैदिक वाड्मय_I.jpeg"
+          }
+        ]
+      }
+    ]
+  }
+export { courses,apiRes};
 

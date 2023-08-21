@@ -32,7 +32,7 @@ export default function WishListComponent({ item, onPress }) {
         >
             <ImageBackground
                 // source={item.preview_330x330}
-                source={item.image}
+                source={{uri:item.image}}
                 style={{ width: 110, height: 110 }}
                 imageStyle={{ borderRadius: 10 }}
             >

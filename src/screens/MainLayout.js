@@ -4,9 +4,8 @@ import { useNavigation } from "@react-navigation/native";
 
 import Home from "../screens/Home";
 import Search from "../screens/Search";
-import MyCurses from "../screens/MyCourses";
+import MyDownloads from "../screens/MyDownloads";
 import MyProfile from "../screens/MyProfile";
-
 import { UserTab, BookOpenTab, SearchTab, HomeTab, Download } from "../svg";
 import { COLORS, FONTS } from "../constants";
 import { useDispatch, useSelector } from "react-redux";
@@ -81,7 +80,7 @@ export default function MainLayout() {
     <View style={{ flex: 1, backgroundColor: COLORS.white }}>
       {selectedTab == "Home" && <Home />}
       {selectedTab == "Search" && <Search />}
-      {selectedTab == "Downloads" && <MyCurses />}
+      {selectedTab == "Downloads" && <MyDownloads />}
       {selectedTab == "My Profile" && <MyProfile />}
       <View
         style={{

@@ -45,7 +45,7 @@ export default function Search() {
 
   const getLoginData = async () => {
     try {
-      const jsonValue = await AsyncStorage.getItem("data");
+      const jsonValue = await AsyncStorage.getItem("userData");
       // console.log("🚀 ~ getDataa ~ jsonValue:", jsonValue);
       return jsonValue != null ? JSON.parse(jsonValue) : null;
     } catch (e) {

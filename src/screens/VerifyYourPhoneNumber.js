@@ -5,11 +5,12 @@ import {
   SafeAreaView,
   StyleSheet,
   TextInput,
+  Platform,
 } from "react-native";
 import React, { useRef, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import PhoneInput from "react-native-phone-input";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { SIZES, AndroidSafeArea, FONTS, COLORS } from "../constants";
 import { Header, Button, InputField } from "../components";
@@ -27,6 +28,9 @@ import fbConfig from "../../config/firebase";
 import { ToastAndroid } from "react-native";
 
 export default function VerifyYourPhoneNumber() {
+  const route = useRoute();
+  const { location } = route.params;
+  console.log("🚀 ~ file: VerifyYourPhoneNumber.js:33 ~ location:", location);
   const navigation = useNavigation();
   const phoneInput = useRef < PhoneInput > null;
 
@@ -49,7 +53,6 @@ export default function VerifyYourPhoneNumber() {
   //   const [phoneNumber, setPhoneNumber] = useState("");
 
   const [phoneNumber, setPhoneNumber] = useState("");
-  console.log("🚀 ~ file: VerifyYourPhoneNumber.js:51 ~ VerifyYourPhoneNumber ~ phoneNumber:", phoneNumber)
   console.log("🚀 ~ file: VerifyYourPhoneNumber.js:51 ~ VerifyYourPhoneNumber ~ phoneNumber:", phoneNumber)
   const phoneRef = useRef(undefined);
 
@@ -99,7 +102,8 @@ export default function VerifyYourPhoneNumber() {
     //   setInfo("Success: Phone authentication successful"); // if OK, set the message
     // //  navigation.navigate("Home"); // navigate to the welcome screen
         navigation.navigate("SignUp", {
-          phoneNumber,
+          phoneNumber:phoneNumber,
+          location:location
         })
     } catch (error) {
       setInfo(`Error : ${error.message}`); // show the error.

@@ -13,10 +13,11 @@ import { CategoryComponent, Header } from "../components";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { classes } from "../constants/constants";
 
-export default function BoardCategoryGrid({ route }) {
+export default function BoardCategoryGrid() {
   const navigation = useNavigation();
   const useRouteList = useRoute();
   const { board, title } = useRouteList.params;
+  // console.log("🚀 ~ file: BoardCategoryGrid.js:20 ~ board:", board);
   // console.log("🚀 ~ BoardCategoryGrid ~ title:", title);
 
   let languageList = [
@@ -24,6 +25,15 @@ export default function BoardCategoryGrid({ route }) {
       board.filter((t) => t.board == title).map((item) => item.language)
     ),
   ];
+  let classes = [
+    ...new Set(
+      board.filter((t) => t.board == title).map((item) => item.class)
+    ),
+  ];
+  // console.log("🚀 ~ file: BoardCategoryGrid.js:33 ~ classes:", classes);
+  
+
+
   // console.log("🚀 ~ BoardCategoryGrid ~ categoryList:", categoryList);
   //  const uniqueLang = [...new Set(categoryList.map(item => item.language))];
   //  console.log("🚀 ~ BoardCategoryGrid ~ uniqueLang:", uniqueLang);
@@ -47,7 +57,8 @@ export default function BoardCategoryGrid({ route }) {
               onPress={() =>
                 navigation.navigate("ClassGrid", {
                   className: classes,
-                  courses:  board,
+                  board:  board,
+                  language:item
                 })
               }
             >

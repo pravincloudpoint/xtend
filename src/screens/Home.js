@@ -34,7 +34,7 @@ import {
   Button,
   DescriptionSectionComponent,
 } from "../components";
-import { InputSearch } from "../svg";
+import { EyeOn, InputSearch } from "../svg";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import OttSlice, { fetchOtt } from "../Slice/OttSlice";
 import { Video, ResizeMode } from "expo-av";
@@ -43,18 +43,26 @@ import * as ScreenOrientation from "expo-screen-orientation";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { selectContents, selectData } from "../Slice/selectors";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../../config/firebase";
+import {
+  checkInternetConnectivity,
+  getDeviceInfo,
+} from "../components/DeviceInfo";
+import { apiRes } from "../constants/dummyData";
 
 export default function Home() {
   const navigation = useNavigation();
   const ref = useRef();
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [data, setData] = useState([]);
+  const [loginData, setLoginData] = useState();
   // console.log("🚀 ~ Home ~ data:", data);
   const [flag, setFlag] = useState(false);
   const dispatch = useDispatch();
 
   const video = useSelector((state) => state.video, shallowEqual);
- // const video = useSelector(selectContents);
+  // const video = useSelector(selectContents);
   console.log("🚀 ~ Home ~ data:", video.length);
 
   // console.log("🚀 ~ Home ~ video:", video);
@@ -66,32 +74,100 @@ export default function Home() {
       console.log("🚀 ~ getData ~ isLoader:", videos.isLoader);
       setFlag(videos.isLoader);
       setData(videos.data.data);
-      // setData(videos.video.data[2]);
     } catch (error) {
       console.log("🚀 ~ getData ~ error:", error);
+      // setFlag(true);
     }
   };
 
-  const getLoginData = async () => {
-    try {
-      const jsonValue = await AsyncStorage.getItem("data");
-      // console.log("🚀 ~ getDataa ~ jsonValue:", jsonValue);r
-      return jsonValue != null ? JSON.parse(jsonValue) : null;
-    } catch (e) {
-      // error reading value
-    }
-  };
+  // testing api tag filter -----------------------------------------
 
-  // if (data == "undefined") {
-  //   console.log("🚀 ~ ====================================> if:",);
-  //   setFlag(true);
-  // } else {
-  //   console.log("🚀 ~ ============================> else:", );
-   
+  // const [tagData, setTagData] = useState({})
+  // console.log("🚀 ~ file: Home.js:84 ~ tagData:", tagData);
+  // let headersList = {
+  //   "User-Agent": "Thunder Client (https://www.thunderclient.com)",
+  //   "Content-Type": "application/json",
+  //   "Accept": "application/json"
+  //  }
+  // const readAPI = async () =>{
+  //   let response = await fetch("http://20.204.171.156/frm/api/v1/packages/NewPVOD", {
+  //     method: "GET",
+  //     headers: headersList
+  //   });
+  //   let data = await response.json();
+
+  //  console.log("data -------->",data);
+  //  setTagData(data)
+  // // console.log("🚀 ~ file: Home.js:99 ~ apiRes:", apiRes);
+  // if (tagData.length > 0) {
+  //   console.log("🚀 ~ file: Home.js:106 ~ tagData:", tagData.length);
+  //     const tags = tagData?.filter(function (data) {
+  //       return data.Package.Tags.class == "Class 10"
+  //     });
+  //     console.log("🚀 ~ file: Home.js:105 ~ tags: ----->", tags);
+  //   }
   // }
+
+  // end ---------------------------------------------------------------
+
+  const getUserLogin = async () => {
+    const isConnected = await checkInternetConnectivity();
+    // console.log("🚀 ~ file: Home.js:82 ~ isConnected:", isConnected);
+
+    await AsyncStorage.getItem("userData")
+      .then((jsonValue) => {
+        const user = jsonValue != null ? JSON.parse(jsonValue) : null;
+        // console.log("🚀 ~ .then ~ loginData:", user);
+        setLoginData(user);
+        getDeviceInfo().then((deviceInfo) => {
+          const docRef = doc(
+            db,
+            "users",
+            user.email,
+            "deviceInfo",
+            deviceInfo.designName
+          );
+          const userDoc = {
+            ...deviceInfo,
+          };
+          setDoc(docRef, userDoc)
+            .then(() => {
+              console.log("device info added successfully");
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        });
+        if (isConnected) {
+          AsyncStorage.getItem("videoAnalytics")
+            .then((jsonValue) => {
+              const videoAnalytics =
+                jsonValue != null ? JSON.parse(jsonValue) : null;
+              // console.log("🚀 ~ file: Home.js:114 ~ videoAnalytics:", videoAnalytics);
+              const docRef = doc(db, "videoAnalytics", user.email);
+              const userDoc = {
+                ...videoAnalytics,
+              };
+              setDoc(docRef, userDoc).then(() => {
+                console.log("videoAnalytics added successfully");
+              });
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+        } else {
+          // Handle the case when there's no internet connection
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
   getData();
   useEffect(() => {
-    getLoginData();
+    //readAPI()
+    getUserLogin();
   }, []);
 
   function updateCurrentSlideIndex(e) {
@@ -103,19 +179,31 @@ export default function Home() {
   const unique = [...new Set(data.map((item) => item.class))]; // [ 'A', 'B']
   // console.log("🚀 ~ Home ~ unique:", unique);
 
-  var sectionList = unique.filter((d) => !d.includes("Class"));
+  const sectionList = unique.filter((d) => !d.includes("Class"));
+
+  const classList = unique.filter((d) => d.includes("Class"));
+  function compareClasses(classObj1, classObj2) {
+    const classNumber1 = parseInt(classObj1.split(" ")[1]);
+    const classNumber2 = parseInt(classObj2.split(" ")[1]);
+    return classNumber1 - classNumber2;
+  }
+  classList.sort(compareClasses);
+
+  // console.log("🚀 ~ file: Home.js:101 ~ classList:", classList);
 
   const board = data.filter(function (course) {
     return course.board;
   });
   // console.log("🚀 ~ board ~ board:", board);
-
   const topRated = data.filter(function (course) {
     return course.topRated;
   });
   const popular = data.filter(function (course) {
     return course.popular;
   });
+
+  // const newCategoryList = getUniqueListBy(filteredByClassArray, 'class');
+  // // console.log('-------', JSON.stringify(newCategoryList));
 
   function renderDots() {
     return (
@@ -242,7 +330,7 @@ export default function Home() {
             showsHorizontalScrollIndicator={false}
             onMomentumScrollEnd={updateCurrentSlideIndex}
             contentContainerStyle={{ marginBottom: 16 }}
-            renderItem={({ item }) => (
+            renderItem={({ item, index }) => (
               // <ImageBackground
               //   source={item.thumbnail}
               //   style={{
@@ -273,6 +361,7 @@ export default function Home() {
               //   ></Image>
               // </TouchableOpacity>
               <TouchableOpacity
+                key={index}
                 onPress={() =>
                   navigation.navigate("CourseDetails", {
                     item: item,
@@ -280,7 +369,8 @@ export default function Home() {
                 }
               >
                 <ImageBackground
-                  source={item.image}
+                  // source={item.image}
+                  source={{ uri: `${item.image}` }}
                   style={{
                     width: SIZES.width - 40,
                     height: 220,
@@ -301,7 +391,7 @@ export default function Home() {
             pagingEnabled={true}
             renderItem={({ item, index }) => {
               return (
-                <View style={{ width: SIZES.width - 20 }}>
+                <View style={{ width: SIZES.width - 20 }} key={index}>
                   <Text
                     style={{
                       textAlign: "center",
@@ -411,7 +501,7 @@ export default function Home() {
     const uniqueBoard = [...new Set(board.map((item) => item.board))];
     // console.log("🚀 ~ renderBoard ~ uniqueBoard:", uniqueBoard);
 
-    let categoryList = [...new Set(board.map((item) => item.language))];
+    // let categoryList = [...new Set(board.map((item) => item.language))];
     // console.log("🚀 ~ renderBoard ~ categoryList:", categoryList);
     return (
       <View style={{ marginBottom: 30 }}>
@@ -469,22 +559,22 @@ export default function Home() {
     );
   }
   function renderClasses() {
-    let categoryList = [...new Set(board.map((item) => item.category))];
-    console.log("🚀 ~ renderBoard ~ categoryList:", categoryList);
+    // let categoryList = [...new Set(board.map((item) => item.category))];
+    // console.log("🚀 ~ renderBoard ~ categoryList:", categoryList);
     return (
       <View style={{ marginBottom: 30 }}>
         <CategoryComponent
           title={"Class List"}
           onPress={() =>
             navigation.navigate("ClassGrid", {
-              className: classes,
-              courses: data,
+              className: classList,
+              board: data,
             })
           }
         />
         {data.length > 0 ? (
           <FlatList
-            data={classes}
+            data={classList}
             horizontal={true}
             renderItem={({ item, index }) => {
               return (
@@ -493,7 +583,7 @@ export default function Home() {
                   onPress={() =>
                     navigation.navigate("CategoryGrid", {
                       className: item,
-                      courses: data,
+                      data: data,
                     })
                   }
                 >
@@ -516,7 +606,7 @@ export default function Home() {
                         fontSize: 14,
                       }}
                     >
-                      {item.class}
+                      {item}
                     </Text>
                   </ImageBackground>
                 </TouchableOpacity>
@@ -539,7 +629,7 @@ export default function Home() {
     );
   }
 
-  function renderDynamicSection(listItem) {
+  function renderDynamicSection(listItem, index) {
     // console.log("🚀 ~ renderKids ~ item:", listItem);
 
     const listSection = data.filter(function (course) {
@@ -547,7 +637,7 @@ export default function Home() {
     });
     // console.log("🚀 ~ listSection ~ listSection:", listSection);
     return (
-      <View style={{ marginBottom: 20 }}>
+      <View style={{ marginBottom: 20 }} key={index}>
         <CategoryComponent
           title={listItem}
           onPress={() =>
@@ -561,9 +651,9 @@ export default function Home() {
           <FlatList
             data={listSection}
             horizontal={true}
-            keyExtractor={({ id }, index) => id}
+            keyExtractor={({ id, index }) => id}
             showsHorizontalScrollIndicator={false}
-            renderItem={({ item, index }) => {
+            renderItem={({ item }) => {
               return (
                 // item.popular === true && (
                 <HomeSectionComponent
@@ -615,6 +705,7 @@ export default function Home() {
               return (
                 item.popular === true && (
                   <HomeSectionComponent
+                    key={item.id}
                     item={item}
                     onPress={() =>
                       navigation.navigate("CourseDetails", {
@@ -713,12 +804,12 @@ export default function Home() {
       <View style={{ flex: 1 }}>
         {renderHeader()}
         {renderBoard()}
-        {renderClasses()}
+        {/* {renderClasses()} */}
         {/* {renderSkill()}
         {renderEducation()}
         {renderKids()} */}
-        {sectionList.map((item) => {
-          return renderDynamicSection(item);
+        {sectionList.map((item, index) => {
+          return renderDynamicSection(item, index);
         })}
         {renderTopRated()}
         {renderPopular()}

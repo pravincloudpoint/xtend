@@ -21,7 +21,7 @@ export default function HomeSectionComponent({ item, onPress }) {
         >
             <ImageBackground
                 style={{ width: "100%", height: 120 }}
-                source={item.image}
+                source={{uri:`${item.image}`}}
                 imageStyle={{ borderRadius: 10 }}
             >
                 <RatingComponent

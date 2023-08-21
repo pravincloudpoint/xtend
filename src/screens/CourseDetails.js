@@ -33,7 +33,7 @@ export default function CourseDetails() {
   const dispatch = useDispatch();
   const { item } = route.params;
   const [itemStatus, setItemStatus] = useState(false);
-  console.log("🚀 ~ CourseDetails ~ itemStatus:", itemStatus);
+  // console.log("🚀 ~ CourseDetails ~ itemStatus:", itemStatus);
   // console.log("🚀 ~ CourseDetails ~ item:", item);
 
   

@@ -10,7 +10,6 @@ import {
   ToastAndroid,
   Dimensions,
   ActivityIndicator,
-  ProgressBarAndroid,
 } from "react-native";
 import React, { useEffect, useRef } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -27,7 +26,6 @@ import {
   Button,
 } from "../components";
 import { Video, ResizeMode } from "expo-av";
-import { downloadAsync } from "expo-file-system";
 import * as FileSystem from "expo-file-system";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
@@ -37,12 +35,9 @@ export default function Player() {
   const navigation = useNavigation();
   const route = useRoute();
   const { item } = route.params;
-  console.log("🚀 ~ Player ~ item:", item);
-  console.log("🚀 ~ Player ~ item: url", item.url);
-  const videoURL = `http://192.168.30.1/frm/${item.URL}`;
+  // console.log("🚀 ~ Player ~ item:", item);
   const video = useRef(null);
 
-  // console.log("🚀 ~ Player ~ item:", item, storagePath);
   const FirstRoute = () => <DescriptionSectionComponent item={item} />;
   const SecondRoute = () => <LessonsSectionComponent item={item} />;
   const ThirdRoute = () => <InstructorSectionComponent item={item} />;
@@ -64,9 +59,8 @@ export default function Player() {
     { key: "third", title: "Instructor" },
     // { key: "fourth", title: "Reviews" },
   ]);
-  // const fileName = item.Filename;
   const [downloadProgress, setDownloadProgress] = useState("");
-  console.log("🚀 ~ Player ~ downloadProgress:", downloadProgress);
+  // console.log("🚀 ~ Player ~ downloadProgress:", downloadProgress);
 
   const downloadCallback = (downloadProgress) => {
     console.log("downloadCallbacks", downloadProgress);
@@ -78,18 +72,19 @@ export default function Player() {
   };
 
   const downloadVideo = async (item) => {
-    console.log("🚀 ~ downloadVideo ~ item:", item);
+    // console.log("🚀 ~ downloadVideo ~ item:", item);
     //const videoUrl="http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4";
     // const { URL, Filename } = item;
-    const { url, name } = item;
-    console.log("🚀 ~ downloadVideo ~ URL:", url);
-    console.log("🚀 ~ downloadVideo ~ Filename:", name);
+    const { url, name, id } = item;
+    // console.log("🚀 ~ downloadVideo ~ URL:", url);
+    // console.log("🚀 ~ downloadVideo ~ Filename:", name);
+    console.log("🚀 ~ downloadVideo ~ Filename:", id);
 
     // const Url = `http://192.168.30.1/frm/${URL}`;
     // console.log("🚀 ~ downloadVideo ~ Url:", Url);
     // const fileUri = FileSystem.documentDirectory + Filename;
 
-    const fileUri = FileSystem.documentDirectory + name;
+    const fileUri = FileSystem.documentDirectory + id;
     console.log("🚀 ~ downloadVideo ~ fileUri:", fileUri);
     try {
       setDownloadProgress(1);
@@ -99,18 +94,24 @@ export default function Player() {
       setDownloadProgress(-1);
       // downloadCallback;
       console.log("Successfully download");
+      updateDownloadVideo(id);
     } catch (error) {
       console.error("Failed to download video:", error);
       ToastAndroid.show("Failed download!", ToastAndroid.LONG);
     }
   };
+
+  const [savedPosition, setSavedPosition] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [dataArray, setDataArray] = useState([]);
+
   useEffect(() => {
     const infoFile = async () => {
       await FileSystem.readDirectoryAsync(storagePath)
         .then((data) => {
           console.log("🚀 ~ .then ~ data:", data);
           data.map((down) => {
-            if (down === item.name) {
+            if (down == item.id) {
               console.log("🚀This video is downloaded", down);
               setDownloadProgress(-1);
             } else {
@@ -125,35 +126,84 @@ export default function Player() {
     };
     infoFile();
     video.current.playAsync();
+    getSavedPosition();
+    return () => {
+      // onPlaybackStatusUpdate();
+    };
+    //AsyncStorage.removeItem('videoAnalytics')
   }, []);
-  const deleteFile = async (videoUrl) => {
-    try {
-      console.log("deleteFile ===>", videoUrl);
-      await FileSystem.deleteAsync(videoUrl);
-      console.log("deleteAsync ===>");
-      // const size=await FileSystem.getFreeDiskStorageAsync()
-      // const totalSize= await FileSystem.getTotalDiskCapacityAsync()
-      // console.log("🚀 ~ deleteFile ~ totalSize:",JSON.stringify(totalSize));
-      // console.log("🚀 ~ deleteFile ~ size:", size);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-  const infoFile = async () => {
-    try {
-      const data = FileSystem.readDirectoryAsync(storagePath);
-      data
-        .then((data) => {
-          console.log("🚀 ~ infoFile ~ data:", data);
-        })
-        .catch((err) => {
-          console.log("error", err);
-        });
-    } catch (e) {
-      console.error(e);
-    }
+
+  const getSavedPosition = async () => {
+    await AsyncStorage.getItem("videoAnalytics").then((readObjs) => {
+      const data = JSON.parse(readObjs);
+      setDataArray(data);
+      const find = data.find((obj) => obj.id === item.id);
+      console.log("🚀 ~ getSavedPosition ~ find:", typeof find);
+      if (!find.Empty) {
+        console.log("-------if------------>>>>>>>>>>>>>");
+        console.log("find.status.positionMillis", find.status.positionMillis);
+        setSavedPosition(find.status.positionMillis);
+      }
+    });
   };
 
+  const onUpdateOrAdd = (newObject) => {
+    updateOrAddObject(newObject);
+  };
+  const onPlaybackStatusUpdate = async (status) => {
+    const newObject = await { ...item, status };
+    if (status.isPlaying) {
+      onUpdateOrAdd(newObject);
+    }
+  };
+  const updateOrAddObject = async (newObject) => {
+    if (dataArray == null) {
+      // console.log("-----------------------------------------",dataArray);
+      setDataArray([newObject]);
+      await AsyncStorage.setItem("videoAnalytics", JSON.stringify(dataArray));
+    }
+    const indexToUpdate = dataArray.findIndex((obj) => obj.id === newObject.id);
+    // console.log("🚀 ~ updateOrAddObject ~ indexToUpdate:", indexToUpdate);
+
+    if (indexToUpdate !== -1) {
+      // Object already exists, update it.
+      console.log("------------if----------------");
+      setDataArray((prevDataArray) => {
+        const updatedArray = prevDataArray.map((obj, index) => {
+          if (index === indexToUpdate) {
+            return { ...obj, ...newObject , deleted : false};
+          }
+          return obj;
+        });
+        AsyncStorage.setItem("videoAnalytics", JSON.stringify(updatedArray));
+        return updatedArray;
+      });
+    } else {
+      console.log("=============else=============");
+      // Object doesn't exist, add it to the array.
+      setDataArray((prevDataArray) => [newObject, ...prevDataArray]);
+      await AsyncStorage.setItem("videoAnalytics", JSON.stringify(dataArray));
+    }
+  };
+  const updateDownloadVideo = async (id) => {
+    const indexToUpdate = dataArray.findIndex((obj) => obj.id == id);
+    console.log("🚀 ~ file: MyDownloads.js:110 ~ indexToUpdate:", indexToUpdate);
+    if (indexToUpdate !== -1) {
+      console.log("------------if--- downloadVideo-------------");
+      setDataArray((prevDataArray) => {
+        const updatedArray = prevDataArray.map((obj, index) => {
+          if (index === indexToUpdate) {
+            return { ...obj, downloaded: true, deleted: false };
+          }
+          return obj;
+        });
+        AsyncStorage.setItem("videoAnalytics", JSON.stringify(updatedArray));
+        return updatedArray;
+      });
+    } else {
+      console.log("------------else-- downloadVideo-------------");
+    }
+  };
   function setOrientation() {
     if (Dimensions.get("window").height > Dimensions.get("window").width) {
       //Device is in portrait mode, rotate to landscape mode.
@@ -179,7 +229,7 @@ export default function Player() {
           <View
             style={{
               flexDirection: "column",
-               alignItems: "center",
+              alignItems: "center",
               justifyContent: "space-around",
               //alignItems: "flex-start",
               // marginBottom: 17,
@@ -194,12 +244,16 @@ export default function Player() {
               isLooping
               source={{
                 uri: item.url,
-                //  uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
+                //uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
                 //uri: "http://192.168.30.1/frm/ui/cat/frmpackage/647dd7000a87b/content/3_Class 8 ICT Understanding HTML C10S1 _ WATCH ALL SESSIONS ONLY ON AAS VIDYALAYA APP.mp4",
               }}
               useNativeControls
               onFullscreenUpdate={setOrientation}
-              onPlaybackStatusUpdate={(status) => setStatus(() => status)}
+              shouldPlay={isPlaying}
+              positionMillis={savedPosition}
+              onPlaybackStatusUpdate={onPlaybackStatusUpdate}
+
+              //onPlaybackStatusUpdate={(status) => setStatus(() => status)}
             />
           </View>
         </View>
@@ -289,7 +343,7 @@ export default function Player() {
             title="View Downloads"
             containerStyle={{ width: "95%", height: 50 }}
             onPress={() => {
-              navigation.navigate("MyCourses");
+              navigation.navigate("MyDownloads");
               // video.current.pauseAsync();
               status.isPlaying
                 ? video.current.pauseAsync()
@@ -297,9 +351,9 @@ export default function Player() {
             }}
           ></Button>
         )}
-        {/* <Button 
-         
-          title="download" 
+        {/* <Button
+
+          title="download"
           containerStyle={{ width: "95%", height: 50 }}
           onPress={() => downloadVideo(item)}
         ></Button> */}

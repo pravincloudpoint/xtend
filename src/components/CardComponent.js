@@ -13,10 +13,9 @@ import {
 
 
 export default function CardComponent({ item, lastComponent, onPress }) {
-// console.log("🚀 ~ CardComponent ~ item:", item);
 const dispatch = useDispatch();
 const [itemStatus, setItemStatus] = useState(false);
-console.log("🚀 ~ CourseDetails ~ itemStatus:", itemStatus);
+// console.log("🚀 ~ CourseDetails ~ itemStatus:", itemStatus);
 // console.log("🚀 ~ CourseDetails ~ item:", item);
 
 
@@ -48,7 +47,7 @@ const removeFavoriteItem = (item) => {
       onPress={onPress}
     >
       <ImageBackground
-        source={item.thumbnail}
+        source={{uri:`${item.thumbnail}`}}
         // style={{ width: 160, height: 120 }}
         style={{ width: 160, height: 100 }}
         imageStyle={{ borderRadius: 10,resizeMode: 'stretch'  }}
@@ -122,6 +121,20 @@ const removeFavoriteItem = (item) => {
           }}
         >
         {item.board? item.board: item.board}
+        </Text>
+        <Text
+          numberOfLines={2}
+          style={{
+            flex: 1,
+            width: "80%",
+            ...FONTS.Lato_500Medium,
+            fontSize: 14,
+            textTransform: "capitalize",
+            lineHeight: 14 * 1.5,
+            color: COLORS.black,
+          }}
+        >
+        {item.language? item.language: item.language}
         </Text>
         
         <View style={{ flexDirection: "row", alignItems: "center" }}>

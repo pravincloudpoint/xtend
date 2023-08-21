@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undef */
-/* eslint-disable react-hooks/rules-of-hooks */
+
 import {
   View,
   Text,
@@ -31,17 +29,13 @@ import * as FileSystem from "expo-file-system";
 import { db } from "../../config/firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import * as Location from 'expo-location';
 
 export default function SignIn() {
   const [rememberMe, setRememberMe] = useState(true);
   const [video, setVideo] = useState([]);
   const navigation = useNavigation();
-  useEffect(() => {});
-  const loginData = { title: "test" };
-  const getUserInfo = async () => {
-    const doc = addDoc(collection(db, "user"), loginData);
-    console.log("🚀 ~ getUserInfo ~ doc:", doc);
-  };
+
   const [state, setState] = useState("");
 
   const storagePath = `${FileSystem.documentDirectory}`;
@@ -169,6 +163,36 @@ export default function SignIn() {
   //   }
   // };
 
+
+  // get location
+
+  const [location, setLocation] = useState({});
+  const [errorMsg, setErrorMsg] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      let address = await Location.reverseGeocodeAsync(location.coords)
+      console.log("🚀 ~ file: SignIn.js:184 ~ address:", typeof address);
+      setLocation(address);
+    })();
+  }, []);
+
+  let text = 'Waiting..';
+  if (errorMsg) {
+    text = errorMsg;
+  } else if (location) {
+    // text = JSON.stringify(location);
+  }
+
+  // end location
   function renderBackground() {
     return (
       <Image
@@ -205,10 +229,6 @@ export default function SignIn() {
     } = useForm({});
     //console.log("🚀 ~ renderContent ~ errors:", errors);
     const onSignInForm = async (data) => {
-      //  console.log("🚀 ~ onSignUpForm ~ data:", loginData);
-      // const doc = addDoc(collection(db, "user"), loginData);
-      //console.log("🚀 ~ getUserInfo ~ doc:", doc);
-
       try {
         const auth = getAuth();
         await signInWithEmailAndPassword(auth, data.email, data.password).then(
@@ -218,7 +238,7 @@ export default function SignIn() {
              const jsonValue = JSON.stringify(user);
           }
         ).then(async()=>{
-          const usersCollection = collection(db, "User");
+          const usersCollection = collection(db, "users");
           const userQuery = query(
             usersCollection,
             where("email", "==", data.email)
@@ -229,14 +249,15 @@ export default function SignIn() {
             console.log("doc data()",doc.data());
             const jsonValue = JSON.stringify(doc.data());
             console.log("🚀 ~ querySnapshot?.forEach ~ jsonValue:", jsonValue);
-            await AsyncStorage.setItem("data", jsonValue);
+            await AsyncStorage.setItem("userData", jsonValue);
 
-            // await AsyncStorage.setItem("data",  JSON.stringify(doc.data())).then(async () => {
+            // await AsyncStorage.setItem("userData",  JSON.stringify(doc.data())).then(async () => {
             //   console.log("success to set email", user.email);
             // });
           });
            navigation.navigate("MainLayout");
         })
+        ToastAndroid.show("User Successfully Login", ToastAndroid.LONG);
         // Additional logic after successful login
       } catch (error) {
         console.log("User login failed:", error.message);
@@ -475,7 +496,10 @@ export default function SignIn() {
             Don’t have an account?
           </Text>
           <TouchableOpacity
-            onPress={() => navigation.navigate("VerifyYourPhoneNumber")}
+           onPress={() => navigation.navigate("VerifyYourPhoneNumber",{
+            location:location
+           })}
+           // onPress={() => navigation.navigate("SignUp")}
           >
             <Text
               style={{

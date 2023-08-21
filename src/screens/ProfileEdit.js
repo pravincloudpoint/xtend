@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import {
   Header,
@@ -22,25 +22,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ProfileEdit() {
   const navigation = useNavigation();
-
-  const [data, setData] = useState("");
-  console.log("🚀 ~ MyProfile ~ data:", data);
-
-  const checkUserLogin = async () => {
-    console.log("🚀 ~ checkUserLogin ~ checkUserLogin:", checkUserLogin);
-    await AsyncStorage.getItem("data")
-      .then((jsonValue) => {
-        const d = jsonValue != null ? JSON.parse(jsonValue) : null;
-        console.log("🚀 ~ .then ~ d:", d);
-        setData(d);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-  useEffect(() => {
-    checkUserLogin();
-  }, []);
+  const route = useRoute();
+  const {data } = route.params;
+  console.log("🚀 ~ file: ProfileEdit.js:27 ~ data:", data);
 
   function renderHeader() {
     return (
@@ -58,7 +42,7 @@ export default function ProfileEdit() {
         contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 20 }}
         showsVerticalScrollIndicator={false}
       >
-        <TouchableOpacity style={{ marginBottom: 25, marginTop: 20 }}>
+        <TouchableOpacity style={{ marginBottom: 10, marginTop: 20 }}>
           <ImageBackground
             // source={{ uri: "https://via.placeholder.com/360x360" }}
             source={require("../assets/images/user.png")}
@@ -121,6 +105,7 @@ export default function ProfileEdit() {
           selectTextOnFocus={false}
           editable={false}
         />
+        
         <InputField
           title="Email"
           placeholder={data ? data.email : ""}
@@ -141,14 +126,42 @@ export default function ProfileEdit() {
           editable={false}
         />
         <InputField
-          title="Location"
-          placeholder={ data.location ? data.location : "India"}
+          title="State"
+          placeholder={ data.location.region? data.location.region : ""}
           contaynerStyle={{
             marginBottom: 10,
           }}
           selectTextOnFocus={false}
           editable={false}
         />
+        <InputField
+          title="City"
+          placeholder={ data.location.city? data.location.city : ""}
+          contaynerStyle={{
+            marginBottom: 10,
+          }}
+          selectTextOnFocus={false}
+          editable={false}
+        />
+         <InputField
+          title="School Name"
+          placeholder={ data.schoolName? data.schoolName : ""}
+          contaynerStyle={{
+            marginBottom: 10,
+          }}
+          selectTextOnFocus={false}
+          editable={false}
+        />
+         <InputField
+          title="Class"
+          placeholder={ data.class? data.class : ""}
+          contaynerStyle={{
+            marginBottom: 10,
+          }}
+          selectTextOnFocus={false}
+          editable={false}
+        />
+        
         {/* <Button
           title="Save changes"
           containerStyle={{ marginTop: 10 }}

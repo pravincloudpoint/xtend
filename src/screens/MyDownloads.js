@@ -7,31 +7,40 @@ import {
   FlatList,
   StyleSheet,
   ToastAndroid,
+  ImageBackground,
 } from "react-native";
 import React, { useState } from "react";
-import { Button, Header, MyCoursesComponent } from "../components";
+import {
+  Button,
+  CardComponent,
+  CategoryComponent,
+  Header,
+  MyCoursesComponent,
+} from "../components";
 import { AREA, COLORS, FONTS, SIZES, courses } from "../constants";
 import { useEffect } from "react";
 import * as FileSystem from "expo-file-system";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { ResizeMode, Video } from "expo-av";
-import { DeleteSvg, Play } from "../svg";
+import { Clock, DeleteSvg, Heart, Play } from "../svg";
 import Modal from "react-native-modal";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import MainLayout from "./MainLayout";
 
-export default function MyCourses() {
+export default function MyDownloads() {
   const navigation = useNavigation();
   const [category, setCategory] = useState("Ongoing");
   const [showModal, setShowModal] = useState(false);
   const [showModals, setShowModals] = useState(false);
   const [deleteVideo, setDeleteVideo] = useState();
   const [video, setVideo] = useState([]);
+  // console.log("🚀 ~ file: MyDownloads.js:34 ~ video:", video);
 
   const [freeSize, setFreeSize] = useState("");
-  console.log("🚀 ~ MyCourses ~ freeSize:", freeSize);
   const [useSize, setUseSize] = useState("");
-  console.log("🚀 ~ MyCourses ~ useSize:", useSize);
+  // console.log("🚀 ~ file: MyDownloads.js:45 ~ useSize:", useSize);
 
-  console.log("🚀 ~ MyCourses ~ video:", video);
   const storagePath = `${FileSystem.documentDirectory}`;
   const isFocused = useIsFocused();
 
@@ -42,15 +51,15 @@ export default function MyCourses() {
       // console.log("🚀 ~ infoFile ~ iinfo:", infoAsync);
 
       const totalSize = await FileSystem.getTotalDiskCapacityAsync();
-      console.log("🚀 ~ totalSize:", JSON.stringify(totalSize));
-      console.log("🚀 ~ size:", size);
+      // console.log("🚀 ~ totalSize:", JSON.stringify(totalSize));
+      // console.log("🚀 ~ size:", size);
 
       // const totalSizeKB = size / Math.pow(1024, 1);
       // console.log("🚀 ~ infoFile ~ totalSizeKB:", totalSizeKB);
       // const totalSizeMB = size / Math.pow(1024, 2);
       // console.log("🚀 ~ infoFile ~ totalSizeMB:", totalSizeMB);
       const totalSizeGB = size / Math.pow(1024, 2);
-      console.log("🚀 ~ infoFile ~ totalSizeGB:", totalSizeGB);
+      // console.log("🚀 ~ infoFile ~ totalSizeGB:", totalSizeGB);
 
       const allFileSize = infoAsync.size / Math.pow(1024, 2);
       // console.log("🚀 ~ infoFile ~ allFileSize:", allFileSize.toFixed(2));
@@ -72,6 +81,43 @@ export default function MyCourses() {
     } catch (e) {
       console.error(e);
     }
+  };
+  const [dataArray, setDataArray] = useState([]);
+  console.log("🚀 ~ file: MyDownloads.js:84 ~ dataArray:", dataArray);
+  const downloadVideo = dataArray?.filter(function (video) {
+    return video.deleted == false;
+    // video.downloaded == true &&
+  });
+  console.log("🚀 ~ file: MyDownloads.js:86 ~ downloadVideo:", downloadVideo);
+
+  const getSavedPosition = async () => {
+    await AsyncStorage.getItem("videoAnalytics").then((readObjs) => {
+      const data = JSON.parse(readObjs);
+      setDataArray(data);
+      updateOrAddObject();
+    });
+  };
+  const updateOrAddObject = async () => {
+    video.map((id) => {
+      console.log("🚀 ~ file: MyDownloads.js:108~ id:", id);
+      const indexToUpdate = dataArray.findIndex((obj) => obj.id == id);
+
+      if (indexToUpdate !== -1) {
+        console.log("------------if--- downloadVideo-------------");
+        setDataArray((prevDataArray) => {
+          const updatedArray = prevDataArray.map((obj, index) => {
+            if (index === indexToUpdate) {
+              return { ...obj, downloaded: true };
+            }
+            return obj;
+          });
+          AsyncStorage.setItem("videoAnalytics", JSON.stringify(updatedArray));
+          return updatedArray;
+        });
+      } else {
+        console.log("------------else-- downloadVideo-------------");
+      }
+    });
   };
   const deleteFile = async (videoUrl) => {
     try {
@@ -106,6 +152,31 @@ export default function MyCourses() {
           console.log("🚀 ~ FileSystem.readDirectoryAsync ~ dir:", dir);
           FileSystem.deleteAsync(`${storagePath}/${dir}`);
         }
+
+        video.map((id) => {
+          console.log("🚀 ~ file: MyDownloads.js:108~ id:", id);
+          const indexToUpdate = dataArray.findIndex((obj) => obj.id == id);
+
+          if (indexToUpdate !== -1) {
+            console.log("------------if--- downloadVideo-------------");
+            setDataArray((prevDataArray) => {
+              const updatedArray = prevDataArray.map((obj, index) => {
+                if (index === indexToUpdate) {
+                  return { ...obj, deleted: true };
+                }
+                return obj;
+              });
+              AsyncStorage.setItem(
+                "videoAnalytics",
+                JSON.stringify(updatedArray)
+              );
+              return updatedArray;
+            });
+          } else {
+            console.log("------------else-- downloadVideo-------------");
+          }
+        });
+        infoFile();
       })
       .then(() => {
         infoFile();
@@ -116,6 +187,7 @@ export default function MyCourses() {
   };
   useEffect(() => {
     infoFile();
+    getSavedPosition();
   }, [isFocused]);
 
   function renderBackground() {
@@ -133,7 +205,14 @@ export default function MyCourses() {
   }
 
   function renderHeader() {
-    return <Header title="Downloads" goBack={false} />;
+    // return <Header title="Downloads" goBack={false} />;
+    return (
+      <Header
+        title="Downloads"
+        goBack={true}
+        onPress={() => navigation.navigate("MainLayout")}
+      />
+    );
   }
 
   function renderModal() {
@@ -348,180 +427,195 @@ export default function MyCourses() {
             Delete All
           </Text>
         </View>
-
-        <FlatList
-          data={video}
-          keyExtractor={(item) => item}
-          contentContainerStyle={{
-            paddingTop: 20,
-            // paddingHorizontal: 20,
-          }}
-          numColumns={1}
-          renderItem={({ item, index }) => {
+        <KeyboardAwareScrollView>
+          {downloadVideo?.map((item, index, array) => {
             return (
-              // <MyCoursesComponent
-              //     item={item}
-              //     ongoingCourse={
-              //         category === "Ongoing" ? true : false
-              //     }
-              // />
               <TouchableOpacity
+                key={index}
                 style={{
-                  marginHorizontal: 20,
+                  marginHorizontal: 10,
                   flexDirection: "row",
                   alignItems: "center",
-                  flex: 1,
                   borderBottomWidth: 1,
                   borderBottomColor: "#E7E6E7",
+                  padding: 10,
                 }}
                 onPress={() =>
                   navigation.navigate("OffLinePlayer", {
-                    item: `${storagePath}/${item}`,
+                    url: `${storagePath}/${item.id}`,
+                    item,
                   })
                 }
               >
-                <Play />
+                <ImageBackground
+                  source={{ uri: `${item.thumbnail}` }}
+                  style={{ width: 160, height: 100 }}
+                  imageStyle={{ borderRadius: 10, resizeMode: "stretch" }}
+                ></ImageBackground>
                 <View
-                  style={{
-                    marginLeft: 8,
-                    flex: 1,
-                    marginVertical: 20,
-                  }}
+                  style={{ flex: 1, paddingVertical: 4, paddingLeft: 12 }}
+                  key={index}
                 >
                   <Text
+                    numberOfLines={2}
                     style={{
-                      ...FONTS.H6,
-                      // textTransform: "capitalize",
-                      color: COLORS.black,
+                      width: "80%",
+                      ...FONTS.Lato_500Medium,
+                      fontSize: 14,
+                      textTransform: "capitalize",
                       lineHeight: 14 * 1.5,
+                      color: COLORS.black,
                     }}
                   >
-                    {item}
+                    {item.name ? item.name : item.Filename}
                   </Text>
-                </View>
-                <TouchableOpacity
-                  onPress={() => {
-                  // console.log("===========>item",item)
-                   setShowModals(true)
-                   setDeleteVideo(item)
-                  }}
-                >
-                  <Image
-                    source={require("../assets/images/delete.png")}
+                  <Text
+                    numberOfLines={6}
                     style={{
-                      width: 20,
-                      height: 20,
-                      resizeMode: "stretch",
+                      width: "80%",
+                      ...FONTS.Lato_500Medium,
+                      fontSize: 14,
+                      textTransform: "capitalize",
+                      lineHeight: 14 * 1.5,
+                      color: COLORS.black,
                     }}
-                  />
-                </TouchableOpacity>
+                  >
+                    {item.class ? item.class : item.class}
+                  </Text>
+                  <Text
+                    numberOfLines={5}
+                    style={{
+                      width: "80%",
+                      ...FONTS.Lato_500Medium,
+                      fontSize: 14,
+                      textTransform: "capitalize",
+                      lineHeight: 14 * 1.5,
+                      color: COLORS.black,
+                    }}
+                  >
+                    {item.board ? item.board : item.board}
+                  </Text>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Clock strokeColor={COLORS.secondaryTextColor} />
+                    <Text
+                      style={{
+                        marginLeft: 6,
+                        ...FONTS.Lato_400Regular,
+                        fontSize: 14,
+                        color: COLORS.gray,
+                      }}
+                    >
+                      {item.duration}
+                    </Text>
+                  </View>
+                </View>
               </TouchableOpacity>
             );
-          }}
-        />
+          })}
+        </KeyboardAwareScrollView>
       </>
     );
   }
-  function renderModals () {
-    console.log("🚀 ~ renderModals ~ deleteVideo:",deleteVideo);
+  function renderModals() {
+    console.log("🚀 ~ renderModals ~ deleteVideo:", deleteVideo);
     return (
-        <Modal
-            isVisible={showModals}
-            onBackdropPress={setShowModals}
-            hideModalContentWhileAnimating={true}
-            backdropTransitionOutTiming={0}
-            style={{ margin: 0 }}
-            animationIn="zoomIn"
-            animationOut="zoomOut"
+      <Modal
+        isVisible={showModals}
+        onBackdropPress={setShowModals}
+        hideModalContentWhileAnimating={true}
+        backdropTransitionOutTiming={0}
+        style={{ margin: 0 }}
+        animationIn="zoomIn"
+        animationOut="zoomOut"
+      >
+        <View
+          style={{
+            width: SIZES.width - 40,
+            backgroundColor: COLORS.white,
+            marginHorizontal: 20,
+            borderRadius: 10,
+            paddingHorizontal: 20,
+            paddingTop: 40,
+            paddingBottom: 30,
+          }}
         >
-            <View
-                style={{
-                    width: SIZES.width - 40,
-                    backgroundColor: COLORS.white,
-                    marginHorizontal: 20,
-                    borderRadius: 10,
-                    paddingHorizontal: 20,
-                    paddingTop: 40,
-                    paddingBottom: 30,
-                }}
+          <Text
+            style={{
+              textAlign: "center",
+              ...FONTS.H2,
+              lineHeight: 20 * 1.5,
+              marginBottom: 30,
+              textTransform: "capitalize",
+            }}
+          >
+            Are you sure you {"\n"} want to Delete File ?
+          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <TouchableOpacity
+              style={{
+                width: 130,
+                height: 48,
+                backgroundColor: COLORS.white,
+                borderRadius: 10,
+                justifyContent: "center",
+                alignItems: "center",
+                marginHorizontal: 7.5,
+                borderColor: COLORS.goldenTransparent_05,
+                borderWidth: 1,
+              }}
+              onPress={() => {
+                setShowModals(false);
+                deleteFile(`${storagePath}/${deleteVideo}`);
+              }}
             >
-                <Text
-                    style={{
-                        textAlign: "center",
-                        ...FONTS.H2,
-                        lineHeight: 20 * 1.5,
-                        marginBottom: 30,
-                        textTransform: "capitalize",
-                    }}
-                >
-                    Are you sure you {"\n"} want to Delete File ?
-                </Text>
-                <View
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    <TouchableOpacity
-                        style={{
-                            width: 130,
-                            height: 48,
-                            backgroundColor: COLORS.white,
-                            borderRadius: 10,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            marginHorizontal: 7.5,
-                            borderColor: COLORS.goldenTransparent_05,
-                            borderWidth: 1,
-                        }}
-                        onPress={() => {
-                            setShowModals(false);
-                           deleteFile(`${storagePath}/${deleteVideo}`)
-                        }}
-                    >
-                        <Text
-                            style={{
-                                color: COLORS.mainColor,
-                                ...FONTS.Lato_700Bold,
-                                fontSize: 18,
-                                textTransform: "capitalize",
-                            }}
-                        >
-                            Sure
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={{
-                            width: 130,
-                            height: 48,
-                            backgroundColor: COLORS.btnColor,
-                            borderRadius: 10,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            marginHorizontal: 7.5,
-                        }}
-                        onPress={() => setShowModals(false)}
-                    >
-                        <Text
-                            style={{
-                                color: COLORS.white,
-                                ...FONTS.Lato_700Bold,
-                                fontSize: 18,
-                                textTransform: "capitalize",
-                            }}
-                        >
-                            Cancel
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </Modal>
+              <Text
+                style={{
+                  color: COLORS.mainColor,
+                  ...FONTS.Lato_700Bold,
+                  fontSize: 18,
+                  textTransform: "capitalize",
+                }}
+              >
+                Sure
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                width: 130,
+                height: 48,
+                backgroundColor: COLORS.btnColor,
+                borderRadius: 10,
+                justifyContent: "center",
+                alignItems: "center",
+                marginHorizontal: 7.5,
+              }}
+              onPress={() => setShowModals(false)}
+            >
+              <Text
+                style={{
+                  color: COLORS.white,
+                  ...FONTS.Lato_700Bold,
+                  fontSize: 18,
+                  textTransform: "capitalize",
+                }}
+              >
+                Cancel
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     );
-}
+  }
   return (
     // <SafeAreaView style={{ flex: 1, ...AREA.AndroidSafeArea }}>
-    <SafeAreaView  style={{ flex: 1}}>
+    <SafeAreaView style={{ flex: 1 }}>
       {renderBackground()}
       {renderHeader()}
       {renderCategories()}

@@ -20,23 +20,19 @@ import { CategoryComponent, Header } from "../components";
 import { useNavigation } from "@react-navigation/native";
 
 export default function CategoryGrid({ route }) {
+const constImage=require("../assets/subjects/e-learning.png");
   const navigation = useNavigation();
-  const { className, courses } = route.params;
-  // console.log("🚀 ~ CategoryGrid ~ data:",  courses);
-  // console.log("🚀 ~ CategoryGrid ~ className:", className.class);
+  const { className, data } = route.params;
 
-  let categoryList = courses.filter((t) => t.class == className.class);
-   console.log("CategoryList",categoryList);
+  let subjectList = data.filter((t) => t.class == className);
+   console.log("subjectList",subjectList);
 
   function getUniqueListBy(arr, key) {
     return [...new Map(arr.map((item) => [item[key], item])).values()];
   }
-
-  const newCategoryList = getUniqueListBy(categoryList, "category");
-  console.log("🚀 ~ CategoryGrid ~ newCategoryList:", newCategoryList);
-  // console.log("-------",JSON.stringify(newCategoryList))
+  const newSubjectList = getUniqueListBy(subjectList, "subject");
   console.log("=================================================>");
-const constImage=require("../assets/subjects/e-learning.png");
+
   return (
     <SafeAreaView
       style={{ marginBottom: 30, flex: 1, ...AndroidSafeArea.AndroidSafeArea }}
@@ -47,7 +43,7 @@ const constImage=require("../assets/subjects/e-learning.png");
         onPress={() => navigation.goBack(null)}
       />
       <FlatList
-        data={newCategoryList}
+        data={newSubjectList}
         horizontal={false}
         numColumns={2}
         columnWrapperStyle={{
@@ -74,7 +70,7 @@ const constImage=require("../assets/subjects/e-learning.png");
                   navigation.navigate("CategoryList", {
                     item,
                     className,
-                    categoryList,
+                    subjectList,
                   })
                 }
             >
@@ -88,7 +84,7 @@ const constImage=require("../assets/subjects/e-learning.png");
                     padding:10,
                     marginBottom:20
                   }}
-                  source={All[`${item.category}`] ? All[`${item.category}`]: constImage}
+                  source={All[`${item.subject}`] ? All[`${item.subject}`]: constImage}
                   imageStyle={{ borderRadius: 10, height: 80, width: 80 }}
                 ></ImageBackground>
               <Text
@@ -100,7 +96,7 @@ const constImage=require("../assets/subjects/e-learning.png");
                   textAlign: "center",
                 }}
               >
-                {item.category}
+                {item.subject}
               </Text>
             </TouchableOpacity>
           );

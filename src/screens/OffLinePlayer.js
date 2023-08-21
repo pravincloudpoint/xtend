@@ -9,7 +9,7 @@ import {
   Image,
   Dimensions,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import Modal from "react-native-modal";
@@ -34,9 +34,10 @@ export default function OffLinePlayer() {
   const navigation = useNavigation();
   const route = useRoute();
   const [showModal, setShowModal] = useState(false);
-
-  const { item } = route.params;
-  console.log("🚀 ~ OffLinePlayer ~ item:", item);
+  const video = useRef(null);
+  const { item, url } = route.params;
+  console.log("🚀 ~ file: OffLinePlayer.js:39 ~ item:", url);
+  // console.log("🚀 ~ OffLinePlayer ~ item:", item);
 
   // console.log("🚀 ~ Player ~ item:", item, storagePath);
   //   const FirstRoute = () => <DescriptionSectionComponent item={item} />;
@@ -61,57 +62,28 @@ export default function OffLinePlayer() {
     // { key: "fourth", title: "Reviews" },
   ]);
   // const fileName = item.Filename;
-  const downloadVideo = async (item) => {
-    console.log("🚀 ~ downloadVideo ~ item:", item);
-    //const videoUrl="http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4";
-    const { URL, Filename } = item;
-    console.log("🚀 ~ downloadVideo ~ URL:", URL);
-    console.log("🚀 ~ downloadVideo ~ Filename:", Filename);
 
-    const Url = `http://192.168.30.1/frm/${URL}`;
+  const [savedPosition, setSavedPosition] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [dataArray, setDataArray] = useState([]);
 
-    console.log("🚀 ~ downloadVideo ~ Url:", Url);
-
-    const fileUri = FileSystem.documentDirectory + Filename;
-
+  const deleteFile = async (url) => {
     try {
-      const { uri } = await FileSystem.downloadAsync(Url, fileUri);
-      console.log("Video downloaded to:", uri);
-    } catch (error) {
-      console.error("Failed to download video:", error);
-    }
-  };
+      // console.log("deleteFile ===>", url);
+      await deletedDownloadVideo(item);
 
-  const deleteFile = async (videoUrl) => {
-    try {
-      console.log("deleteFile ===>", videoUrl);
-      await FileSystem.deleteAsync(videoUrl);
-      console.log("deleteAsync ===>");
-      ToastAndroid.show('Successfully delete!', ToastAndroid.LONG);
+      ToastAndroid.show("Successfully delete!", ToastAndroid.LONG);
       // const size=await FileSystem.getFreeDiskStorageAsync()
       // const totalSize= await FileSystem.getTotalDiskCapacityAsync()
       // console.log("🚀 ~ deleteFile ~ totalSize:",JSON.stringify(totalSize));
       // console.log("🚀 ~ deleteFile ~ size:", size);
-      navigation.goBack(null) 
+      navigation.goBack(null);
     } catch (e) {
-      console.error(e);
-      ToastAndroid.show('Failed delete!', ToastAndroid.LONG);
+      console.error(e.message);
+      ToastAndroid.show("Failed delete!", ToastAndroid.LONG);
     }
   };
-  const infoFile = async () => {
-    try {
-      const data = FileSystem.readDirectoryAsync(storagePath);
-      data
-        .then((data) => {
-          console.log("🚀 ~ infoFile ~ data:", data);
-        })
-        .catch((err) => {
-          console.log("error", err);
-        });
-    } catch (e) {
-      console.error(e);
-    }
-  };
+
   function setOrientation() {
     if (Dimensions.get("window").height > Dimensions.get("window").width) {
       //Device is in portrait mode, rotate to landscape mode.
@@ -121,6 +93,86 @@ export default function OffLinePlayer() {
       ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
     }
   }
+  useEffect(() => {
+    getSavedPosition();
+    return () => {
+      // onPlaybackStatusUpdate();
+    };
+    //AsyncStorage.removeItem('videoAnalytics')
+  }, []);
+
+  const getSavedPosition = async () => {
+    await AsyncStorage.getItem("videoAnalytics").then((readObjs) => {
+      const data = JSON.parse(readObjs);
+      setDataArray(data);
+      const find = data.find((obj) => obj.id === item.id);
+      // console.log("🚀 ~ getSavedPosition ~ find:", typeof find);
+      if (!find.Empty) {
+        setSavedPosition(find.status.positionMillis);
+      }
+    });
+  };
+
+  const onPlaybackStatusUpdate = async (status) => {
+    const newObject = await { ...item, status };
+    if (status.isPlaying) {
+      updateOrAddObject(newObject);
+    }
+  };
+
+  const updateOrAddObject = async (newObject) => {
+    console.log('====================================');
+    console.log();
+    console.log('====================================');
+    if (dataArray == null) {
+      setDataArray([newObject]);
+      await AsyncStorage.setItem("videoAnalytics", JSON.stringify(dataArray));
+    }
+    const indexToUpdate = dataArray.findIndex(
+      (obj) => obj.name === newObject.name
+    );
+    if (indexToUpdate !== -1) {
+      console.log("------------if----------------");
+      setDataArray((prevDataArray) => {
+        const updatedArray = prevDataArray.map((obj, index) => {
+          if (index === indexToUpdate) {
+            return { ...obj, ...newObject };
+          }
+          return obj;
+        });
+        AsyncStorage.setItem("videoAnalytics", JSON.stringify(updatedArray));
+        return updatedArray;
+      });
+    } else {
+      console.log("=============else=============");
+      setDataArray((prevDataArray) => [newObject, ...prevDataArray]);
+      await AsyncStorage.setItem("videoAnalytics", JSON.stringify(dataArray));
+    }
+  };
+
+  const deletedDownloadVideo = async (item) => {
+    const indexToUpdate = dataArray.findIndex((obj) => obj.id == item.id);
+    if (indexToUpdate !== -1) {
+      console.log("------------if--- deletedDownloadVideo---- false---------");
+      setDataArray((prevDataArray) => {
+        const updatedArray = prevDataArray.map((obj, index) => {
+          if (index === indexToUpdate) {
+            return { ...obj, deleted: true };
+          }
+          return obj;
+        });
+        console.log(
+          "🚀 ~ file: OffLinePlayer.js:169 ~ updatedArray:",
+          updatedArray
+        );
+          AsyncStorage.setItem("videoAnalytics", JSON.stringify(updatedArray));
+        return updatedArray;
+      });
+      await FileSystem.deleteAsync(url);
+    } else {
+      console.log("------------else-- deletedDownloadVideo----- false--------");
+    }
+  };
   function renderHeader() {
     return (
       <ImageBackground
@@ -143,17 +195,21 @@ export default function OffLinePlayer() {
             }}
           >
             <Video
+              ref={video}
               // style={styles.video}
               style={{ width: Dimensions.get("window").width, height: "100%" }}
               // resizeMode="contain"
               resizeMode={ResizeMode.CONTAIN}
               isLooping
               source={{
-                uri: item,
+                uri: url,
               }}
               useNativeControls
-              shouldPlay
+              // shouldPlay
               onFullscreenUpdate={setOrientation}
+              shouldPlay={isPlaying}
+              positionMillis={savedPosition}
+              onPlaybackStatusUpdate={onPlaybackStatusUpdate}
             />
           </View>
         </View>
@@ -208,100 +264,100 @@ export default function OffLinePlayer() {
   }
   function renderModal() {
     return (
-        <Modal
-            isVisible={showModal}
-            onBackdropPress={setShowModal}
-            hideModalContentWhileAnimating={true}
-            backdropTransitionOutTiming={0}
-            style={{ margin: 0 }}
-            animationIn="zoomIn"
-            animationOut="zoomOut"
+      <Modal
+        isVisible={showModal}
+        onBackdropPress={setShowModal}
+        hideModalContentWhileAnimating={true}
+        backdropTransitionOutTiming={0}
+        style={{ margin: 0 }}
+        animationIn="zoomIn"
+        animationOut="zoomOut"
+      >
+        <View
+          style={{
+            width: SIZES.width - 40,
+            backgroundColor: COLORS.white,
+            marginHorizontal: 20,
+            borderRadius: 10,
+            paddingHorizontal: 20,
+            paddingTop: 40,
+            paddingBottom: 30,
+          }}
         >
-            <View
-                style={{
-                    width: SIZES.width - 40,
-                    backgroundColor: COLORS.white,
-                    marginHorizontal: 20,
-                    borderRadius: 10,
-                    paddingHorizontal: 20,
-                    paddingTop: 40,
-                    paddingBottom: 30,
-                }}
+          <Text
+            style={{
+              textAlign: "center",
+              ...FONTS.H2,
+              lineHeight: 20 * 1.5,
+              marginBottom: 30,
+              textTransform: "capitalize",
+            }}
+          >
+            Are you sure you {"\n"} want to Delete File ?
+          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <TouchableOpacity
+              style={{
+                width: 130,
+                height: 48,
+                backgroundColor: COLORS.white,
+                borderRadius: 10,
+                justifyContent: "center",
+                alignItems: "center",
+                marginHorizontal: 7.5,
+                borderColor: COLORS.goldenTransparent_05,
+                borderWidth: 1,
+              }}
+              onPress={() => {
+                setShowModal(false);
+                deleteFile(url);
+              }}
             >
-                <Text
-                    style={{
-                        textAlign: "center",
-                        ...FONTS.H2,
-                        lineHeight: 20 * 1.5,
-                        marginBottom: 30,
-                        textTransform: "capitalize",
-                    }}
-                >
-                    Are you sure you {"\n"} want to Delete File ?
-                </Text>
-                <View
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    <TouchableOpacity
-                        style={{
-                            width: 130,
-                            height: 48,
-                            backgroundColor: COLORS.white,
-                            borderRadius: 10,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            marginHorizontal: 7.5,
-                            borderColor: COLORS.goldenTransparent_05,
-                            borderWidth: 1,
-                        }}
-                        onPress={() => {
-                            setShowModal(false);
-                            deleteFile(item)
-                        }}
-                    >
-                        <Text
-                            style={{
-                                color: COLORS.mainColor,
-                                ...FONTS.Lato_700Bold,
-                                fontSize: 18,
-                                textTransform: "capitalize",
-                            }}
-                        >
-                            Sure
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={{
-                            width: 130,
-                            height: 48,
-                            backgroundColor: COLORS.btnColor,
-                            borderRadius: 10,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            marginHorizontal: 7.5,
-                        }}
-                        onPress={() => setShowModal(false)}
-                    >
-                        <Text
-                            style={{
-                                color: COLORS.white,
-                                ...FONTS.Lato_700Bold,
-                                fontSize: 18,
-                                textTransform: "capitalize",
-                            }}
-                        >
-                            Cancel
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </Modal>
+              <Text
+                style={{
+                  color: COLORS.mainColor,
+                  ...FONTS.Lato_700Bold,
+                  fontSize: 18,
+                  textTransform: "capitalize",
+                }}
+              >
+                Sure
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                width: 130,
+                height: 48,
+                backgroundColor: COLORS.btnColor,
+                borderRadius: 10,
+                justifyContent: "center",
+                alignItems: "center",
+                marginHorizontal: 7.5,
+              }}
+              onPress={() => setShowModal(false)}
+            >
+              <Text
+                style={{
+                  color: COLORS.white,
+                  ...FONTS.Lato_700Bold,
+                  fontSize: 18,
+                  textTransform: "capitalize",
+                }}
+              >
+                Cancel
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     );
-}
+  }
   return (
     <View style={{ flex: 1 }}>
       <StatusBar barStyle="light-content" />
@@ -319,8 +375,10 @@ export default function OffLinePlayer() {
         <Button
           title="delete"
           containerStyle={{ width: "95%", height: 50 }}
-          // onPress={() => deleteFile(item)}
-          onPress={() => setShowModal(true)}
+          onPress={() => {
+            video.current.pauseAsync();
+            setShowModal(true);
+          }}
         ></Button>
         {/* <Button
             title="infoFile"
