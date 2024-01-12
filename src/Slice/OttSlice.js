@@ -3,8 +3,9 @@ const { createSlice, createAsyncThunk } = require("@reduxjs/toolkit");
 // import file from "./../constants/file.json"
 // http://20.204.171.156/frm
 const url =
- //"http://192.168.30.1/frm/api/v1/packages";
-  "http://192.168.30.1/frm/ui/cat/file.json";
+ //"http://192.168.30.1/frm/api/v1/packages"; //  package read
+  // "http://192.168.30.1/frm/ui/cat/file.json"; // old settop box
+  "http://192.168.31.23/frm/ui/cat/file.json" // new settop box
 
 const options = {
   method: "GET",

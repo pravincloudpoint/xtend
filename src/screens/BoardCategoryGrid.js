@@ -78,7 +78,7 @@ export default function BoardCategoryGrid() {
                 <Text
                   style={{
                     ...FONTS.Lato_700Bold,
-                    color: COLORS.white,
+                    color: COLORS.black,
                     lineHeight: 14 * 1.5,
                     fontSize: 14,
                   }}
